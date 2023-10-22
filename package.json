@@ -1,9 +1,9 @@
 {
   "name": "guess-the-wiki-page",
-  "private": true,
+  "homepage": "https://djbalin.github.io/guess-the-wiki/",
+  "private": false,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://djbalin.github.io/guess-the-wiki/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
