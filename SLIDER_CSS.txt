@@ -1,0 +1,54 @@
+
+
+input[type="range"] {
+  /* Removing default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+
+  /* creating a custom design */
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+
+  height: 1rem;
+  background: #ccc;
+  border-radius: 16px;
+}
+
+/* Track: webkit browsers */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 1rem;
+  background: #ccc;
+  border-radius: 16px;
+}
+
+/* Track: Mozilla Firefox */
+input[type="range"]::-moz-range-track {
+  height: 1rem;
+  background: #ccc;
+  border-radius: 16px;
+}
+
+/* Thumb: webkit */
+input[type="range"]::-webkit-slider-thumb {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none;
+  /* creating a custom design */
+  height: 1rem;
+  width: 1rem;
+  background-color: #fff;
+  /* border-radius: 50%; */
+  border: 2px solid #f50;
+  /* box-shadow: -407px 0 0 400px #f50; */
+  /* overflow: hidden; */
+}
+
+/* Thumb: Firefox */
+input[type="range"]::-moz-range-thumb {
+  height: 1rem;
+  width: 1rem;
+  background-color: #fff;
+  border-radius: 50%;
+  border: 1px solid #f50;
+}

@@ -1,0 +1,31 @@
+Nedenstående funktion skal ændres, således at censureringen foregår på det rå wiki-udtræk. Censureringen skal matche *hele* sidens titel, dvs. f.eks. "The Duke of Edinburgh", 
+og derigennem ikke censurere "The" eller "of", etc. Dette skal foregå i det oprindelige rå udtræk, da et snippeted udtræk kan se således ud: "of Edinburgh is a title ...", og så vil matchet ikke virke.
+
+export async function fetchRandomWikiPagesSnippeted(
+  numPages: number,
+  snippetLength: number
+): Promise<object[]> {
+  const fullPages = await fetchRandomWikiPages(numPages);
+  const wikiPagesSnippeted: WikiPageObject[] = [];
+
+  // let fullPage: Record<string,string> = {}
+  // let fullPage: {
+  //   content?: string;
+  //   title?: string;
+  // } = {};
+
+  // TODO:
+  for (const fullPage of fullPages) {
+    const extractedSnippet: string = extractSnippetFromText(
+      fullPage.content_raw,
+      snippetLength
+    );
+    const newObject: WikiPageObject = {
+      title: fullPage.title,
+      content_raw: extractedSnippet,
+      content_censored: extractedSnippet.replaceAll(fullPage.title, "###"),
+    };
+    wikiPagesSnippeted.push(newObject);
+  }
+  return wikiPagesSnippeted;
+}
