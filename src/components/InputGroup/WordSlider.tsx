@@ -5,27 +5,27 @@ type WordSliderProps = {
 
 export function WordSlider(props: WordSliderProps) {
   return (
-    <div className="w-auto grid col-span-1">
-      <span className="w-full">
-        <label htmlFor="snippetLengthSlider">Words in snippets: </label>
-        <input
-          className="w-8 text-center"
-          type="text"
-          name=""
-          id="snippetLengthSlider"
-          value={props.snippetLengthValue}
-          onFocus={(e) => {
-            e.target.select();
-          }}
-          onChange={(e) => {
-            if (parseInt(e.target.value) > 100) {
-              props.setSnippetLengthValue("100");
-            } else {
-              props.setSnippetLengthValue(e.target.value);
-            }
-          }}
-        />
-      </span>
+    <div className="">
+      <label className="" htmlFor="snippetLengthSlider">
+        Words in snippets:{" "}
+      </label>
+      <input
+        className="text-center w-8"
+        type="text"
+        name=""
+        id="snippetLengthSlider"
+        value={props.snippetLengthValue}
+        onFocus={(e) => {
+          e.target.select();
+        }}
+        onChange={(e) => {
+          if (parseInt(e.target.value) > 100) {
+            props.setSnippetLengthValue("100");
+          } else {
+            props.setSnippetLengthValue(e.target.value);
+          }
+        }}
+      />
       <input
         min="0"
         max="50"

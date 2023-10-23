@@ -1,13 +1,6 @@
 import SnippetTitle from "./SnippetTitle";
 import SnippetContent from "./SnippetContent";
 
-// import {
-//   handleDragEnd,
-//   handleDragStart,
-//   handleDragDrop,
-//   handleDragOver,
-//   handleDragLeave,
-// } from "../../scripts/dragger";
 import { useEffect, useRef } from "react";
 import { WikiPageObject } from "../../resources/WikiHelperTypes";
 
@@ -28,11 +21,9 @@ function toggleCurrentlyDraggingOver(elementBeingDraggedOver: Element) {
 function toggleDraggable(element: Element) {
   if (element.getAttribute("draggable") == "true") {
     element.setAttribute("draggable", "false");
-    // element.classList.remove("hover:cursor-grab:hover");
     element.classList.remove("hover:cursor-grab");
   } else {
     element.setAttribute("draggable", "true");
-    // element.classList.add("hover:cursor-grab:hover");
     element.classList.add("hover:cursor-grab");
   }
 }
@@ -191,24 +182,9 @@ export function PlayingField({
     clonedDragElement.setAttribute("draggable", "true");
     toggleGreyedOut(clonedDragElement);
 
-    // toggleGreyedOut(currentlyDragging!);
-    dropTarget!.prepend(clonedDragElement);
-    // dropTarget!.prepend(currentlyDragging!);
+    dropTarget.prepend(clonedDragElement);
     dropTarget.classList.add("contains_guess");
-    // snippetsContainer!.insertBefore(clonedDragElement, dropTarget);
-    // currentlyDragging as Node;
-    // dropTarget.appendChild(currentlyDragging);
 
-    // dropLocationvalid = true;
-    // currentlyDragging = null;
-
-    // // Otherwise, something has already been dropped in the target, and we "reset".
-
-    // dropLocationvalid = false;
-
-    // dropTargetsSaturated.set
-
-    // dropLocationvalid = true;
     currentlyDragging = null;
   };
 
@@ -224,43 +200,22 @@ export function PlayingField({
     titleHtmlIdsAndPages.set(generateSnippetTitleId(), wikiPage);
   });
 
-  // const wikiPagesAndHtmlIds: Map<
-  //   WikiPageObject,
-  //   { snippetTitleId: string; snippetContentId: string }
-  // > = new Map();
-
-  // wikiPageObjects.forEach((wikiPage) => {
-  //   wikiPagesAndHtmlIds.set(wikiPage, {
-  //     snippetTitleId: generateSnippetTitleId(),
-  //     snippetContentId: generateSnippetContentId(),
-  //   });
-  // });
-
   return (
     <div
       id="playingField"
       ref={playingFieldRef}
-      className="grid w-auto gap-y-6 mt-16"
+      className="grid w-auto place-items-center"
     >
-      <button className="w-auto" onClick={handleClickMakeGuess}>
+      <button className="w-[50vw] p-2 border-4" onClick={handleClickMakeGuess}>
         MAKE GUESS!
       </button>
       <div
         ref={titlesRef}
         id="titlesContainer"
         className={
-          "grid justify-around place-items-center content-center gap-y-4 gap-x-6"
+          "grid justify-around place-items-center content-center pt-4 gap-y-4 gap-x-6"
         }
       >
-        {/* {titlesWithIds.map((titleWithId) => (
-          <SnippetTitle
-            titleWithId={titleWithId}
-            dragStartHandler={handleDragStart}
-            dragEndHandler={handleDragEnd}
-            key={titleWithId.id}
-            htmlId={getTitleId()}
-          />
-        ))} */}
         {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
           <SnippetTitle
             wikiPage={titleHtmlIdsAndPages.get(titleHtmlId)!}
@@ -270,21 +225,12 @@ export function PlayingField({
             htmlId={titleHtmlId}
           />
         ))}
-        {/* {wikiPageObjects.map((wikiPage) => (
-          <SnippetTitle
-            wikiPage={wikiPage}
-            dragStartHandler={handleDragStart}
-            dragEndHandler={handleDragEnd}
-            key={wikiPagesAndHtmlIds.get(wikiPage)!.snippetTitleId}
-            htmlId={generateSnippetTitleId()}
-          />
-        ))} */}
       </div>
 
       <div
         ref={snippetsRef}
         id="snippetsContainer"
-        className="grid h-min  place-items-center gap-x-6"
+        className="grid h-min pt-6 place-items-center gap-x-6"
       >
         {Array.from(contentHtmlIdsAndPages.keys())
           .sort(() => Math.random() - 0.5)
@@ -300,18 +246,6 @@ export function PlayingField({
               htmlId={contentHtmlId}
             />
           ))}
-        {/* {wikiPageObjects.map((wikiPage) => (
-          <SnippetContent
-            onClickHandler={onClickHandler}
-            wikiPageObject={wikiPage}
-            // dragOverHandler={handleDragOver}
-            dragEnterHandler={handleDragEnter}
-            dragLeaveHandler={handleDragLeave}
-            dragDropHandler={handleDragDropOnDiv}
-            key={wikiPagesAndHtmlIds.get(wikiPage)!.snippetContentId}
-            htmlId={generateSnippetContentId()}
-          />
-        ))} */}
       </div>
     </div>
   );

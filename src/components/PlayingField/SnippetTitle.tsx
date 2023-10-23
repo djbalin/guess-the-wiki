@@ -37,7 +37,7 @@ function SnippetTitle(props: SnippetTitleProps) {
       onDragStart={props.dragStartHandler}
       onDragEnd={props.dragEndHandler}
       draggable="true"
-      className={`bg-slate-600 grid wikiTitle rounded-[2rem] p-4 items-center justify-center hover:cursor-move`}
+      className={`bg-slate-600 grid wikiTitle rounded-[1rem] lg:rounded-[2rem] p-2 lg:p-4 items-center justify-center hover:cursor-move`}
       id={props.htmlId}
     >
       {props.wikiPage.title}

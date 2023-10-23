@@ -22,7 +22,7 @@ function SnippetContent(props: {
       onDragLeave={props.dragLeaveHandler}
       onDrop={props.dragDropHandler}
       onClick={props.onClickHandler}
-      className="wikiSnippet h-full p-4 text-sm rounded-lg text-left bg-slate-700"
+      className="wikiSnippet h-full text-xs p-2 lg:p-4 md:text-sm rounded-sm lg:rounded-lg text-left bg-slate-700"
       id={props.htmlId}
     >
       {props.wikiPageObject.content_censored}

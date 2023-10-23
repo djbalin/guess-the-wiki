@@ -8,8 +8,8 @@ export function SnippetAmountInput({
   setSnippetAmount,
 }: SnippetAmountInputProps) {
   return (
-    <div className="w-auto">
-      <span className="w-full">
+    <div className="">
+      <span className="">
         <label htmlFor="snippetsAmountSlider">Number of snippets: </label>
         <input
           className="w-8 text-center"

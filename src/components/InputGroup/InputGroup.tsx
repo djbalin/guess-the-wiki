@@ -25,19 +25,22 @@ export default function InputGroup(props: InputProps) {
     switch (props.loadingStatus) {
       case "IDLE":
         return (
-          <button className="w-[10rem]" onClick={handlePlayGame}>
+          <button
+            className="w-[10rem] px-4 py-3 bg-purple-600"
+            onClick={handlePlayGame}
+          >
             PLAY GAME :)
           </button>
         );
       case "LOADING":
         return (
-          <button className="w-[10rem] cursor-wait opacity-50">
+          <button className="w-[10rem] bg-purple-600 cursor-wait opacity-50">
             LOADING...
           </button>
         );
       case "ERROR":
         return (
-          <button className="w-[10rem]" onClick={handlePlayGame}>
+          <button className="w-[10rem]  bg-purple-600" onClick={handlePlayGame}>
             ERROR loading data :( Try again!
           </button>
         );
@@ -45,21 +48,69 @@ export default function InputGroup(props: InputProps) {
   }
 
   return (
-    <div className="w-full gap-x-24 min-h-[10rem] gap-y-6 justify-around grid grid-cols-6">
-      <div className="grid col-span-2">
-        <WordSlider
-          snippetLengthValue={snippetLengthValue}
-          setSnippetLengthValue={setSnippetLengthValue}
-        />
-        <SnippetAmountInput
-          snippetAmount={snippetAmount}
-          setSnippetAmount={setSnippetAmount}
-        />
-      </div>
+    <>
+      <div className="flex flex-row h-auto gap-y-6 justify-around pb-8">
+        <div className="w-52 p-2 items-center justify-around">
+          <WordSlider
+            snippetLengthValue={snippetLengthValue}
+            setSnippetLengthValue={setSnippetLengthValue}
+          />
+          <SnippetAmountInput
+            snippetAmount={snippetAmount}
+            setSnippetAmount={setSnippetAmount}
+          />
+        </div>
 
-      <div className="grid col-span-1 items-center justify-around ">
-        {renderButton()}
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-x-8 xl:gap-x-4 justify-evenly place-items-center">
+          <div>
+            <button
+              className="difficulty_button  bg-green-600  "
+              onClick={() => {
+                setSnippetAmount("2");
+                setSnippetLengthValue("50");
+              }}
+            >
+              Easy
+            </button>
+          </div>
+
+          <div className="grid">
+            <button
+              className="difficulty_button bg-yellow-400"
+              onClick={() => {
+                setSnippetAmount("3");
+                setSnippetLengthValue("40");
+              }}
+            >
+              Medium
+            </button>
+          </div>
+          <div className="grid">
+            <button
+              className="difficulty_button bg-orange-500"
+              onClick={() => {
+                setSnippetAmount("4");
+                setSnippetLengthValue("20");
+              }}
+            >
+              Hard
+            </button>
+          </div>
+          <div className="grid">
+            <button
+              className="difficulty_button bg-red-700 shadow-red-950 shadow-xl"
+              onClick={() => {
+                setSnippetAmount("5");
+                setSnippetLengthValue("10");
+              }}
+            >
+              Extreme
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+      <div className="flex items-center justify-around ">{renderButton()}</div>
+      <hr className="h-3px mt-10 mb-8 bg-green-200 border-3 dark:bg-gray-700" />
+    </>
   );
 }
