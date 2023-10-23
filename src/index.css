@@ -61,7 +61,7 @@ button:focus-visible {
   /* @apply font-bold text-purple-600 outline outline-purple-600 outline-[3px]; */
 }
 
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -72,7 +72,7 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
 
 .wikiTitle.greyed_out {
   opacity: 0.4;
