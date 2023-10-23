@@ -59,10 +59,11 @@ function App() {
       setLoadingStatus(LoadingStatus.Loading);
       await fetchWikiSnippets(num_pages, snippet_length);
       setLoadingStatus(LoadingStatus.Idle);
+      setShowPlayingField(true);
     } catch (error) {
+      console.log(error);
       setLoadingStatus(LoadingStatus.Error);
     }
-    setShowPlayingField(true);
   }
 
   return (
