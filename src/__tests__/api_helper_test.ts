@@ -22,12 +22,12 @@ test("fetchWikiPageContent works", async () => {
 });
 
 test("fetchRandomWikiPages works", async () => {
-  const length = 3;
-  const res = await api.fetchRandomWikiPages(length);
+  const num = 3;
+  const res = await api.fetchRandomWikiPages(num);
 
   expect(Array.isArray(res)).toBe(true);
   expect(typeof res[0]).toBe("object");
-  expect(res.length).toBe(length);
+  expect(res.length).toBe(num);
 
-  expect(typeof res[0].content).toBe("string");
+  expect(typeof res[0].content_raw).toBe("string");
 });

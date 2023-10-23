@@ -3,7 +3,6 @@ import { WikiPageObject } from "../../resources/WikiHelperTypes";
 
 function SnippetContent(props: {
   wikiPageObject: WikiPageObject;
-  // dragOverHandler: (event: React.DragEvent<HTMLDivElement>) => void;
   dragEnterHandler: (event: React.DragEvent<HTMLDivElement>) => void;
   dragLeaveHandler: (event: React.DragEvent<HTMLDivElement>) => void;
   dragDropHandler: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -14,7 +13,6 @@ function SnippetContent(props: {
 
   return (
     <div
-      // onDragOver={props.dragOverHandler}
       onDragOver={(e) => {
         e.preventDefault();
       }}
@@ -26,8 +24,6 @@ function SnippetContent(props: {
       id={props.htmlId}
     >
       {props.wikiPageObject.content_censored}
-      {/* {props.wikiPageObject.id}
-      htmlid: + {htmlIdAndContent[0]} */}
     </div>
   );
 }

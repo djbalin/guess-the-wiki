@@ -34,13 +34,16 @@ export default function InputGroup(props: InputProps) {
         );
       case "LOADING":
         return (
-          <button className="w-[10rem] bg-purple-600 cursor-wait opacity-50">
+          <button className="w-[10rem] px-4 py-3 bg-purple-600 cursor-wait opacity-50">
             LOADING...
           </button>
         );
       case "ERROR":
         return (
-          <button className="w-[10rem]  bg-purple-600" onClick={handlePlayGame}>
+          <button
+            className="w-[10rem] px-4 py-3 bg-purple-600"
+            onClick={handlePlayGame}
+          >
             ERROR loading data :( Try again!
           </button>
         );
@@ -49,7 +52,7 @@ export default function InputGroup(props: InputProps) {
 
   return (
     <>
-      <div className="flex flex-row h-auto gap-y-6 justify-around pb-8">
+      <div className="flex flex-row h-auto justify-around pb-8">
         <div className="w-52 p-2 items-center justify-around">
           <WordSlider
             snippetLengthValue={snippetLengthValue}

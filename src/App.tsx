@@ -19,6 +19,9 @@ function App() {
   const [wikiPageObjects, setWikiPageObjects] = useState<WikiPageObject[]>([]);
 
   function onMakeGuess(guess: Map<Element, Element | null>): void {
+    // TODO
+    // TODO
+    // TODO
     // NOT YET IMPLEMENTED
     // Will handle the result of the guess and provide some feedback to the user.
     evaluateGuess(guess);
@@ -31,8 +34,8 @@ function App() {
     // TODO
     // TODO
     //
-    gameIsFinished;
-    guess.size;
+    // gameIsFinished;
+    // guess.size;
     return false;
   }
 

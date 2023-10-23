@@ -51,7 +51,6 @@ export function PlayingField({
   let snippetsSaturatedBy: Map<Element, Element | null> = new Map();
 
   useEffect(() => {
-    console.log("1ST USEEFFECT RAN)");
     if (playingFieldRef.current) {
       dropTargets = document.querySelectorAll(".wikiSnippet");
       for (const dropTarget of dropTargets) {
@@ -84,8 +83,6 @@ export function PlayingField({
   }
 
   useEffect(() => {
-    console.log("2ND USEEFFECT RAN)");
-
     const ncols: string = wikiPageObjects.length.toString();
     const titlesContainer: HTMLElement | null =
       document.getElementById("titlesContainer");
@@ -273,20 +270,13 @@ export function PlayingField({
 // and: https://www.youtube.com/watch?v=jfYWwQrtzzY
 
 let currentlyDragging: Element | null = null;
-// let dropLocationvalid: boolean | null = null;
 
 export const handleDragStart = (
   event: React.DragEvent<HTMLDivElement>
 ): void => {
-  //   event.preventDefault();
-  // event.dataTransfer.effectAllowed = "copyMove";
-  console.log("drag start");
-
   const target = event.target as Element;
   currentlyDragging = target;
   toggleGreyedOut(target);
-  // target.classList.add("currently_dragging");
-
   event.dataTransfer.setData("text", event.currentTarget.id);
 };
 
@@ -294,7 +284,6 @@ export const handleDragEnd = (event: React.DragEvent<HTMLDivElement>): void => {
   const target = event.target as Element;
   if (event.dataTransfer.dropEffect == "none") {
     toggleGreyedOut(target);
-    // target.classList.remove("currently_dragging");
   }
   currentlyDragging = null;
 };
