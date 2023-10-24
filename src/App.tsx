@@ -1,7 +1,5 @@
 import { useState } from "react";
-import "./App.css";
 import PlayingField from "./components/PlayingField/PlayingField";
-import "./scripts/api_helper";
 import { fetchAndSnippetRandomWikiPages } from "./scripts/api_helper";
 import InputGroup from "./components/InputGroup/InputGroup";
 import { Header } from "./components/Header";
@@ -34,8 +32,8 @@ function App() {
     // TODO
     // TODO
     //
-    // gameIsFinished;
-    // guess.size;
+    gameIsFinished;
+    guess.size;
     return false;
   }
 
