@@ -12,7 +12,7 @@ export function SnippetAmountInput({
       <span className="">
         <label htmlFor="snippetsAmountSlider">Number of snippets: </label>
         <input
-          className="w-8 text-center"
+          className="w-8 text-center bg-zinc-700 text-white"
           type="text"
           name=""
           id="snippetsAmountSlider"

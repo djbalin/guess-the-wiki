@@ -7,7 +7,7 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
+  color-scheme: dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
@@ -98,10 +98,22 @@ button:focus-visible {
   /* min-height: 100vh; */
 }
 
-/* #playingField {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-} */
+button {
+  transition: scale 200ms, font-weight 200ms, opacity 200ms;
+}
+
+button:hover {
+  scale: 1.1;
+  transition-timing-function: ease-in-out;
+  transition-delay: 50ms;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.gamecontrol_button {
+  @apply w-[10vw] text-xs md:text-sm bg-opacity-80 lg:text-lg font-medium px-2 py-2;
+}
 
 .difficulty_button {
-  @apply w-[10vw] text-xs md:text-sm bg-opacity-80 lg:text-lg font-medium px-2 py-2 hover:scale-110 focus:scale-110  hover:font-semibold focus:font-semibold focus:text-black hover:bg-opacity-100 focus:bg-opacity-100;
+  @apply focus:text-black focus:font-semibold focus:bg-opacity-100 focus:scale-110;
 }

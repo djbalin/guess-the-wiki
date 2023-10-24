@@ -4,6 +4,7 @@ import { fetchAndSnippetRandomWikiPages } from "./scripts/api_helper";
 import InputGroup from "./components/InputGroup/InputGroup";
 import { Header } from "./components/Header";
 import { LoadingStatus, WikiPageObject } from "./resources/WikiHelperTypes";
+import { HorizontalRule } from "./components/HorizontalRule";
 
 function App() {
   const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
@@ -71,6 +72,7 @@ function App() {
         onGenerateSnippets={generateAndShowWikiSnippets}
         loadingStatus={loadingStatus}
       />
+      <HorizontalRule showPlayingField={showPlayingField} />
       {showPlayingField && (
         <PlayingField
           onMakeGuess={onMakeGuess}

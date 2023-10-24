@@ -26,7 +26,7 @@ export default function InputGroup(props: InputProps) {
       case "IDLE":
         return (
           <button
-            className="w-[10rem] px-4 py-3 bg-purple-600"
+            className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600"
             onClick={handlePlayGame}
           >
             PLAY GAME :)
@@ -34,14 +34,14 @@ export default function InputGroup(props: InputProps) {
         );
       case "LOADING":
         return (
-          <button className="w-[10rem] px-4 py-3 bg-purple-600 cursor-wait opacity-50">
+          <button className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600 cursor-wait opacity-50">
             LOADING...
           </button>
         );
       case "ERROR":
         return (
           <button
-            className="w-[10rem] px-4 py-3 bg-purple-600"
+            className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600"
             onClick={handlePlayGame}
           >
             ERROR loading data :( Try again!
@@ -67,7 +67,7 @@ export default function InputGroup(props: InputProps) {
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-x-8 xl:gap-x-4 justify-evenly place-items-center">
           <div>
             <button
-              className="difficulty_button  bg-green-600  "
+              className="gamecontrol_button difficulty_button  bg-green-600  "
               onClick={() => {
                 setSnippetAmount("2");
                 setSnippetLengthValue("50");
@@ -79,7 +79,7 @@ export default function InputGroup(props: InputProps) {
 
           <div className="grid">
             <button
-              className="difficulty_button bg-yellow-400"
+              className="gamecontrol_button difficulty_button bg-yellow-400"
               onClick={() => {
                 setSnippetAmount("3");
                 setSnippetLengthValue("40");
@@ -90,7 +90,7 @@ export default function InputGroup(props: InputProps) {
           </div>
           <div className="grid">
             <button
-              className="difficulty_button bg-orange-500"
+              className="gamecontrol_button difficulty_button bg-orange-500"
               onClick={() => {
                 setSnippetAmount("4");
                 setSnippetLengthValue("20");
@@ -101,7 +101,7 @@ export default function InputGroup(props: InputProps) {
           </div>
           <div className="grid">
             <button
-              className="difficulty_button bg-red-700 shadow-red-950 shadow-xl"
+              className="gamecontrol_button difficulty_button bg-red-700 shadow-red-950 shadow-xl"
               onClick={() => {
                 setSnippetAmount("5");
                 setSnippetLengthValue("10");
@@ -112,8 +112,7 @@ export default function InputGroup(props: InputProps) {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-around ">{renderButton()}</div>
-      <hr className="h-3px mt-10 mb-8 bg-green-200 border-3 dark:bg-gray-700" />
+      <div className="flex items-center justify-around ">{renderButton()}</div>{" "}
     </>
   );
 }

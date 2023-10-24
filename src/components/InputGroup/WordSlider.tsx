@@ -10,10 +10,10 @@ export function WordSlider(props: WordSliderProps) {
         Words in snippets:{" "}
       </label>
       <input
-        className="text-center w-8"
+        className="text-center w-8 bg-zinc-700 text-white"
         type="text"
         name=""
-        id="snippetLengthSlider"
+        id="snippetLengthSsider"
         value={props.snippetLengthValue}
         onFocus={(e) => {
           e.target.select();
