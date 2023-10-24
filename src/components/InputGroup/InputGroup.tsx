@@ -26,7 +26,7 @@ export default function InputGroup(props: InputProps) {
       case "IDLE":
         return (
           <button
-            className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600"
+            className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
             onClick={handlePlayGame}
           >
             PLAY GAME :)
@@ -34,14 +34,15 @@ export default function InputGroup(props: InputProps) {
         );
       case "LOADING":
         return (
-          <button className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600 cursor-wait opacity-50">
+          <button className="loading_button text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600">
             LOADING...
           </button>
         );
       case "ERROR":
         return (
           <button
-            className="gamecontrol_button w-[10rem] px-4 py-3 bg-purple-600"
+            className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
+            // className="font-medium text-md w-[10rem] px-2 py-3 bg-purple-600"
             onClick={handlePlayGame}
           >
             ERROR loading data :( Try again!

@@ -110,7 +110,7 @@ export async function fetchWikiPageContent(pageTitle: string): Promise<string> {
   const url =
     wikiEndpoint + "&titles=" + pageTitle + randomWikiPageParams.join("");
   const wikiConfig = {
-    timeout: 10000,
+    timeout: 5000,
   };
 
   const jsonResponse = await axios.get(url, wikiConfig);
