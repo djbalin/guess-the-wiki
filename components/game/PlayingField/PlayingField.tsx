@@ -201,27 +201,33 @@ export function PlayingField({
     <div
       id="playingField"
       ref={playingFieldRef}
-      className="grid w-auto place-items-center"
+      className="flex flex-col bg-amber-500 border-2 rounded-lg p-4"
     >
-      <button className="w-[50vw] p-2 border-4" onClick={handleClickMakeGuess}>
-        MAKE GUESS!
-      </button>
-      <div
-        ref={titlesRef}
-        id="titlesContainer"
-        className={
-          "grid justify-around place-items-center content-center pt-4 gap-y-4 gap-x-6"
-        }
-      >
-        {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
-          <SnippetTitle
-            wikiPage={titleHtmlIdsAndPages.get(titleHtmlId)!}
-            dragStartHandler={handleDragStart}
-            dragEndHandler={handleDragEnd}
-            key={titleHtmlIdsAndPages.get(titleHtmlId)!.title}
-            htmlId={titleHtmlId}
-          />
-        ))}
+      <div className="flex flex-row w-full">
+        <ul
+          ref={titlesRef}
+          id="titlesContainer"
+          className="flex flex-row w-full items-center justify-around  gap-x-0"
+        >
+          {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
+            <SnippetTitle
+              wikiPage={titleHtmlIdsAndPages.get(titleHtmlId)!}
+              dragStartHandler={handleDragStart}
+              dragEndHandler={handleDragEnd}
+              key={titleHtmlIdsAndPages.get(titleHtmlId)!.title}
+              htmlId={titleHtmlId}
+            />
+          ))}
+        </ul>
+        {/* <div className="absolute top-0 right-0 w-auto"> */}
+        <div className="flex items-center w-auto">
+          <button
+            className="text-2xl text-nowrap bg-yellow-300 p-2 border-4"
+            onClick={handleClickMakeGuess}
+          >
+            MAKE GUESS!
+          </button>
+        </div>
       </div>
 
       <div
