@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Step from "./Step";
-import Code from "@/components/Code";
+import Code from "@/components/supabase/Code";
 
 const create = `
 create table notes (

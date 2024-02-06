@@ -40,3 +40,99 @@
     transform: translateY(0);
   }
 }
+
+body,
+html {
+  min-width: 100vw;
+  min-height: 100vw;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+
+.wikiTitle.greyed_out {
+  opacity: 0.4;
+}
+
+.wikiSnippet.currently_dragging_over {
+  opacity: 1;
+  background-color: #f3af99;
+  transform: scale(1.03);
+  transition-timing-function: ease-in-out;
+  transition-duration: 200ms;
+}
+
+/* #root { */
+/* max-width: 1280px; */
+/* border: 3px solid red; */
+/* margin: 0 auto; */
+/* margin-top: 0;
+  padding: 2rem;
+  width: 100vw;
+  margin-right: 13%;
+  margin-left: 13%;
+  text-align: center; */
+/* min-height: 100vh; */
+/* } */
+
+button {
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+
+.gamecontrol_button {
+  transition: scale 200ms, font-weight 0ms, opacity 200ms;
+}
+
+.gamecontrol_button:hover,
+.gamecontrol_button:focus {
+  scale: 1.1;
+  transition-timing-function: ease-in-out;
+  transition-delay: 50ms;
+  font-weight: 600;
+  opacity: 1;
+}
+.gamecontrol_button:focus {
+  color: black;
+}
+
+.gamecontrol_button {
+  @apply w-[10vw] text-xs md:text-sm bg-opacity-80
+        lg:text-lg font-medium px-2 py-2;
+}
+
+.loading_button {
+  @apply cursor-wait opacity-50;
+}
+
+.loading_button:focus {
+  outline: none;
+}
+
+/* .difficulty_button {
+  @apply focus:text-black focus:font-semibold focus:bg-opacity-100;
+} */
