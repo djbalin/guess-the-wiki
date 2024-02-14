@@ -4,8 +4,11 @@ import { useState } from "react";
 import { HorizontalRule } from "./HorizontalRule";
 import InputGroup from "./InputGroup/InputGroup";
 import PlayingField from "./PlayingField/PlayingField";
-import { LoadingStatus, WikiDocument } from "@/resources/WikiHelperTypes";
-import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
+import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
+import {
+  fetchAndSnippetRandomWikiPages,
+  fetchRandomWikiPageTitles,
+} from "@/scripts/api_helper";
 
 export default function Game() {
   const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);

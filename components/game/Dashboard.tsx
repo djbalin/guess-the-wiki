@@ -1,5 +1,5 @@
 "use server";
-import { LoadingStatus, WikiDocument } from "@/resources/WikiHelperTypes";
+import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
 import { useState } from "react";
 import { HorizontalRule } from "./HorizontalRule";
 import InputGroup from "./InputGroup/InputGroup";

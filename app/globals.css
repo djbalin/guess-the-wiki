@@ -73,7 +73,6 @@ a:hover {
 
 .wikiSnippet.currently_dragging_over {
   opacity: 1;
-  background-color: #f3af99;
   transform: scale(1.03);
   transition-timing-function: ease-in-out;
   transition-duration: 200ms;
@@ -111,7 +110,8 @@ button:hover {
   scale: 1.1;
   transition-timing-function: ease-in-out;
   transition-delay: 50ms;
-  font-weight: 600;
+  font-weight: 700;
+  border: 2px solid #00000058;
   opacity: 1;
 }
 .gamecontrol_button:focus {
