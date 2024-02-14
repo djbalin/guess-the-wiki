@@ -1,4 +1,4 @@
-import { WikiDocument } from "@/resources/WikiHelperTypes";
+import { WikiDocument } from "@/resources/TypesEnums";
 import { useEffect } from "react";
 
 interface SnippetTitleProps {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 // import { WordSlider } from "./WordSlider";
 import { SnippetAmountInput } from "./SnippetAmountInput";
-import { LoadingStatus, WikiDocument } from "@/resources/WikiHelperTypes";
+import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 
 interface InputProps {
@@ -72,7 +72,7 @@ export default function InputGroup(props: InputProps) {
         <></>
       )}
       <div id="sliders" className="flex gap-y-2 flex-col">
-        <h2 className="text-2xl w-full text-center">Custom settings:</h2>
+        <h2 className="text-2xl w-full text-center">Tweak difficulty:</h2>
         <div className="flex flex-col gap-y-2">
           <div className="flex flex-row gap-x-2 justify-end">
             <label className="w-full" htmlFor="snippetsAmountSlider">
@@ -142,8 +142,8 @@ export default function InputGroup(props: InputProps) {
       </div>
 
       <div className="flex flex-col gap-y-2">
-        <h2 className="text-2xl w-full text-center">Premade settings:</h2>
-        <div id="buttons" className="flex flex-shrink gap-x-2 flex-wrap ">
+        <h2 className="text-2xl w-full text-center">Difficulty:</h2>
+        <div id="buttons" className="flex flex-shrink gap-x-4 flex-wrap ">
           <button
             className="gamecontrol_button difficulty_button  bg-green-600  "
             onClick={() => {

@@ -1,4 +1,4 @@
-import { WikiDocument } from "@/resources/WikiHelperTypes";
+import { BackgroundColors, WikiDocument } from "@/resources/TypesEnums";
 import { useEffect } from "react";
 
 export default function SnippetContent(props: {
@@ -20,7 +20,8 @@ export default function SnippetContent(props: {
       onDragLeave={props.dragLeaveHandler}
       onDrop={props.dragDropHandler}
       onClick={props.onClickHandler}
-      className="wikiSnippet h-full text-xs p-2 lg:p-4 md:text-sm rounded-sm lg:rounded-lg text-left bg-cyan-400"
+      style={{ backgroundColor: BackgroundColors.UNSATURATED }}
+      className="wikiSnippet h-full text-xs p-2 lg:p-4 md:text-sm rounded-sm lg:rounded-lg text-left"
       id={props.htmlId}
     >
       {props.wikiPageObject.content_censored}

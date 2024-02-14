@@ -2,21 +2,25 @@
 
 import axios from "axios";
 import { commonWords } from "../assets/1000_most_common_english_words";
-import {
-  WikiDocument,
-  WikiPageTitleObject,
-} from "../resources/WikiHelperTypes";
+import { WikiDocument } from "../resources/TypesEnums";
 
-const wikiEndpoint = "https://en.wikipedia.org/w/api.php?action=query";
-const standardParams = ["&format=json", "&origin=*"];
-const randomWikiPageParamsExtra = [
+const WIKI_ENDPOINT = "https://en.wikipedia.org/w/api.php?action=query";
+const STANDARD_PARAMS = ["&format=json", "&origin=*"];
+const RANDOM_TITLE_EXTRA_PARAMS = [
+  "&generator=random",
+  "&grnnamespace=0",
+  "&prop=info",
+  "&inprop=url",
+];
+const RANDOM_WIKIPAGES_EXTRA_PARAMS = [
   "&explaintext",
   "&formatversion=2",
   "&prop=extracts",
 ];
-const randomPageTitleParamsExtra = ["&list=random", "&rnnamespace=0"];
-const randomPageTitleParams = standardParams.concat(randomPageTitleParamsExtra);
-const randomWikiPageParams = standardParams.concat(randomWikiPageParamsExtra);
+const RANDOM_TITLE_PARAMS = STANDARD_PARAMS.concat(RANDOM_TITLE_EXTRA_PARAMS);
+const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
+  RANDOM_WIKIPAGES_EXTRA_PARAMS
+);
 
 /**
  * Replaces specified words in a given input string.
@@ -83,19 +87,27 @@ function extractSnippetFromText(fullText: string, snippetLength: number) {
  * @returns A Promise that resolves to an array of WikiPageTitleObject.
  * @throws {Error} If there's an issue with the HTTP request or if the response doesn't match the expected format.
  */
-export function fetchRandomWikiPageTitleObjects(
+export async function fetchRandomWikiPageTitles(
   numPages: number
-): Promise<WikiPageTitleObject[]> {
-  const numPagesParam = "&rnlimit=" + numPages;
-  const url = wikiEndpoint + numPagesParam + randomPageTitleParams.join("");
-  const titles: WikiPageTitleObject[] = [];
+): Promise<WikiDocument[]> {
+  const numPagesParam = "&grnlimit=" + numPages;
+  const randomTitlesEndpoint =
+    WIKI_ENDPOINT + numPagesParam + RANDOM_TITLE_PARAMS.join("");
+  const randomWikiTitles: WikiDocument[] = [];
+  const result = await axios.get(randomTitlesEndpoint);
 
-  return axios.get(url).then((response) => {
-    response.data.query.random.forEach((element: any) => {
-      titles.push({ title: element.title, id: element.id });
-    });
-    return titles;
+  Object.values(result.data.query.pages).forEach((element: any) => {
+    const wikiTitle: WikiDocument = {
+      title: element.title,
+      id: element.pageid,
+      url: element.fullurl,
+      content_censored: null,
+      content_raw: null,
+    };
+
+    randomWikiTitles.push(wikiTitle);
   });
+  return randomWikiTitles;
 }
 
 /**
@@ -107,14 +119,13 @@ export function fetchRandomWikiPageTitleObjects(
  * @throws {Error} If there's an issue with the HTTP request, if the page is not found, or if the response doesn't match the expected format.
  */
 export async function fetchWikiPageContent(pageTitle: string): Promise<string> {
-  const url =
-    wikiEndpoint + "&titles=" + pageTitle + randomWikiPageParams.join("");
+  const randomPageEndpoint =
+    WIKI_ENDPOINT + "&titles=" + pageTitle + RANDOM_WIKIPAGE_PARAMS.join("");
   const wikiConfig = {
     timeout: 5000,
   };
-
-  const jsonResponse = await axios.get(url, wikiConfig);
-  return jsonResponse.data.query.pages[0].extract;
+  const response = await axios.get(randomPageEndpoint, wikiConfig);
+  return response.data.query.pages[0].extract;
 }
 
 /**
@@ -128,24 +139,13 @@ export async function fetchWikiPageContent(pageTitle: string): Promise<string> {
 export async function fetchRandomWikiPages(
   numPages: number
 ): Promise<WikiDocument[]> {
-  const wikiPageTitleObjects: WikiPageTitleObject[] =
-    await fetchRandomWikiPageTitleObjects(numPages);
-
-  const wikiPageObjects: WikiDocument[] = [];
-
-  for (const wikiPageTitleObject of wikiPageTitleObjects) {
-    const wikiPageContent = await fetchWikiPageContent(
-      wikiPageTitleObject.title
-    );
-    const pageObject = {
-      title: wikiPageTitleObject.title,
-      content_raw: wikiPageContent,
-      content_censored: "",
-      id: wikiPageTitleObject.id,
-    };
-    wikiPageObjects.push(pageObject);
+  const wikiPages: WikiDocument[] = await fetchRandomWikiPageTitles(numPages);
+  for await (const wikiPage of wikiPages) {
+    const wikiPageContent = await fetchWikiPageContent(wikiPage.title);
+    wikiPage["content_raw"] = wikiPageContent;
   }
-  return wikiPageObjects;
+
+  return wikiPages;
 }
 
 /**
@@ -159,13 +159,15 @@ export async function fetchAndSnippetRandomWikiPages(
   numPages: number,
   snippetLength: number
 ): Promise<WikiDocument[]> {
-  const wikiPageObjects = await fetchRandomWikiPages(numPages);
-  const wikiPagesSnippeted: WikiDocument[] = [];
+  const wikiPages = await fetchRandomWikiPages(numPages);
 
-  for (const wikiPageObject of wikiPageObjects) {
+  for (const wikiPage of wikiPages) {
+    if (!wikiPage.content_raw) {
+      throw Error("Error fetching Wiki snippets: raw content is null");
+    }
     const raw_censored: string = censorText(
-      wikiPageObject.content_raw,
-      wikiPageObject.title
+      wikiPage.content_raw,
+      wikiPage.title
     );
 
     const extractedSnippet: string = extractSnippetFromText(
@@ -173,15 +175,17 @@ export async function fetchAndSnippetRandomWikiPages(
       snippetLength
     );
 
-    const newWikiPage: WikiDocument = {
-      title: wikiPageObject.title,
-      content_raw: extractedSnippet,
-      content_censored: extractedSnippet,
-      id: wikiPageObject.id,
-    };
-    wikiPagesSnippeted.push(newWikiPage);
+    wikiPage.content_censored = extractedSnippet;
+
+    // const newWikiPage: WikiDocument = {
+    //   title: wikiPage.title,
+    //   content_raw: extractedSnippet,
+    //   content_censored: extractedSnippet,
+    //   id: wikiPage.id,
+    // };
+    // wikiPagesSnippeted.push(newWikiPage);
   }
-  return wikiPagesSnippeted;
+  return wikiPages;
 }
 
 // TODO
