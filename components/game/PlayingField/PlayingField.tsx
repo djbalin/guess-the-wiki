@@ -5,7 +5,7 @@ import SnippetContent from "./SnippetContent";
 import { useEffect, useRef, useState } from "react";
 import { BackgroundColors, WikiDocument } from "@/resources/TypesEnums";
 
-function toggleGreyedOut(element: Element) {
+function toggleGreyedOut(element: HTMLElement) {
   if (element.classList.contains("greyed_out")) {
     element.classList.remove("greyed_out");
     return;
@@ -25,7 +25,7 @@ function toggleCurrentlyDraggingOver(elementBeingDraggedOver: HTMLElement) {
   }
 }
 
-function toggleDraggable(element: Element) {
+function toggleDraggable(element: HTMLElement) {
   if (element.getAttribute("draggable") == "true") {
     element.setAttribute("draggable", "false");
     element.classList.remove("hover:cursor-grab");
@@ -35,30 +35,40 @@ function toggleDraggable(element: Element) {
   }
 }
 
-type PlayingFieldProps = {
-  wikiPageObjects: WikiDocument[];
-  onMakeGuess: (guess: Map<Element, Element | null>) => void;
-};
+// type PlayingFieldProps = {
+//   wikiPageObjects: WikiDocument[];
+//   onMakeGuess: (guess: Map<HTMLElement, HTMLElement | null>) => void;
+// };
 
 export default function PlayingField({
-  wikiPageObjects,
+  wikiPages,
   onMakeGuess,
-}: PlayingFieldProps) {
-  const titlesWithIds: { title: string; id: number }[] = [];
-  for (const wikiPageObject of wikiPageObjects) {
-    titlesWithIds.push({ title: wikiPageObject.title, id: wikiPageObject.id });
-  }
+}: {
+  wikiPages: WikiDocument[];
+  onMakeGuess: (guess: Map<HTMLElement, HTMLElement | null>) => void;
+}) {
+  // PlayingFieldProps)
+  // const titlesWithIds: { title: string; id: number }[] = [];
+  // for (const wikiPageObject of wikiPages) {
+  //   titlesWithIds.push({ title: wikiPageObject.title, id: wikiPageObject.id });
+  // }
+
+  const [randomizer, setRandomizer] = useState<number>(0);
+  useEffect(() => {
+    console.log("useeffect ran");
+
+    setRandomizer(Math.random());
+  }, []);
 
   const [guessHasBeenMade, setGuessHasBeenMade] = useState<boolean>(false);
 
-  const titlesRef = useRef<HTMLDivElement>(null);
-  const snippetsRef = useRef<HTMLDivElement>(null);
-  const playingFieldRef = useRef<HTMLDivElement>(null);
+  const titlesRef = useRef<HTMLUListElement | null>(null);
+  const snippetsRef = useRef<HTMLDivElement | null>(null);
+  const playingFieldRef = useRef<HTMLDivElement | null>(null);
 
-  let dropTargets: NodeListOf<Element> | null = null;
+  let dropTargets: NodeListOf<HTMLElement> | null = null;
   let cloneIdCounter = 0;
   let snippetsSaturatedBy: Map<HTMLElement, HTMLElement | null> = new Map();
-  console.log("RENDER PLAYINGFIELD");
 
   useEffect(() => {
     if (playingFieldRef.current) {
@@ -68,7 +78,7 @@ export default function PlayingField({
       }
     }
 
-    const ncols: string = wikiPageObjects.length.toString();
+    const ncols: string = wikiPages.length.toString();
     const titlesContainer: HTMLElement | null =
       document.getElementById("titlesContainer");
     const snippetsContainer: HTMLElement | null =
@@ -83,6 +93,27 @@ export default function PlayingField({
   let titleIdCounter = 0;
   let snippetIdCounter = 0;
 
+  let currentlyDragging: HTMLElement | null = null;
+
+  function handleDragEnd(event: React.DragEvent<HTMLLIElement>): void {
+    const target = event.target as HTMLElement;
+    if (event.dataTransfer.dropEffect == "none") {
+      toggleGreyedOut(target);
+    }
+    currentlyDragging = null;
+  }
+
+  const handleDragLeave = (
+    event: React.DragEvent<HTMLParagraphElement>
+  ): void => {
+    const target = event.target as HTMLElement;
+    if (target.nodeName != "LI") {
+      if (!target.classList.contains("contains_guess")) {
+        toggleCurrentlyDraggingOver(target);
+      }
+    }
+  };
+
   function generateSnippetContentId(): string {
     snippetIdCounter += 1;
     return "s" + snippetIdCounter;
@@ -93,7 +124,7 @@ export default function PlayingField({
   }
 
   useEffect(() => {
-    const ncols: string = wikiPageObjects.length.toString();
+    const ncols: string = wikiPages.length.toString();
     const titlesContainer: HTMLElement | null =
       document.getElementById("titlesContainer");
     const snippetsContainer: HTMLElement | null =
@@ -142,14 +173,18 @@ export default function PlayingField({
     const titlesContainer = document.getElementById("titlesContainer");
     const snippetsContainer = document.getElementById("snippetsContainer");
     for (const title of titlesContainer!.children) {
-      toggleDraggable(title);
-      toggleGreyedOut(title);
+      toggleDraggable(title as HTMLElement);
+      toggleGreyedOut(title as HTMLElement);
     }
     for (const snippet of snippetsContainer!.children) {
       snippet.removeChild(snippet.children[0]);
       (snippet as HTMLElement).style.backgroundColor =
         BackgroundColors.UNSATURATED;
     }
+    dropTargets?.forEach((dropTarget) => {
+      snippetsSaturatedBy.set(dropTarget, null);
+      dropTarget.classList.remove("contains_guess");
+    });
 
     // const saturator = snippetsSaturatedBy.get(clickTarget);
     // if (saturator != null) {
@@ -164,17 +199,21 @@ export default function PlayingField({
   }
 
   const onClickHandler = (event: React.MouseEvent<HTMLDivElement>): void => {
+    console.log("clickhandle");
+
     let clickTarget = event.target as HTMLElement;
     if (clickTarget.id.startsWith("placed_title_")) {
       clickTarget = clickTarget.parentElement!;
     }
     const saturator = snippetsSaturatedBy.get(clickTarget);
+    console.log(saturator);
+
     if (saturator != null) {
       clickTarget.removeChild(clickTarget.children[0]);
       toggleDraggable(saturator);
       toggleGreyedOut(saturator);
       clickTarget.classList.remove("hover:cursor-pointer");
-      snippetsSaturatedBy.set(clickTarget, null);
+
       toggleCurrentlyDraggingOver(clickTarget);
     }
   };
@@ -182,13 +221,19 @@ export default function PlayingField({
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>): void => {
     event.preventDefault();
     const target = event.target as HTMLElement;
-    console.log(target.nodeName);
     if (target.nodeName != "LI") {
       if (snippetsSaturatedBy.get(target) == null) {
         toggleCurrentlyDraggingOver(target);
       }
     }
   };
+  const handleDragStart = (event: React.DragEvent<HTMLLIElement>): void => {
+    const target = event.target as HTMLElement;
+    currentlyDragging = target;
+    toggleGreyedOut(target);
+    event.dataTransfer.setData("text", event.currentTarget.id);
+  };
+  console.log("RENER FIELD");
 
   const handleDragDropOnDiv = (
     event: React.DragEvent<HTMLDivElement>
@@ -207,9 +252,9 @@ export default function PlayingField({
     snippetsSaturatedBy.set(dropTarget, currentlyDragging);
     toggleDraggable(currentlyDragging!);
 
-    const clonedDragElement: Element = currentlyDragging!.cloneNode(
+    const clonedDragElement: HTMLElement = currentlyDragging!.cloneNode(
       true
-    ) as Element;
+    ) as HTMLElement;
 
     clonedDragElement.id = "placed_title_" + (++cloneIdCounter).toString();
     clonedDragElement.classList.remove("hover:cursor-move");
@@ -225,13 +270,13 @@ export default function PlayingField({
 
   const contentHtmlIdsAndPages: Map<string, WikiDocument> = new Map();
 
-  wikiPageObjects.forEach((wikiPage) => {
+  wikiPages.forEach((wikiPage) => {
     contentHtmlIdsAndPages.set(generateSnippetContentId(), wikiPage);
   });
 
   const titleHtmlIdsAndPages: Map<string, WikiDocument> = new Map();
 
-  wikiPageObjects.forEach((wikiPage) => {
+  wikiPages.forEach((wikiPage) => {
     titleHtmlIdsAndPages.set(generateSnippetTitleId(), wikiPage);
   });
 
@@ -250,14 +295,15 @@ export default function PlayingField({
           {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
             <SnippetTitle
               wikiPage={titleHtmlIdsAndPages.get(titleHtmlId)!}
-              dragStartHandler={handleDragStart}
+              dragStartHandler={(e) => {
+                handleDragStart(e);
+              }}
               dragEndHandler={handleDragEnd}
               key={titleHtmlIdsAndPages.get(titleHtmlId)!.title}
               htmlId={titleHtmlId}
             />
           ))}
         </ul>
-        {/* <div className="absolute top-0 right-0 w-auto"> */}
         <div className="flex items-center w-auto">
           {guessHasBeenMade ? (
             <button
@@ -268,7 +314,7 @@ export default function PlayingField({
             </button>
           ) : (
             <button
-              className="text-2xl text-nowrap bg-yellow-300 p-2 border-4"
+              className="right-0 text-2xl text-nowrap bg-yellow-300 p-2 border-4"
               onClick={handleClickMakeGuess}
             >
               MAKE GUESS!
@@ -283,7 +329,7 @@ export default function PlayingField({
         className="grid h-min pt-6 place-items-center gap-x-6"
       >
         {Array.from(contentHtmlIdsAndPages.keys())
-          .sort(() => Math.random() - 0.5)
+          .sort(() => randomizer - 0.5)
           .map((contentHtmlId) => (
             <SnippetContent
               onClickHandler={onClickHandler}
@@ -321,33 +367,3 @@ export default function PlayingField({
 // ///////////
 // Inspiration for implementation: https://kennethlange.com/drag-and-drop-in-pure-typescript-and-react/
 // and: https://www.youtube.com/watch?v=jfYWwQrtzzY
-
-let currentlyDragging: HTMLElement | null = null;
-
-export const handleDragStart = (
-  event: React.DragEvent<HTMLDivElement>
-): void => {
-  const target = event.target as HTMLElement;
-  currentlyDragging = target;
-  toggleGreyedOut(target);
-  event.dataTransfer.setData("text", event.currentTarget.id);
-};
-
-export const handleDragEnd = (event: React.DragEvent<HTMLDivElement>): void => {
-  const target = event.target as Element;
-  if (event.dataTransfer.dropEffect == "none") {
-    toggleGreyedOut(target);
-  }
-  currentlyDragging = null;
-};
-
-export const handleDragLeave = (
-  event: React.DragEvent<HTMLDivElement>
-): void => {
-  const target = event.target as HTMLElement;
-  if (target.nodeName != "LI") {
-    if (!target.classList.contains("contains_guess")) {
-      toggleCurrentlyDraggingOver(target);
-    }
-  }
-};

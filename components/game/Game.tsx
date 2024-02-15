@@ -70,18 +70,15 @@ export default function Game() {
   // }
 
   return (
-    <div className="">
+    <div className="flex flex-col gap-y-12">
       <InputGroup
         onPlayGame={showWikiSnippets}
         // onPlayGame={generateAndShowWikiSnippets}
         loadingStatus={loadingStatus}
       />
-      <HorizontalRule showPlayingField={showPlayingField} />
+      {/* <HorizontalRule showPlayingField={showPlayingField} /> */}
       {showPlayingField && (
-        <PlayingField
-          onMakeGuess={onMakeGuess}
-          wikiPageObjects={wikiPageObjects}
-        />
+        <PlayingField onMakeGuess={onMakeGuess} wikiPages={wikiPageObjects} />
       )}
     </div>
   );

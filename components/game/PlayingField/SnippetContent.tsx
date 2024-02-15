@@ -3,10 +3,10 @@ import { useEffect } from "react";
 
 export default function SnippetContent(props: {
   wikiPageObject: WikiDocument;
-  dragEnterHandler: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragLeaveHandler: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragDropHandler: (event: React.DragEvent<HTMLDivElement>) => void;
-  onClickHandler: (event: React.MouseEvent<HTMLDivElement>) => void;
+  dragEnterHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
+  dragLeaveHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
+  dragDropHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
+  onClickHandler: (event: React.MouseEvent<HTMLParagraphElement>) => void;
   htmlId: string;
 }) {
   useEffect(() => {});
@@ -21,7 +21,7 @@ export default function SnippetContent(props: {
       onDrop={props.dragDropHandler}
       onClick={props.onClickHandler}
       style={{ backgroundColor: BackgroundColors.UNSATURATED }}
-      className="wikiSnippet h-full text-xs p-2 lg:p-4 md:text-sm rounded-sm lg:rounded-lg text-left"
+      className="wikiSnippet h-full text-sm p-2 lg:p-4 md:text-base rounded-sm lg:rounded-lg text-left"
       id={props.htmlId}
     >
       {props.wikiPageObject.content_censored}

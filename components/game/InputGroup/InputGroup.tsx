@@ -172,7 +172,7 @@ export default function InputGroup(props: InputProps) {
             Hard
           </button>
           <button
-            className="gamecontrol_button difficulty_button bg-red-700 shadow-red-950 shadow-xl"
+            className="gamecontrol_button difficulty_button bg-red-700 "
             onClick={() => {
               setSnippetAmount("5");
               setSnippetLengthValue("10");

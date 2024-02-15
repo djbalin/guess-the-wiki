@@ -15,7 +15,7 @@ export default async function Dashboard() {
   return (
     <section
       id="game-container"
-      className="p-8 flex flex-col min-w-full min-h-full border-red-300 border-solid border-2"
+      className="py-8 px-16 flex flex-col min-w-full min-h-full border-red-300 border-solid border-2"
     >
       <GameDescription />
 

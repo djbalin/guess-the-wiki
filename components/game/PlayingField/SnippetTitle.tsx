@@ -3,8 +3,8 @@ import { useEffect } from "react";
 
 interface SnippetTitleProps {
   wikiPage: WikiDocument;
-  dragStartHandler: (event: React.DragEvent<HTMLDivElement>) => void;
-  dragEndHandler: (event: React.DragEvent<HTMLDivElement>) => void;
+  dragStartHandler: (event: React.DragEvent<HTMLLIElement>) => void;
+  dragEndHandler: (event: React.DragEvent<HTMLLIElement>) => void;
   htmlId: string;
 }
 
@@ -23,10 +23,10 @@ function SnippetTitle(props: SnippetTitleProps) {
 
   return (
     <li
-      onDragStart={props.dragStartHandler}
-      onDragEnd={props.dragEndHandler}
+      onDragStart={(e) => props.dragStartHandler(e)}
+      onDragEnd={(e) => props.dragEndHandler(e)}
       draggable="true"
-      className="wikiTitle font-semibold w-auto text-base bg-blue-500  rounded-[1rem] lg:rounded-[2rem] p-2 lg:p-4 items-center justify-center hover:cursor-move"
+      className="wikiTitle font-semibold w-min xl:w-auto text-lg bg-blue-500  rounded-[1rem] lg:rounded-[2rem] p-2 lg:px-8 items-center justify-center hover:cursor-move"
       id={props.htmlId}
     >
       {props.wikiPage.title}

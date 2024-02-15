@@ -1,9 +1,15 @@
 {
+  "name": "guess-the-wiki",
+  "homepage": "https://djbalin.github.io/guess-the-wiki/",
+  "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d .next"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
