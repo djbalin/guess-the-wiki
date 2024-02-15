@@ -213,6 +213,7 @@ export default function PlayingField({
       toggleDraggable(saturator);
       toggleGreyedOut(saturator);
       clickTarget.classList.remove("hover:cursor-pointer");
+      snippetsSaturatedBy.set(clickTarget, null);
 
       toggleCurrentlyDraggingOver(clickTarget);
     }
