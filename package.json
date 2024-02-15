@@ -2,7 +2,6 @@
   "name": "guess-the-wiki",
   "homepage": "https://djbalin.github.io/guess-the-wiki/",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
