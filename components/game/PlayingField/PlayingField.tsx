@@ -37,11 +37,6 @@ function toggleDraggable(element: HTMLElement) {
   }
 }
 
-// type PlayingFieldProps = {
-//   wikiPageObjects: WikiDocument[];
-//   onMakeGuess: (guess: Map<HTMLElement, HTMLElement | null>) => void;
-// };
-
 export default function PlayingField({
   wikiPages,
   onMakeGuess,
@@ -49,36 +44,20 @@ export default function PlayingField({
   wikiPages: WikiDocument[];
   onMakeGuess: (guess: Map<HTMLElement, HTMLElement>) => void;
 }) {
-  // PlayingFieldProps)
-  // const titlesWithIds: { title: string; id: number }[] = [];
-  // for (const wikiPageObject of wikiPages) {
-  //   titlesWithIds.push({ title: wikiPageObject.title, id: wikiPageObject.id });
-  // }
-
-  // const context = useContext(GameStatusContext);
-  // console.log("CONTEXT: " + context.hidden + " " + context.retry);
-
   const context = useGameStatusContext();
 
   const [randomizer, setRandomizer] = useState<number>(0);
-  // const [guessHasBeenMade, setGuessHasBeenMade] = useState<boolean>(false);
-
-  const titlesRef = useRef<HTMLUListElement | null>(null);
-  const snippetsRef = useRef<HTMLDivElement | null>(null);
+  // const titlesRef = useRef<HTMLUListElement | null>(null);
+  // const snippetsRef = useRef<HTMLDivElement | null>(null);
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
 
   let dropTargets: NodeListOf<HTMLElement> | null = null;
   let cloneIdCounter = 0;
-  let snippetsSaturatedBy: Map<HTMLElement, HTMLElement | null> = new Map();
+  let dropTargetsAndSaturators: Map<HTMLElement, HTMLElement> = new Map();
 
   useEffect(() => {
     setRandomizer(Math.random());
-    if (playingFieldRef.current) {
-      dropTargets = document.querySelectorAll(".wikiSnippet");
-      for (const dropTarget of dropTargets) {
-        snippetsSaturatedBy.set(dropTarget as HTMLElement, null);
-      }
-    }
+    console.log("Setting randomizer.");
 
     const ncols: string = wikiPages.length.toString();
     const titlesContainer: HTMLElement | null =
@@ -91,6 +70,15 @@ export default function PlayingField({
       snippetsContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
     }
   }, []);
+
+  // useEffect(() => {
+  //   console.log("Playing field ref useEffect ran");
+  //   dropTargets = document.querySelectorAll(".wikiSnippet");
+  //   for (const dropTarget of dropTargets) {
+  //     console.log("Setting map el as null");
+  //     dropTargetsAndSaturators.set(dropTarget as HTMLElement, null);
+  //   }
+  // });
 
   let titleIdCounter = 0;
   let snippetIdCounter = 0;
@@ -139,7 +127,7 @@ export default function PlayingField({
   });
 
   function evaluateSingleGuess(dropTarget: HTMLElement): boolean {
-    const saturator = snippetsSaturatedBy.get(dropTarget);
+    const saturator = dropTargetsAndSaturators.get(dropTarget);
 
     const wikiIdOfTitle: number = titleHtmlIdsAndPages.get(saturator!.id)!.id;
     const wikiIdOfContent: number = contentHtmlIdsAndPages.get(
@@ -153,26 +141,39 @@ export default function PlayingField({
   }
 
   function handleClickMakeGuess(): void {
-    for (const ssb of snippetsSaturatedBy.keys()) {
-      const result: boolean = evaluateSingleGuess(ssb);
-      ssb.classList.remove("currently_dragging_over");
-      if (result == true) {
-        ssb.style.backgroundColor = BackgroundColors.CORRECT;
-      } else {
-        ssb.style.backgroundColor = BackgroundColors.INCORRECT;
+    console.log("Handling click make guesss");
+    console.log("droptargetandsats size: " + dropTargetsAndSaturators.size);
+    const playingFieldObject = playingFieldRef.current!;
+
+    if (dropTargetsAndSaturators.size != wikiPages.length) {
+      console.log(
+        "HEY! You need to make a guess for each title!" +
+          playingFieldObject.classList
+      );
+      playingFieldObject.classList.add("shake");
+
+      // alert("HEY! You need to make a guess for each title!");
+    } else {
+      for (const ssb of dropTargetsAndSaturators.keys()) {
+        console.log(ssb);
+        if (dropTargetsAndSaturators.get(ssb) == null) {
+          console.log("NO GUESS MADE");
+        }
+
+        const result: boolean = evaluateSingleGuess(ssb);
+        ssb.classList.remove("currently_dragging_over");
+        if (result == true) {
+          ssb.style.backgroundColor = BackgroundColors.CORRECT;
+        } else {
+          ssb.style.backgroundColor = BackgroundColors.INCORRECT;
+        }
       }
+      context.setGameStatusContext({
+        ...context.gameStatusContext,
+        guessHasBeenMade: true,
+      });
+      onMakeGuess(dropTargetsAndSaturators as Map<HTMLElement, HTMLElement>);
     }
-    //
-    // TODO
-    // TODO
-    // TODO
-    //
-    // setGuessHasBeenMade(true);
-    context.setGameStatusContext({
-      ...context.gameStatusContext,
-      guessHasBeenMade: true,
-    });
-    onMakeGuess(snippetsSaturatedBy);
   }
 
   function handleClickReset() {
@@ -188,7 +189,8 @@ export default function PlayingField({
         BackgroundColors.UNSATURATED;
     }
     dropTargets?.forEach((dropTarget) => {
-      snippetsSaturatedBy.set(dropTarget, null);
+      dropTargetsAndSaturators.clear();
+      // dropTargetsAndSaturators.set(dropTarget, null);
       dropTarget.classList.remove("contains_guess");
     });
 
@@ -214,7 +216,7 @@ export default function PlayingField({
     if (clickTarget.id.startsWith("placed_title_")) {
       clickTarget = clickTarget.parentElement!;
     }
-    const saturator = snippetsSaturatedBy.get(clickTarget);
+    const saturator = dropTargetsAndSaturators.get(clickTarget);
     // console.log(saturator);
 
     if (saturator != null) {
@@ -222,8 +224,8 @@ export default function PlayingField({
       toggleDraggable(saturator);
       toggleGreyedOut(saturator);
       clickTarget.classList.remove("hover:cursor-pointer");
-      snippetsSaturatedBy.set(clickTarget, null);
-
+      // dropTargetsAndSaturators.set(clickTarget, null);
+      dropTargetsAndSaturators.delete(clickTarget);
       toggleCurrentlyDraggingOver(clickTarget);
     }
   };
@@ -232,7 +234,7 @@ export default function PlayingField({
     event.preventDefault();
     const target = event.target as HTMLElement;
     if (target.nodeName != "LI") {
-      if (snippetsSaturatedBy.get(target) == null) {
+      if (dropTargetsAndSaturators.get(target) == null) {
         toggleCurrentlyDraggingOver(target);
       }
     }
@@ -242,6 +244,9 @@ export default function PlayingField({
     currentlyDragging = target;
     toggleGreyedOut(target);
     event.dataTransfer.setData("text", event.currentTarget.id);
+    if (playingFieldRef.current?.classList.contains("shake")) {
+      playingFieldRef.current.classList.remove("shake");
+    }
   };
 
   const handleDragDropOnDiv = (
@@ -251,14 +256,14 @@ export default function PlayingField({
     if (dropTarget.classList.contains("wikiTitle") == true) {
       dropTarget = dropTarget.parentElement as HTMLElement;
     }
-    const previousGuess = snippetsSaturatedBy.get(dropTarget);
+    const previousGuess = dropTargetsAndSaturators.get(dropTarget);
     if (previousGuess != null) {
       toggleGreyedOut(previousGuess);
       toggleDraggable(previousGuess);
       dropTarget.removeChild(dropTarget.children[0]);
     }
     dropTarget.classList.add("hover:cursor-pointer");
-    snippetsSaturatedBy.set(dropTarget, currentlyDragging);
+    dropTargetsAndSaturators.set(dropTarget, currentlyDragging!);
     toggleDraggable(currentlyDragging!);
 
     const clonedDragElement: HTMLElement = currentlyDragging!.cloneNode(
@@ -295,14 +300,9 @@ export default function PlayingField({
       ref={playingFieldRef}
       className="flex flex-col bg-amber-500 border-2 rounded-lg p-6"
     >
-      <span>
-        GAME STATUS CONTEXT: show playing field ?{" "}
-        {context.gameStatusContext.showPlayingField.toString()} guess has been
-        made ? {context.gameStatusContext.guessHasBeenMade.toString()}
-      </span>
       <div className="flex flex-row w-full">
         <ul
-          ref={titlesRef}
+          // ref={titlesRef}
           id="titlesContainer"
           className="flex flex-row w-full items-center justify-between pr-4"
         >
@@ -321,10 +321,11 @@ export default function PlayingField({
         <div className="flex items-center w-auto">
           {context.gameStatusContext.guessHasBeenMade ? (
             <button
-              className="text-2xl text-nowrap bg-yellow-300 p-2 border-4"
+              disabled={context.gameStatusContext.result == 1}
+              className="text-2xl text-nowrap bg-yellow-300 p-2 border-4 disabled:hover:cursor-not-allowed"
               onClick={handleClickReset}
             >
-              RETRY!
+              {context.gameStatusContext.result == 1 ? "BRAVO!" : "TRY AGAIN!"}
             </button>
           ) : (
             <button
@@ -338,7 +339,7 @@ export default function PlayingField({
       </div>
 
       <div
-        ref={snippetsRef}
+        // ref={snippetsRef}
         id="snippetsContainer"
         className="grid h-min pt-6 place-items-center gap-x-6"
       >
