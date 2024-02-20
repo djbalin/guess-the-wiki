@@ -49,7 +49,6 @@ export default function PlayingField({
   const context = useGameStatusContext();
   console.log("Playingfield, randomizer is: " + randomizer);
 
-  // const [randomizer, setRandomizer] = useState<number>(0);
   // const titlesRef = useRef<HTMLUListElement | null>(null);
   // const snippetsRef = useRef<HTMLDivElement | null>(null);
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
@@ -57,31 +56,6 @@ export default function PlayingField({
   let dropTargets: NodeListOf<HTMLElement> | null = null;
   let cloneIdCounter = 0;
   let dropTargetsAndSaturators: Map<HTMLElement, HTMLElement> = new Map();
-
-  // useEffect(() => {
-  //   setRandomizer(Math.random());
-  //   console.log("Setting randomizer.");
-
-  //   const ncols: string = wikiPages.length.toString();
-  //   const titlesContainer: HTMLElement | null =
-  //     document.getElementById("titlesContainer");
-  //   const snippetsContainer: HTMLElement | null =
-  //     document.getElementById("snippetsContainer");
-
-  //   if (titlesContainer && snippetsContainer) {
-  //     titlesContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
-  //     snippetsContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
-  //   }
-  // }, [wikiPages]);
-
-  // useEffect(() => {
-  //   console.log("Playing field ref useEffect ran");
-  //   dropTargets = document.querySelectorAll(".wikiSnippet");
-  //   for (const dropTarget of dropTargets) {
-  //     console.log("Setting map el as null");
-  //     dropTargetsAndSaturators.set(dropTarget as HTMLElement, null);
-  //   }
-  // });
 
   let titleIdCounter = 0;
   let snippetIdCounter = 0;
@@ -116,7 +90,6 @@ export default function PlayingField({
     return "t" + titleIdCounter;
   }
 
-  const [showLinks, setShowLinks] = useState<boolean>(false);
   useEffect(() => {
     const ncols: string = wikiPages.length.toString();
     const titlesContainer: HTMLElement | null =
@@ -308,7 +281,7 @@ export default function PlayingField({
         <ul
           // ref={titlesRef}
           id="titlesContainer"
-          className="flex flex-row w-full items-center justify-between pr-4"
+          className="flex flex-row w-full gap-x-6 items-center justify-between pr-4"
         >
           {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
             <SnippetTitle
@@ -359,16 +332,22 @@ export default function PlayingField({
               dragDropHandler={handleDragDropOnDiv}
               key={contentHtmlIdsAndPages.get(contentHtmlId)!.id}
               htmlId={contentHtmlId}
-              showLinks={showLinks}
             />
           ))}
       </div>
       <div className="w-full flex items-end mt-4 justify-end">
         <button
           className="right-0 text-xl text-nowrap bg-yellow-300 p-2 border-4"
-          onClick={(e) => setShowLinks(!showLinks)}
+          onClick={(e) =>
+            context.setGameStatusContext({
+              ...context.gameStatusContext,
+              revealSolution: !context.gameStatusContext.revealSolution,
+            })
+          }
         >
-          {showLinks ? "Hide links" : "Reveal links"}
+          {context.gameStatusContext.revealSolution
+            ? "Hide solution"
+            : "Reveal solution"}
         </button>
       </div>
     </div>

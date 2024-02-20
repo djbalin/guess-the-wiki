@@ -1,5 +1,7 @@
+import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { BackgroundColors, WikiDocument } from "@/resources/TypesEnums";
 import { useEffect } from "react";
+import { FaExternalLinkAlt, FaExternalLinkSquareAlt } from "react-icons/fa";
 
 export default function SnippetContent({
   wikiPageObject,
@@ -8,7 +10,6 @@ export default function SnippetContent({
   dragDropHandler,
   onClickHandler,
   htmlId,
-  showLinks,
 }: {
   wikiPageObject: WikiDocument;
   dragEnterHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
@@ -16,10 +17,8 @@ export default function SnippetContent({
   dragDropHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
   onClickHandler: (event: React.MouseEvent<HTMLParagraphElement>) => void;
   htmlId: string;
-  showLinks: boolean;
 }) {
-  useEffect(() => {});
-
+  const context = useGameStatusContext();
   return (
     <p
       onDragOver={(e) => {
@@ -30,18 +29,23 @@ export default function SnippetContent({
       onDrop={dragDropHandler}
       onClick={onClickHandler}
       style={{ backgroundColor: BackgroundColors.UNSATURATED }}
-      className="wikiSnippet relative h-full text-sm p-2 lg:p-4 md:text-base rounded-sm lg:rounded-lg text-left"
+      className="wikiSnippet p-2 text-sm  md:text-base  text-left lg:p-4 relative h-full rounded-sm lg:rounded-lg"
       id={htmlId}
     >
-      <span>{showLinks.toString()}</span>
-      {showLinks ? (
-        <a
-          target="_blank"
-          className="absolute bg-slate-800 bg-opacity-80 rounded-lg p-1 top-[-10px] right-[-10px]"
-          href={wikiPageObject.url}
-        >
-          LINK
-        </a>
+      {context.gameStatusContext.revealSolution ? (
+        <>
+          <a target="_blank" href={wikiPageObject.url}>
+            <span className="text-base break-normal w-full text-center inline-flex p-2 items-center bg-green-500 justify-center text-black font-bold rounded-xl my-1 ">
+              {/* <span></span> */}
+
+              {wikiPageObject.title}
+              <span className="flex items-center justify-center w-6 h-6">
+                <FaExternalLinkAlt></FaExternalLinkAlt>
+              </span>
+            </span>
+          </a>
+          <br></br>
+        </>
       ) : (
         <></>
       )}

@@ -5,6 +5,20 @@ import GameControls from "./InputGroup/GameControls";
 import PlayingField from "./PlayingField/PlayingField";
 import { LoadingStatus, Result, WikiDocument } from "@/resources/TypesEnums";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
+
+function shuffleArray(arr: any[], accumulator: any[]) {
+  if (arr.length == 0) {
+    return accumulator;
+  } else {
+    const idx = Math.floor(Math.random() * arr.length);
+
+    const el = arr[idx];
+    const spliced = arr.toSpliced(idx, 1);
+    accumulator.push(el);
+    return shuffleArray(spliced, accumulator);
+  }
+}
+
 export default function Game() {
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
@@ -26,12 +40,14 @@ export default function Game() {
         guessHasBeenMade: true,
         result: Result.Victory,
         showPlayingField: true,
+        revealSolution: true,
       });
     } else {
       context.setGameStatusContext({
         guessHasBeenMade: true,
         result: Result.Loss,
         showPlayingField: true,
+        revealSolution: false,
       });
     }
 
@@ -57,6 +73,7 @@ export default function Game() {
       showPlayingField: true,
       guessHasBeenMade: false,
       result: 0,
+      revealSolution: false,
     });
     setRandomizer(Math.random());
     // setShowPlayingField(true);

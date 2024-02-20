@@ -28,43 +28,13 @@ export default function GameControls(props: InputProps) {
     // props.onPlayGame(parseInt(snippetAmount), parseInt(snippetLengthValue));
   }
 
-  // function renderButton() {
-  //   switch (props.loadingStatus) {
-  //     case "IDLE":
-  //       return (
-  //         <button
-  //           className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
-  //           onClick={handlePlayGame}
-  //         >
-  //           PLAY GAME :)
-  //         </button>
-  //       );
-  //     case "LOADING":
-  //       return (
-  //         <button className="loading_button text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600">
-  //           LOADING...
-  //         </button>
-  //       );
-  //     case "ERROR":
-  //       return (
-  //         <button
-  //           className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
-  //           // className="font-medium text-md w-[10rem] px-2 py-3 bg-purple-600"
-  //           onClick={handlePlayGame}
-  //         >
-  //           ERROR loading data :( Try again!
-  //         </button>
-  //       );
-  //   }
-  // }
-
   return (
     <form
       action={async () => {}}
       className="flex border-2 bg-amber-500 rounded-lg p-2 px-4 justify-evenly flex-row gap-x-8"
     >
       {loading ? (
-        <div className="min-w-[100%] top-0 left-0 min-h-screen flex items-center justify-center absolute bg-purple-300 bg-opacity-40">
+        <div className="min-w-[100%] top-0 left-0 min-h-screen flex items-center justify-center z-10 absolute bg-purple-300 bg-opacity-40">
           <span className="text-4xl">LOADING..</span>
         </div>
       ) : (

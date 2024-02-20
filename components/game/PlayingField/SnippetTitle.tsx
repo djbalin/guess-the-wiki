@@ -26,7 +26,7 @@ function SnippetTitle(props: SnippetTitleProps) {
       onDragStart={(e) => props.dragStartHandler(e)}
       onDragEnd={(e) => props.dragEndHandler(e)}
       draggable="true"
-      className="wikiTitle list-none font-semibold w-min xl:w-auto text-lg bg-blue-500  rounded-[1rem] lg:rounded-[2rem] p-2 lg:px-8 items-center justify-center hover:cursor-move"
+      className="wikiTitle flex justify-center text-center list-none font-semibold xl:w-auto text-lg bg-blue-500 leading-6  rounded-[1rem] lg:rounded-xl py-2 px-4 items-center hover:cursor-move"
       id={props.htmlId}
     >
       {props.wikiPage.title}

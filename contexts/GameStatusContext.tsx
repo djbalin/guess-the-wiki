@@ -6,6 +6,7 @@ type GameStatus = {
   showPlayingField: boolean;
   guessHasBeenMade: boolean;
   result: Result;
+  revealSolution: boolean;
 };
 
 type GameStatusContext = {
@@ -31,6 +32,7 @@ export default function GameStatusContextProvider({
     showPlayingField: false,
     guessHasBeenMade: false,
     result: Result.Ongoing,
+    revealSolution: false,
   });
   //   const [categories, setCategories] = useState<string[]>([""]);
 
