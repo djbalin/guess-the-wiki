@@ -19,6 +19,11 @@ function shuffleArray(arr: any[], accumulator: any[]) {
   }
 }
 
+function produceRandomArrayIndices(length: number) {
+  let array = Array.from({ length: length }, (_, i) => i + 1);
+  return shuffleArray(array, []);
+}
+
 export default function Game() {
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
@@ -75,11 +80,11 @@ export default function Game() {
       result: 0,
       revealSolution: false,
     });
-    setRandomizer(Math.random());
+    setRandomizerArray(produceRandomArrayIndices(wikiPages.length));
     // setShowPlayingField(true);
   }
 
-  const [randomizer, setRandomizer] = useState<number>(Math.random());
+  const [randomizerArray, setRandomizerArray] = useState<number[]>([]);
 
   return (
     <div className="flex flex-col gap-y-12">
@@ -92,7 +97,7 @@ export default function Game() {
         <PlayingField
           onMakeGuess={onMakeGuess}
           wikiPages={wikiPageObjects}
-          randomizer={randomizer}
+          randomizerArray={randomizerArray}
         />
       )}
     </div>

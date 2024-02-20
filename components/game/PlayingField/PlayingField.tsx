@@ -40,14 +40,14 @@ function toggleDraggable(element: HTMLElement) {
 export default function PlayingField({
   wikiPages,
   onMakeGuess,
-  randomizer,
+  randomizerArray,
 }: {
   wikiPages: WikiDocument[];
   onMakeGuess: (guess: Map<HTMLElement, HTMLElement>) => void;
-  randomizer: number;
+  randomizerArray: number[];
 }) {
   const context = useGameStatusContext();
-  console.log("Playingfield, randomizer is: " + randomizer);
+  console.log("Playingfield, randomizer is: " + randomizerArray);
 
   // const titlesRef = useRef<HTMLUListElement | null>(null);
   // const snippetsRef = useRef<HTMLDivElement | null>(null);
@@ -259,16 +259,12 @@ export default function PlayingField({
     currentlyDragging = null;
   };
 
-  const contentHtmlIdsAndPages: Map<string, WikiDocument> = new Map();
+  const contentHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
+  const titleHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
 
   wikiPages.forEach((wikiPage) => {
-    contentHtmlIdsAndPages.set(generateSnippetContentId(), wikiPage);
-  });
-
-  const titleHtmlIdsAndPages: Map<string, WikiDocument> = new Map();
-
-  wikiPages.forEach((wikiPage) => {
-    titleHtmlIdsAndPages.set(generateSnippetTitleId(), wikiPage);
+    contentHtmlIdsAndPages[generateSnippetContentId()] = wikiPage;
+    titleHtmlIdsAndPages[generateSnippetTitleId()] = wikiPage;
   });
 
   return (
@@ -320,20 +316,23 @@ export default function PlayingField({
         id="snippetsContainer"
         className="grid h-min pt-6 place-items-center gap-x-6"
       >
-        {Array.from(contentHtmlIdsAndPages.keys())
-          .sort(() => randomizer - 0.5)
-          .map((contentHtmlId) => (
+        {Array.from(contentHtmlIdsAndPages.keys()).map((contentHtmlId, idx) => {
+          const current = contentHtmlId[randomizerArray[idx]];
+          console.log(current);
+
+          return (
             <SnippetContent
               onClickHandler={onClickHandler}
-              wikiPageObject={contentHtmlIdsAndPages.get(contentHtmlId)!}
+              wikiPageObject={contentHtmlIdsAndPages.get(current)!}
               // dragOverHandler={handleDragOver}
               dragEnterHandler={handleDragEnter}
               dragLeaveHandler={handleDragLeave}
               dragDropHandler={handleDragDropOnDiv}
-              key={contentHtmlIdsAndPages.get(contentHtmlId)!.id}
+              key={contentHtmlIdsAndPages.get(current)!.id}
               htmlId={contentHtmlId}
             />
-          ))}
+          );
+        })}
       </div>
       <div className="w-full flex items-end mt-4 justify-end">
         <button
