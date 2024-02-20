@@ -7,10 +7,9 @@ import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 interface InputProps {
   // onPlayGame: (num_pages: number, snippet_length: number) => Promise<void>;
   onPlayGame: (wikiPages: WikiDocument[]) => void;
-  loadingStatus: LoadingStatus;
 }
 
-export default function InputGroup(props: InputProps) {
+export default function GameControls(props: InputProps) {
   const [snippetLengthValue, setSnippetLengthValue] = useState("30");
   const [snippetAmount, setSnippetAmount] = useState("3");
   const [loading, setLoading] = useState(false);

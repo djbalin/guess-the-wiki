@@ -1,19 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import InputGroup from "./InputGroup/InputGroup";
+import { useEffect, useState } from "react";
+import GameControls from "./InputGroup/GameControls";
 import PlayingField from "./PlayingField/PlayingField";
 import { LoadingStatus, Result, WikiDocument } from "@/resources/TypesEnums";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 export default function Game() {
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
-  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
-    LoadingStatus.Idle
-  );
   console.log("GAME RENDERED");
-
-  // const [showPlayingField, setShowPlayingField] = useState<boolean>(false);
 
   const context = useGameStatusContext();
 
@@ -63,18 +58,25 @@ export default function Game() {
       guessHasBeenMade: false,
       result: 0,
     });
+    setRandomizer(Math.random());
     // setShowPlayingField(true);
   }
+
+  const [randomizer, setRandomizer] = useState<number>(Math.random());
+
   return (
     <div className="flex flex-col gap-y-12">
-      <InputGroup
+      <GameControls
         onPlayGame={showWikiSnippets}
         // onPlayGame={generateAndShowWikiSnippets}
-        loadingStatus={loadingStatus}
       />
       {/* <HorizontalRule showPlayingField={showPlayingField} /> */}
       {context.gameStatusContext.showPlayingField && (
-        <PlayingField onMakeGuess={onMakeGuess} wikiPages={wikiPageObjects} />
+        <PlayingField
+          onMakeGuess={onMakeGuess}
+          wikiPages={wikiPageObjects}
+          randomizer={randomizer}
+        />
       )}
     </div>
   );

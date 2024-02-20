@@ -1,12 +1,5 @@
 "use server";
-import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
-import { useState } from "react";
-import { HorizontalRule } from "./HorizontalRule";
-import InputGroup from "./InputGroup/InputGroup";
-import PlayingField from "./PlayingField/PlayingField";
-
 import { GameDescription } from "./GameDescription";
-import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import Game from "./Game";
 import GameStatusContextProvider from "@/contexts/GameStatusContext";
 

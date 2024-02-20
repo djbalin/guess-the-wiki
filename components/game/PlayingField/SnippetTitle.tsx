@@ -9,17 +9,17 @@ interface SnippetTitleProps {
 }
 
 function SnippetTitle(props: SnippetTitleProps) {
-  useEffect(() => {
-    const el: HTMLElement | null = document.getElementById(props.htmlId);
-    const length = props.wikiPage.title.length;
-    // if (length > 40) {
-    //   el!.style.fontSize = "0.75rem";
-    //   el!.style.lineHeight = "1rem";
-    // } else {
-    //   el!.style.fontSize = "0.875rem";
-    //   el!.style.lineHeight = "1.25rem";
-    // }
-  });
+  // useEffect(() => {
+  //   const el: HTMLElement | null = document.getElementById(props.htmlId);
+  //   const length = props.wikiPage.title.length;
+  //   // if (length > 40) {
+  //   //   el!.style.fontSize = "0.75rem";
+  //   //   el!.style.lineHeight = "1rem";
+  //   // } else {
+  //   //   el!.style.fontSize = "0.875rem";
+  //   //   el!.style.lineHeight = "1.25rem";
+  //   // }
+  // });
 
   return (
     <li
