@@ -1,74 +1,70 @@
 "use client";
 
 import { useState } from "react";
-import { HorizontalRule } from "./HorizontalRule";
 import InputGroup from "./InputGroup/InputGroup";
 import PlayingField from "./PlayingField/PlayingField";
-import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
-import {
-  fetchAndSnippetRandomWikiPages,
-  fetchRandomWikiPageTitles,
-} from "@/scripts/api_helper";
-
+import { LoadingStatus, Result, WikiDocument } from "@/resources/TypesEnums";
+import { useGameStatusContext } from "@/contexts/GameStatusContext";
 export default function Game() {
-  const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
+  // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
   const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
     LoadingStatus.Idle
   );
+  console.log("GAME RENDERED");
 
-  const [showPlayingField, setShowPlayingField] = useState<boolean>(false);
+  // const [showPlayingField, setShowPlayingField] = useState<boolean>(false);
+
+  const context = useGameStatusContext();
 
   const [wikiPageObjects, setWikiPageObjects] = useState<WikiDocument[]>([]);
-  function onMakeGuess(guess: Map<Element, Element | null>): void {
+  function onMakeGuess(guess: Map<Element, Element>): void {
     // TODO
     // TODO
     // TODO
     // NOT YET IMPLEMENTED
     // Will handle the result of the guess and provide some feedback to the user.
-    evaluateGuess(guess);
-    setGameIsFinished(true);
+    const isVictory = evaluateGuess(guess);
+
+    if (isVictory) {
+      context.setGameStatusContext({
+        guessHasBeenMade: true,
+        result: Result.Victory,
+        showPlayingField: true,
+      });
+    } else {
+      context.setGameStatusContext({
+        guessHasBeenMade: true,
+        result: Result.Loss,
+        showPlayingField: true,
+      });
+    }
+
+    console.log("VICTORY WAS : " + isVictory);
+
+    // setGameIsFinished(true);
   }
 
-  function evaluateGuess(guess: Map<Element, Element | null>): boolean {
-    //
-    // TODO
-    // TODO
-    // TODO
-    //
-    gameIsFinished;
-    guess.size;
-    return false;
+  function evaluateGuess(guess: Map<Element, Element>): boolean {
+    console.log("EVALUATING GUESS");
+    let isVictory = true;
+    for (const [key, value] of guess) {
+      if (key.id.substring(1) != value.id.substring(1)) {
+        isVictory = false;
+      }
+    }
+    return isVictory;
   }
 
   function showWikiSnippets(wikiPages: WikiDocument[]): void {
     setWikiPageObjects(wikiPages);
-    setShowPlayingField(true);
+    context.setGameStatusContext({
+      showPlayingField: true,
+      guessHasBeenMade: false,
+      result: 0,
+    });
+    // setShowPlayingField(true);
   }
-
-  // async function generateAndShowWikiSnippets(
-  //   num_pages: number,
-  //   snippet_length: number
-  // ): Promise<void> {
-  //   try {
-  //     setLoadingStatus(LoadingStatus.Loading);
-  //     const wikiPageObjects = await fetchAndSnippetRandomWikiPages(
-  //       num_pages,
-  //       snippet_length
-  //     );
-  //     if (wikiPageObjects != null) {
-  //       setWikiPageObjects(wikiPageObjects);
-  //     } else {
-  //       throw new Error("Error fetching Wiki snippets");
-  //     }
-  //     setLoadingStatus(LoadingStatus.Idle);
-  //     setShowPlayingField(true);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setLoadingStatus(LoadingStatus.Error);
-  //   }
-  // }
-
   return (
     <div className="flex flex-col gap-y-12">
       <InputGroup
@@ -77,7 +73,7 @@ export default function Game() {
         loadingStatus={loadingStatus}
       />
       {/* <HorizontalRule showPlayingField={showPlayingField} /> */}
-      {showPlayingField && (
+      {context.gameStatusContext.showPlayingField && (
         <PlayingField onMakeGuess={onMakeGuess} wikiPages={wikiPageObjects} />
       )}
     </div>

@@ -65,8 +65,8 @@ export default function InputGroup(props: InputProps) {
       className="flex border-2 bg-amber-500 rounded-lg p-2 px-4 justify-evenly flex-row gap-x-8"
     >
       {loading ? (
-        <div className="min-w-screen min-h-screen absolute bg-red-300">
-          LOADING..
+        <div className="min-w-[100%] top-0 left-0 min-h-screen flex items-center justify-center absolute bg-purple-300 bg-opacity-40">
+          <span className="text-4xl">LOADING..</span>
         </div>
       ) : (
         <></>

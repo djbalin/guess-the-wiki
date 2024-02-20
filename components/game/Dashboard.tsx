@@ -8,6 +8,7 @@ import PlayingField from "./PlayingField/PlayingField";
 import { GameDescription } from "./GameDescription";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import Game from "./Game";
+import GameStatusContextProvider from "@/contexts/GameStatusContext";
 
 export default async function Dashboard() {
   console.log("DASHBOARD RENDERED");
@@ -18,8 +19,9 @@ export default async function Dashboard() {
       className="py-8 px-16 flex flex-col min-w-full min-h-full border-red-300 border-solid border-2"
     >
       <GameDescription />
-
-      <Game></Game>
+      <GameStatusContextProvider>
+        <Game></Game>
+      </GameStatusContextProvider>
     </section>
   );
 }

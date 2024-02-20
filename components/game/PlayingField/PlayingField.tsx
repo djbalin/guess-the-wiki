@@ -2,8 +2,10 @@
 import SnippetTitle from "./SnippetTitle";
 import SnippetContent from "./SnippetContent";
 
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BackgroundColors, WikiDocument } from "@/resources/TypesEnums";
+import { useGameStatusContext } from "@/contexts/GameStatusContext";
+// import GameStatusContext from "@/contexts/GameStatusContext";
 
 function toggleGreyedOut(element: HTMLElement) {
   if (element.classList.contains("greyed_out")) {
@@ -45,7 +47,7 @@ export default function PlayingField({
   onMakeGuess,
 }: {
   wikiPages: WikiDocument[];
-  onMakeGuess: (guess: Map<HTMLElement, HTMLElement | null>) => void;
+  onMakeGuess: (guess: Map<HTMLElement, HTMLElement>) => void;
 }) {
   // PlayingFieldProps)
   // const titlesWithIds: { title: string; id: number }[] = [];
@@ -53,14 +55,13 @@ export default function PlayingField({
   //   titlesWithIds.push({ title: wikiPageObject.title, id: wikiPageObject.id });
   // }
 
+  // const context = useContext(GameStatusContext);
+  // console.log("CONTEXT: " + context.hidden + " " + context.retry);
+
+  const context = useGameStatusContext();
+
   const [randomizer, setRandomizer] = useState<number>(0);
-  useEffect(() => {
-    console.log("useeffect ran");
-
-    setRandomizer(Math.random());
-  }, []);
-
-  const [guessHasBeenMade, setGuessHasBeenMade] = useState<boolean>(false);
+  // const [guessHasBeenMade, setGuessHasBeenMade] = useState<boolean>(false);
 
   const titlesRef = useRef<HTMLUListElement | null>(null);
   const snippetsRef = useRef<HTMLDivElement | null>(null);
@@ -71,6 +72,7 @@ export default function PlayingField({
   let snippetsSaturatedBy: Map<HTMLElement, HTMLElement | null> = new Map();
 
   useEffect(() => {
+    setRandomizer(Math.random());
     if (playingFieldRef.current) {
       dropTargets = document.querySelectorAll(".wikiSnippet");
       for (const dropTarget of dropTargets) {
@@ -165,7 +167,11 @@ export default function PlayingField({
     // TODO
     // TODO
     //
-    setGuessHasBeenMade(true);
+    // setGuessHasBeenMade(true);
+    context.setGameStatusContext({
+      ...context.gameStatusContext,
+      guessHasBeenMade: true,
+    });
     onMakeGuess(snippetsSaturatedBy);
   }
 
@@ -195,18 +201,21 @@ export default function PlayingField({
     //   snippetsSaturatedBy.set(clickTarget, null);
     //   toggleCurrentlyDraggingOver(clickTarget);
     // }
-    setGuessHasBeenMade(false);
+    // setGuessHasBeenMade(false);
+    context.setGameStatusContext({
+      ...context.gameStatusContext,
+      guessHasBeenMade: false,
+    });
+    // console.log(guessHasBeenMade);
   }
 
   const onClickHandler = (event: React.MouseEvent<HTMLDivElement>): void => {
-    console.log("clickhandle");
-
     let clickTarget = event.target as HTMLElement;
     if (clickTarget.id.startsWith("placed_title_")) {
       clickTarget = clickTarget.parentElement!;
     }
     const saturator = snippetsSaturatedBy.get(clickTarget);
-    console.log(saturator);
+    // console.log(saturator);
 
     if (saturator != null) {
       clickTarget.removeChild(clickTarget.children[0]);
@@ -234,7 +243,6 @@ export default function PlayingField({
     toggleGreyedOut(target);
     event.dataTransfer.setData("text", event.currentTarget.id);
   };
-  console.log("RENER FIELD");
 
   const handleDragDropOnDiv = (
     event: React.DragEvent<HTMLDivElement>
@@ -285,13 +293,18 @@ export default function PlayingField({
     <div
       id="playingField"
       ref={playingFieldRef}
-      className="flex flex-col bg-amber-500 border-2 rounded-lg p-4"
+      className="flex flex-col bg-amber-500 border-2 rounded-lg p-6"
     >
+      <span>
+        GAME STATUS CONTEXT: show playing field ?{" "}
+        {context.gameStatusContext.showPlayingField.toString()} guess has been
+        made ? {context.gameStatusContext.guessHasBeenMade.toString()}
+      </span>
       <div className="flex flex-row w-full">
         <ul
           ref={titlesRef}
           id="titlesContainer"
-          className="flex flex-row w-full items-center justify-around  gap-x-0"
+          className="flex flex-row w-full items-center justify-between pr-4"
         >
           {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
             <SnippetTitle
@@ -306,12 +319,12 @@ export default function PlayingField({
           ))}
         </ul>
         <div className="flex items-center w-auto">
-          {guessHasBeenMade ? (
+          {context.gameStatusContext.guessHasBeenMade ? (
             <button
               className="text-2xl text-nowrap bg-yellow-300 p-2 border-4"
               onClick={handleClickReset}
             >
-              RESET!
+              RETRY!
             </button>
           ) : (
             <button
