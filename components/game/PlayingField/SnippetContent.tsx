@@ -1,7 +1,6 @@
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { BackgroundColors, WikiDocument } from "@/resources/TypesEnums";
-import { useEffect } from "react";
-import { FaExternalLinkAlt, FaExternalLinkSquareAlt } from "react-icons/fa";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default function SnippetContent({
   wikiPageObject,
@@ -36,8 +35,6 @@ export default function SnippetContent({
         <>
           <a target="_blank" href={wikiPageObject.url}>
             <span className="text-base break-normal w-full text-center inline-flex p-2 items-center bg-green-500 justify-center text-black font-bold rounded-xl my-1 ">
-              {/* <span></span> */}
-
               {wikiPageObject.title}
               <span className="flex items-center justify-center w-6 h-6">
                 <FaExternalLinkAlt></FaExternalLinkAlt>

@@ -1,4 +1,4 @@
-import { DifficultyParameter } from "./GameControls";
+import { DifficultyParameter, DifficultyTitle } from "./GameControls";
 
 const buttonStyles = {
   Easy: "bg-green-600",
@@ -10,24 +10,22 @@ const buttonStyles = {
 export default function DifficultyButton({
   parameters,
   setGameParameters,
+  activeDifficulty,
+  setActiveDifficulty,
 }: {
   parameters: DifficultyParameter;
   setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
+  activeDifficulty: string;
+  setActiveDifficulty: React.Dispatch<React.SetStateAction<DifficultyTitle>>;
 }) {
   return (
     <button
-      className={`gamecontrol_button difficulty_button ${
-        buttonStyles[parameters.title]
+      className={`gamecontrol_button ${buttonStyles[parameters.title]} ${
+        activeDifficulty == parameters.title && "gamecontrol_active"
       }`}
       onClick={(e) => {
-        console.log("setting game parameters to");
-        console.log(parameters);
-
         setGameParameters(parameters);
-        // handleClickDifficulty(e);
-        // setSnippetAmount("2");
-        // setSnippetLengthValue("50");
-        // setDifficulty("easy");
+        setActiveDifficulty(parameters.title);
       }}
     >
       {parameters.title}

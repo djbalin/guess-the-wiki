@@ -1,5 +1,6 @@
+import { useState } from "react";
 import DifficultyButton from "./DifficultyButton";
-import { DifficultyParameter } from "./GameControls";
+import { DifficultyParameter, DifficultyTitle } from "./GameControls";
 
 export default function DifficultyButtons({
   difficulties,
@@ -8,37 +9,19 @@ export default function DifficultyButtons({
   difficulties: DifficultyParameter[];
   setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
 }) {
-  //   return Object.entries(difficulties).map(([difficulty, values], idx) => {
+  const [activeDifficulty, setActiveDifficulty] = useState<DifficultyTitle>(
+    difficulties[1].title
+  );
   return difficulties.map((difficulty) => {
     return (
       <span>
-        {/* {difficulty.title} {difficulty.snippetAmount} */}
         <DifficultyButton
           parameters={difficulty}
           setGameParameters={setGameParameters}
+          activeDifficulty={activeDifficulty}
+          setActiveDifficulty={setActiveDifficulty}
         ></DifficultyButton>
       </span>
     );
   });
-  // return (
-  //     <div className=""></div>
-  // )
-  //   return Object.entries(difficulties).map(
-  //     ([difficulty, { snippetAmount, snippetLength }], idx) => {
-  //       return (
-  //         <DifficultyButton
-  //           snippetAmount={snippetAmount}
-  //           snippetLengthValue={snippetLength}
-  //           difficulty={difficulty}
-  //         ></DifficultyButton>
-  //       );
-  //     }
-  //   );
-  //   difficulties.map((difficulty, idx) => {
-  //       return <DifficultyButton key={idx} difficulty={difficulty}></DifficultyButton>
-  //   })
-  //   <DifficultyButton></DifficultyButton>
-  //   <DifficultyButton></DifficultyButton>
-  //   <DifficultyButton></DifficultyButton>
-  //   <DifficultyButton></DifficultyButton>
 }

@@ -54,19 +54,6 @@ a:hover {
   color: #535bf2;
 }
 
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
-
 .wikiTitle.greyed_out {
   opacity: 0.4;
 }
@@ -77,19 +64,6 @@ a:hover {
   transition-timing-function: ease-in-out;
   transition-duration: 200ms;
 }
-
-/* #root { */
-/* max-width: 1280px; */
-/* border: 3px solid red; */
-/* margin: 0 auto; */
-/* margin-top: 0;
-  padding: 2rem;
-  width: 100vw;
-  margin-right: 13%;
-  margin-left: 13%;
-  text-align: center; */
-/* min-height: 100vh; */
-/* } */
 
 button {
   border-radius: 8px;
@@ -106,21 +80,20 @@ button:hover {
 }
 
 .gamecontrol_button:hover,
-.gamecontrol_button:focus {
+.gamecontrol_active {
   scale: 1.1;
+  border-color: #646cff;
   transition-timing-function: ease-in-out;
   transition-delay: 50ms;
   font-weight: 700;
   border: 2px solid #00000058;
   opacity: 1;
-}
-.gamecontrol_button:focus {
   color: black;
 }
 
 .gamecontrol_button {
   @apply w-[10vw] text-xs md:text-sm bg-opacity-80
-        lg:text-lg font-medium px-2 py-2;
+        lg:text-lg px-2 py-2;
 }
 
 .loading_button {
@@ -130,10 +103,6 @@ button:hover {
 .loading_button:focus {
   outline: none;
 }
-
-/* .difficulty_button {
-  @apply focus:text-black focus:font-semibold focus:bg-opacity-100;
-} */
 
 @keyframes shake {
   0% {

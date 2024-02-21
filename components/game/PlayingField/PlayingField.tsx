@@ -52,6 +52,8 @@ export default function PlayingField({
   console.log("Playingfield, randomizer is: " + randomizerArray);
 
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
+  const titlesContainerRef = useRef<HTMLUListElement | null>(null);
+  const snippetsContainerRef = useRef<HTMLDivElement | null>(null);
 
   let dropTargets: NodeListOf<HTMLElement> | null = null;
   const cloneIdCounter = useRef(0);
@@ -111,10 +113,9 @@ export default function PlayingField({
 
   useEffect(() => {
     const ncols: string = wikiPages.length.toString();
-    const titlesContainer: HTMLElement | null =
-      document.getElementById("titlesContainer");
-    const snippetsContainer: HTMLElement | null =
-      document.getElementById("snippetsContainer");
+
+    const titlesContainer = titlesContainerRef.current;
+    const snippetsContainer = snippetsContainerRef.current;
 
     if (titlesContainer && snippetsContainer) {
       titlesContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
@@ -169,16 +170,18 @@ export default function PlayingField({
   }
 
   function handleClickReset() {
-    const titlesContainer = document.getElementById("titlesContainer");
-    const snippetsContainer = document.getElementById("snippetsContainer");
-    for (const title of titlesContainer!.children) {
-      toggleDraggable(title as HTMLElement);
-      toggleGreyedOut(title as HTMLElement);
-    }
-    for (const snippet of snippetsContainer!.children) {
-      snippet.removeChild(snippet.children[0]);
-      (snippet as HTMLElement).style.backgroundColor =
-        BackgroundColors.UNSATURATED;
+    const titlesContainer = titlesContainerRef.current;
+    const snippetsContainer = snippetsContainerRef.current;
+    if (titlesContainer && snippetsContainer) {
+      for (const title of titlesContainer.children) {
+        toggleDraggable(title as HTMLElement);
+        toggleGreyedOut(title as HTMLElement);
+      }
+      for (const snippet of snippetsContainer.children) {
+        snippet.removeChild(snippet.children[0]);
+        (snippet as HTMLElement).style.backgroundColor =
+          BackgroundColors.UNSATURATED;
+      }
     }
     dropTargets?.forEach((dropTarget) => {
       dropTargetsAndSaturators.clear();
@@ -203,7 +206,6 @@ export default function PlayingField({
       toggleDraggable(saturator);
       toggleGreyedOut(saturator);
       clickTarget.classList.remove("hover:cursor-pointer");
-      // dropTargetsAndSaturators.set(clickTarget, null);
       dropTargetsAndSaturators.delete(clickTarget);
       toggleCurrentlyDraggingOver(clickTarget);
     }
@@ -271,6 +273,7 @@ export default function PlayingField({
       <div className="flex flex-row w-full">
         <ul
           id="titlesContainer"
+          ref={titlesContainerRef}
           className="flex flex-row w-full gap-x-6 items-center justify-between pr-4"
         >
           {Array.from(
@@ -314,6 +317,7 @@ export default function PlayingField({
 
       <div
         id="snippetsContainer"
+        ref={snippetsContainerRef}
         className="grid h-min pt-6 place-items-center gap-x-6"
       >
         {randomizedContentHtmlIds.map((htmlId: string) => {
