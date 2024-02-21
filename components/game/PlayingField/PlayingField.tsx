@@ -1,8 +1,10 @@
 "use client";
+// Inspiration for implementation: https://kennethlange.com/drag-and-drop-in-pure-typescript-and-react/
+// and: https://www.youtube.com/watch?v=jfYWwQrtzzY
 import SnippetTitle from "./SnippetTitle";
 import SnippetContent from "./SnippetContent";
 
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { BackgroundColors, Result, WikiDocument } from "@/resources/TypesEnums";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 // import GameStatusContext from "@/contexts/GameStatusContext";
@@ -46,11 +48,9 @@ export default function PlayingField({
   onMakeGuess: (guess: Map<HTMLElement, HTMLElement>) => void;
   randomizerArray: number[];
 }) {
-  const context = useGameStatusContext();
+  const gameStatusContext = useGameStatusContext();
   console.log("Playingfield, randomizer is: " + randomizerArray);
 
-  // const titlesRef = useRef<HTMLUListElement | null>(null);
-  // const snippetsRef = useRef<HTMLDivElement | null>(null);
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
 
   let dropTargets: NodeListOf<HTMLElement> | null = null;
@@ -59,8 +59,35 @@ export default function PlayingField({
 
   let titleIdCounter = 0;
   let snippetIdCounter = 0;
+  function generateSnippetContentId(): string {
+    snippetIdCounter += 1;
+    return "s" + snippetIdCounter;
+  }
+  function generateSnippetTitleId(): string {
+    titleIdCounter += 1;
+    return "t" + titleIdCounter;
+  }
 
   let currentlyDragging: HTMLElement | null = null;
+
+  const contentHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
+  const titleHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
+
+  wikiPages.forEach((wikiPage) => {
+    contentHtmlIdsAndPages[generateSnippetContentId()] = wikiPage;
+    titleHtmlIdsAndPages[generateSnippetTitleId()] = wikiPage;
+  });
+
+  console.log(contentHtmlIdsAndPages);
+  console.log(titleHtmlIdsAndPages);
+
+  const contentHtmlIds: string[] = Object.keys(contentHtmlIdsAndPages);
+  console.log("contentHtmlIds: " + contentHtmlIds);
+
+  const randomizedContentHtmlIds: string[] = randomizerArray.flatMap(
+    (rnd) => contentHtmlIds[rnd]
+  );
+  console.log("randomized contenthtmlids: " + randomizedContentHtmlIds);
 
   function handleDragEnd(event: React.DragEvent<HTMLLIElement>): void {
     const target = event.target as HTMLElement;
@@ -81,15 +108,6 @@ export default function PlayingField({
     }
   };
 
-  function generateSnippetContentId(): string {
-    snippetIdCounter += 1;
-    return "s" + snippetIdCounter;
-  }
-  function generateSnippetTitleId(): string {
-    titleIdCounter += 1;
-    return "t" + titleIdCounter;
-  }
-
   useEffect(() => {
     const ncols: string = wikiPages.length.toString();
     const titlesContainer: HTMLElement | null =
@@ -106,10 +124,8 @@ export default function PlayingField({
   function evaluateSingleGuess(dropTarget: HTMLElement): boolean {
     const saturator = dropTargetsAndSaturators.get(dropTarget);
 
-    const wikiIdOfTitle: number = titleHtmlIdsAndPages.get(saturator!.id)!.id;
-    const wikiIdOfContent: number = contentHtmlIdsAndPages.get(
-      dropTarget.id
-    )!.id;
+    const wikiIdOfTitle: number = titleHtmlIdsAndPages[saturator!.id]!.id;
+    const wikiIdOfContent: number = contentHtmlIdsAndPages[dropTarget.id].id;
     if (wikiIdOfContent == wikiIdOfTitle) {
       return true;
     } else {
@@ -128,8 +144,6 @@ export default function PlayingField({
           playingFieldObject.classList
       );
       playingFieldObject.classList.add("shake");
-
-      // alert("HEY! You need to make a guess for each title!");
     } else {
       for (const ssb of dropTargetsAndSaturators.keys()) {
         console.log(ssb);
@@ -145,8 +159,8 @@ export default function PlayingField({
           ssb.style.backgroundColor = BackgroundColors.INCORRECT;
         }
       }
-      context.setGameStatusContext({
-        ...context.gameStatusContext,
+      gameStatusContext.setGameStatusContext({
+        ...gameStatusContext.gameStatusContext,
         guessHasBeenMade: true,
       });
       onMakeGuess(dropTargetsAndSaturators as Map<HTMLElement, HTMLElement>);
@@ -171,21 +185,10 @@ export default function PlayingField({
       dropTarget.classList.remove("contains_guess");
     });
 
-    // const saturator = snippetsSaturatedBy.get(clickTarget);
-    // if (saturator != null) {
-    //   clickTarget.removeChild(clickTarget.children[0]);
-    //   toggleDraggable(saturator);
-    //   toggleGreyedOut(saturator);
-    //   clickTarget.classList.remove("hover:cursor-pointer");
-    //   snippetsSaturatedBy.set(clickTarget, null);
-    //   toggleCurrentlyDraggingOver(clickTarget);
-    // }
-    // setGuessHasBeenMade(false);
-    context.setGameStatusContext({
-      ...context.gameStatusContext,
+    gameStatusContext.setGameStatusContext({
+      ...gameStatusContext.gameStatusContext,
       guessHasBeenMade: false,
     });
-    // console.log(guessHasBeenMade);
   }
 
   const onClickHandler = (event: React.MouseEvent<HTMLDivElement>): void => {
@@ -194,8 +197,6 @@ export default function PlayingField({
       clickTarget = clickTarget.parentElement!;
     }
     const saturator = dropTargetsAndSaturators.get(clickTarget);
-    // console.log(saturator);
-
     if (saturator != null) {
       clickTarget.removeChild(clickTarget.children[0]);
       toggleDraggable(saturator);
@@ -259,14 +260,6 @@ export default function PlayingField({
     currentlyDragging = null;
   };
 
-  const contentHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
-  const titleHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
-
-  wikiPages.forEach((wikiPage) => {
-    contentHtmlIdsAndPages[generateSnippetContentId()] = wikiPage;
-    titleHtmlIdsAndPages[generateSnippetTitleId()] = wikiPage;
-  });
-
   return (
     <div
       id="playingField"
@@ -275,30 +268,36 @@ export default function PlayingField({
     >
       <div className="flex flex-row w-full">
         <ul
-          // ref={titlesRef}
           id="titlesContainer"
           className="flex flex-row w-full gap-x-6 items-center justify-between pr-4"
         >
-          {Array.from(titleHtmlIdsAndPages.keys()).map((titleHtmlId) => (
-            <SnippetTitle
-              wikiPage={titleHtmlIdsAndPages.get(titleHtmlId)!}
-              dragStartHandler={(e) => {
-                handleDragStart(e);
-              }}
-              dragEndHandler={handleDragEnd}
-              key={titleHtmlIdsAndPages.get(titleHtmlId)!.title}
-              htmlId={titleHtmlId}
-            />
-          ))}
+          {Array.from(
+            Object.entries(titleHtmlIdsAndPages).map((titleHtmlIdAndPage) => {
+              const [htmlId, page] = titleHtmlIdAndPage;
+              return (
+                <SnippetTitle
+                  wikiPage={page}
+                  dragStartHandler={(e) => {
+                    handleDragStart(e);
+                  }}
+                  dragEndHandler={handleDragEnd}
+                  key={page.id}
+                  htmlId={htmlId}
+                />
+              );
+            })
+          )}
         </ul>
         <div className="flex items-center w-auto">
-          {context.gameStatusContext.guessHasBeenMade ? (
+          {gameStatusContext.gameStatusContext.guessHasBeenMade ? (
             <button
-              disabled={context.gameStatusContext.result == 1}
+              disabled={gameStatusContext.gameStatusContext.result == 1}
               className="text-2xl text-nowrap bg-yellow-300 p-2 border-4 disabled:hover:cursor-not-allowed"
               onClick={handleClickReset}
             >
-              {context.gameStatusContext.result == 1 ? "BRAVO!" : "TRY AGAIN!"}
+              {gameStatusContext.gameStatusContext.result == 1
+                ? "BRAVO!"
+                : "TRY AGAIN!"}
             </button>
           ) : (
             <button
@@ -312,24 +311,22 @@ export default function PlayingField({
       </div>
 
       <div
-        // ref={snippetsRef}
         id="snippetsContainer"
         className="grid h-min pt-6 place-items-center gap-x-6"
       >
-        {Array.from(contentHtmlIdsAndPages.keys()).map((contentHtmlId, idx) => {
-          const current = contentHtmlId[randomizerArray[idx]];
-          console.log(current);
+        {randomizedContentHtmlIds.map((htmlId: string) => {
+          const wikiPage: WikiDocument = contentHtmlIdsAndPages[htmlId];
 
           return (
             <SnippetContent
               onClickHandler={onClickHandler}
-              wikiPageObject={contentHtmlIdsAndPages.get(current)!}
+              wikiPageObject={wikiPage}
               // dragOverHandler={handleDragOver}
               dragEnterHandler={handleDragEnter}
               dragLeaveHandler={handleDragLeave}
               dragDropHandler={handleDragDropOnDiv}
-              key={contentHtmlIdsAndPages.get(current)!.id}
-              htmlId={contentHtmlId}
+              key={wikiPage.id}
+              htmlId={htmlId}
             />
           );
         })}
@@ -338,13 +335,14 @@ export default function PlayingField({
         <button
           className="right-0 text-xl text-nowrap bg-yellow-300 p-2 border-4"
           onClick={(e) =>
-            context.setGameStatusContext({
-              ...context.gameStatusContext,
-              revealSolution: !context.gameStatusContext.revealSolution,
+            gameStatusContext.setGameStatusContext({
+              ...gameStatusContext.gameStatusContext,
+              revealSolution:
+                !gameStatusContext.gameStatusContext.revealSolution,
             })
           }
         >
-          {context.gameStatusContext.revealSolution
+          {gameStatusContext.gameStatusContext.revealSolution
             ? "Hide solution"
             : "Reveal solution"}
         </button>
@@ -352,24 +350,3 @@ export default function PlayingField({
     </div>
   );
 }
-
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// ///////////
-// Inspiration for implementation: https://kennethlange.com/drag-and-drop-in-pure-typescript-and-react/
-// and: https://www.youtube.com/watch?v=jfYWwQrtzzY

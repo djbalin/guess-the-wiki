@@ -20,7 +20,7 @@ function shuffleArray(arr: any[], accumulator: any[]) {
 }
 
 function produceRandomArrayIndices(length: number) {
-  let array = Array.from({ length: length }, (_, i) => i + 1);
+  let array = Array.from({ length: length }, (_, i) => i);
   return shuffleArray(array, []);
 }
 

@@ -38,7 +38,6 @@ export default function SnippetContent({
             <span className="text-base break-normal w-full text-center inline-flex p-2 items-center bg-green-500 justify-center text-black font-bold rounded-xl my-1 ">
               {/* <span></span> */}
 
-              {wikiPageObject.content_censored}
               {wikiPageObject.title}
               <span className="flex items-center justify-center w-6 h-6">
                 <FaExternalLinkAlt></FaExternalLinkAlt>
@@ -50,6 +49,7 @@ export default function SnippetContent({
       ) : (
         <></>
       )}
+      {wikiPageObject.content_censored}
     </p>
   );
 }
