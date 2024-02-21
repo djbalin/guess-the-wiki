@@ -1,18 +1,49 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 // import { WordSlider } from "./WordSlider";
 import { SnippetAmountInput } from "./SnippetAmountInput";
 import { LoadingStatus, WikiDocument } from "@/resources/TypesEnums";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
+import DifficultyButton from "./DifficultyButton";
+import DifficultyButtons from "./DifficultyButtons";
 
 interface InputProps {
   // onPlayGame: (num_pages: number, snippet_length: number) => Promise<void>;
   onPlayGame: (wikiPages: WikiDocument[]) => void;
 }
 
+// export type DifficultyParameters = {
+//   easy: { difficulty: string; snippetAmount: number; snippetLength: number };
+//   medium: { difficulty: string; snippetAmount: number; snippetLength: number };
+//   hard: { difficulty: string; snippetAmount: number; snippetLength: number };
+//   extreme: { difficulty: string; snippetAmount: number; snippetLength: number };
+// };
+
+type DifficultyTitle = "Easy" | "Medium" | "Hard" | "Extreme";
+
+export type DifficultyParameter = {
+  title: DifficultyTitle;
+  snippetAmount: number;
+  snippetLength: number;
+};
+
+const DIFFICULTY_PARAMETERS: DifficultyParameter[] = [
+  { title: "Easy", snippetAmount: 2, snippetLength: 50 },
+  { title: "Medium", snippetAmount: 3, snippetLength: 40 },
+  { title: "Hard", snippetAmount: 4, snippetLength: 30 },
+  { title: "Extreme", snippetAmount: 5, snippetLength: 20 },
+];
+
 export default function GameControls(props: InputProps) {
-  const [snippetLengthValue, setSnippetLengthValue] = useState("30");
-  const [snippetAmount, setSnippetAmount] = useState("3");
+  // const [snippetLengthValue, setSnippetLengthValue] = useState("30");
+  // const [snippetAmount, setSnippetAmount] = useState("3");
   const [loading, setLoading] = useState(false);
+  const [difficulty, setDifficulty] = useState<string>("medium");
+  const [gameParameters, setGameParameters] = useState(
+    // easy: DIFFICULTY_PARAMETERS.easy,
+    DIFFICULTY_PARAMETERS[1]
+    // hard: DIFFICULTY_PARAMETERS.hard,
+    // extreme: DIFFICULTY_PARAMETERS.extreme,
+  );
   // const handlePlayGame = () => {
   //   props.onPlayGame(parseInt(snippetAmount), parseInt(snippetLengthValue));
   // };
@@ -20,8 +51,10 @@ export default function GameControls(props: InputProps) {
   async function handlePlayGame() {
     setLoading(true);
     const wikiDocuments: WikiDocument[] = await fetchAndSnippetRandomWikiPages(
-      parseInt(snippetAmount),
-      parseInt(snippetLengthValue)
+      gameParameters.snippetAmount,
+      // parseInt(snippetAmount),
+      // parseInt(snippetLengthValue)
+      gameParameters.snippetLength
     );
     setLoading(false);
     props.onPlayGame(wikiDocuments);
@@ -54,23 +87,42 @@ export default function GameControls(props: InputProps) {
               type="range"
               id="snippetLengthChoice"
               className="w-32"
-              onChange={(val) => setSnippetAmount(val.target.value)}
-              value={snippetAmount}
+              onChange={(val) => {
+                try {
+                  setGameParameters({
+                    ...gameParameters,
+                    snippetAmount: parseInt(val.target.value),
+                  });
+                } catch (error) {
+                  alert("WRONG INPUT!");
+                }
+                // setSnippetAmount(val.target.value)}
+              }}
+              value={gameParameters.snippetAmount}
             />
             <input
               className="w-8  text-center bg-zinc-700 text-white"
               type="text"
               name=""
               id="snippetsAmountSlider"
-              value={snippetAmount}
+              value={gameParameters.snippetAmount}
               onFocus={(e) => {
                 e.target.select();
               }}
               onChange={(e) => {
-                if (parseInt(e.target.value) > 10) {
-                  setSnippetAmount("10");
+                const intVal = parseInt(e.target.value);
+                if (intVal > 10) {
+                  setGameParameters({
+                    ...gameParameters,
+                    snippetAmount: 10,
+                  });
+                  // setSnippetAmount("10");
                 } else {
-                  setSnippetAmount(e.target.value);
+                  setGameParameters({
+                    ...gameParameters,
+                    snippetAmount: intVal,
+                  });
+                  // setSnippetAmount(e.target.value);
                 }
               }}
             />
@@ -86,24 +138,44 @@ export default function GameControls(props: InputProps) {
               type="range"
               id="snippetLengthChoice"
               className="w-32"
-              onChange={(val) => setSnippetLengthValue(val.target.value)}
-              value={snippetLengthValue}
+              onChange={(val) => {
+                setGameParameters({
+                  ...gameParameters,
+                  snippetLength: parseInt(val.target.value),
+                });
+                // setSnippetLengthValue(val.target.value);
+              }}
+              value={gameParameters.snippetLength}
             />
             <input
               className="text-center w-8  bg-zinc-700 text-white"
               type="text"
               name=""
               id="snippetLengthSsider"
-              value={snippetLengthValue}
+              value={gameParameters.snippetLength}
               onFocus={(e) => {
                 e.target.select();
               }}
               onChange={(e) => {
-                if (parseInt(e.target.value) > 100) {
-                  setSnippetLengthValue("100");
+                const intVal = parseInt(e.target.value);
+                if (intVal > 100) {
+                  setGameParameters({
+                    ...gameParameters,
+                    snippetAmount: 100,
+                  });
+                  // setSnippetAmount("10");
                 } else {
-                  setSnippetLengthValue(e.target.value);
+                  setGameParameters({
+                    ...gameParameters,
+                    snippetLength: intVal,
+                  });
+                  // setSnippetAmount(e.target.value);
                 }
+                // if (parseInt(e.target.value) > 100) {
+                //   setSnippetLengthValue("100");
+                // } else {
+                //   setSnippetLengthValue(e.target.value);
+                // }
               }}
             />
           </div>
@@ -113,42 +185,51 @@ export default function GameControls(props: InputProps) {
       <div className="flex flex-col gap-y-2">
         <h2 className="text-2xl w-full text-center">Difficulty:</h2>
         <div id="buttons" className="flex flex-shrink gap-x-4 flex-wrap ">
-          <button
+          <DifficultyButtons
+            difficulties={DIFFICULTY_PARAMETERS}
+            setGameParameters={setGameParameters}
+          ></DifficultyButtons>
+          {/* <DifficultyButton></DifficultyButton> */}
+          {/* <button
             className="gamecontrol_button difficulty_button  bg-green-600  "
-            onClick={() => {
+            onClick={(e) => {
               setSnippetAmount("2");
               setSnippetLengthValue("50");
+              setDifficulty("easy");
             }}
           >
             Easy
           </button>
           <button
             className="gamecontrol_button difficulty_button bg-yellow-400"
-            onClick={() => {
+            onClick={(e) => {
               setSnippetAmount("3");
               setSnippetLengthValue("40");
+              setDifficulty("medium");
             }}
           >
             Medium
           </button>
           <button
             className="gamecontrol_button difficulty_button bg-orange-500"
-            onClick={() => {
+            onClick={(e) => {
               setSnippetAmount("4");
               setSnippetLengthValue("20");
+              setDifficulty("hard");
             }}
           >
             Hard
           </button>
           <button
             className="gamecontrol_button difficulty_button bg-red-700 "
-            onClick={() => {
+            onClick={(e) => {
               setSnippetAmount("5");
               setSnippetLengthValue("10");
+              setDifficulty("extreme");
             }}
           >
             Extreme
-          </button>
+          </button> */}
           <div className="flex items-center justify-around ">
             <button
               className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"

@@ -54,7 +54,8 @@ export default function PlayingField({
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
 
   let dropTargets: NodeListOf<HTMLElement> | null = null;
-  let cloneIdCounter = 0;
+  const cloneIdCounter = useRef(0);
+  // let cloneIdCounter = 0;
   let dropTargetsAndSaturators: Map<HTMLElement, HTMLElement> = new Map();
 
   let titleIdCounter = 0;
@@ -248,7 +249,8 @@ export default function PlayingField({
       true
     ) as HTMLElement;
 
-    clonedDragElement.id = "placed_title_" + (++cloneIdCounter).toString();
+    clonedDragElement.id =
+      "placed_title_" + (cloneIdCounter.current++).toString();
     clonedDragElement.classList.remove("hover:cursor-move");
     clonedDragElement.classList.add("hover:cursor-pointer");
     clonedDragElement.setAttribute("draggable", "true");
