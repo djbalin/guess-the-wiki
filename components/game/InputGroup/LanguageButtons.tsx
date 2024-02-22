@@ -5,7 +5,7 @@ import {
   flagComponents,
 } from "@/resources/TypesEnums";
 import { setCookie, getCookie } from "cookies-next";
-import { DK, FR, GB } from "country-flag-icons/react/3x2";
+import { DK, FR, GB, ES, DE } from "country-flag-icons/react/3x2";
 
 function storeLanguageSettings(language: Languages) {
   console.log("STORING LANGUAGE COOKIE: " + language);
@@ -27,16 +27,6 @@ export default function LanguageButtons() {
 
   return (
     <>
-      {/* {Languages.map((language) => {} */}
-      {/* {Object.values(Languages).map((key) => {
-        console.log("VAL: " + key);
-
-        const FC = flagComponents[key];
-
-        console.log(FC);
-
-        <FC />;
-      })} */}
       <button className={`${language == Languages.Danish && activeLanguage}`}>
         <DK
           onClick={(e) => {
@@ -64,6 +54,24 @@ export default function LanguageButtons() {
           }}
           className="w-12 h-auto"
         ></GB>
+      </button>
+      <button className={`${language == Languages.German && activeLanguage}`}>
+        <DE
+          onClick={(e) => {
+            languageContext.setLanguage(Languages.German);
+            storeLanguageSettings(Languages.German);
+          }}
+          className="w-12 h-auto"
+        ></DE>
+      </button>
+      <button className={`${language == Languages.Spanish && activeLanguage}`}>
+        <ES
+          onClick={(e) => {
+            languageContext.setLanguage(Languages.Spanish);
+            storeLanguageSettings(Languages.Spanish);
+          }}
+          className="w-12 h-auto"
+        ></ES>
       </button>
     </>
   );

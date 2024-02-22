@@ -9,11 +9,19 @@ export const GAME_DESCRIPTION: {
   },
   da: {
     header: "Find den rette Wikipedia-artikel!",
-    body: "Wikipedia-artiklerne forneden har fået blandet deres overskrifter rundt. Din opgave er at trække hver overskrift foroven ned på den brødtekst forneden, som den hører til (ord i brødteksten, som udgør del af overskriften, er censureret med ###)",
+    body: "Der er gået ged i den hos Wikipedia! Artiklerne og deres overskrifter er blevet blandet rundt. Din opgave er at trække hver overskrift hen til det uddrag af artiklen, som den passer til (hvis et ord fra overskriften indgår i brødteksten, er det blevet censureret med ###)",
   },
   fr: {
     header: "Devinez l'article Wikipédia !",
     body: "Les titres des articles Wikipédia et leur contenu ont été mélangés ! Votre tâche est de faire glisser chaque titre vers le contenu qu'il représente (### dans le contenu indique qu'un mot qui fait part du titre a été censuré).",
+  },
+  de: {
+    header: "Errate den Wikipedia-Artikel!",
+    body: "Die Titel von Wikipedia-Artikeln und deren Inhalt wurden durcheinandergebracht! Deine Aufgabe ist es, jeden Titel zum Inhalt zuzuordnen, den er repräsentiert (### im Inhalt zeigt an, dass ein Wort aus dem Titel zensiert wurde).",
+  },
+  es: {
+    header: "¡Adivina el artículo de Wikipedia!",
+    body: "¡Los títulos de los artículos de Wikipedia y su contenido se han mezclado! Tu tarea es arrastrar cada título al contenido que representa (### en el contenido indica que una palabra del título ha sido censurada).",
   },
 };
 
@@ -37,6 +45,18 @@ export const DIFFICULTY_DESCRIPTORS: {
     1: "Moyen",
     2: "Difficile",
     3: "Extrême",
+  },
+  de: {
+    0: "Leicht",
+    1: "Mittel",
+    2: "Schwer",
+    3: "Extrem",
+  },
+  es: {
+    0: "Fácil",
+    1: "Medio",
+    2: "Difícil",
+    3: "Extremo",
   },
 };
 
@@ -66,6 +86,18 @@ export const TWEAK_DIFFICULTY: {
     snippetLength: "Longueur de snippet",
     difficulty: "Difficulté",
   },
+  de: {
+    tweak: "Schwierigkeit anpassen",
+    snippetCount: "Anzahl der Snippets",
+    snippetLength: "Wörter pro Snippet",
+    difficulty: "Schwierigkeit",
+  },
+  es: {
+    tweak: "Ajustar dificultad",
+    snippetCount: "Número de fragmentos",
+    snippetLength: "Palabras por fragmento",
+    difficulty: "Dificultad",
+  },
 };
 
 export const PLAY_GAME_BUTTON: {
@@ -74,4 +106,6 @@ export const PLAY_GAME_BUTTON: {
   en: "PLAY GAME !",
   da: "SPIL !",
   fr: "Á JOUER !",
+  de: "SPIELEN !",
+  es: "JUGAR !",
 };

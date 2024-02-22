@@ -1,4 +1,4 @@
-import { DK, GB, FR } from "country-flag-icons/react/3x2";
+import { DK, GB, FR, DE, ES } from "country-flag-icons/react/3x2";
 import Flag from "country-flag-icons/react/3x2";
 
 export type WikiDocument = {
@@ -48,8 +48,8 @@ export enum Languages {
   Danish = "da",
   English = "en",
   French = "fr",
-  // German = "de",
-  // Spanish = "es",
+  Spanish = "es",
+  German = "de",
 }
 
 export type Language = Languages;
@@ -60,15 +60,16 @@ export enum Countries {
   Denmark = "DK",
   UnitedKingdom = "GB",
   France = "FR",
-  // Spain = "ES",
-  // Germany = "DE",
+  Spain = "ES",
+  Germany = "DE",
 }
 
 export const flagComponents: { [key: string]: Flag.FlagComponent } = {
   da: DK,
   fr: FR,
   gb: GB,
-  // Add more mappings as needed
+  de: DE,
+  es: ES,
 };
 
 export const DEFAULT_LANGUAGE = Languages.English;
