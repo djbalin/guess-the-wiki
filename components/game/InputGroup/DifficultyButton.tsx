@@ -1,11 +1,16 @@
-import { DifficultyParameter, DifficultyTitle } from "./GameControls";
+// import { DifficultyTitles } from "@/resources/TypesEnums";
+import { DifficultyParameter } from "./GameControls";
+import { Difficulties } from "@/resources/TypesEnums";
 
-const buttonStyles = {
-  Easy: "bg-green-600",
-  Medium: "bg-yellow-400",
-  Hard: "bg-orange-500",
-  Extreme: "bg-red-700",
-};
+// const buttonStyles;
+
+// const buttonStyles: { [key in Difficulties]: string } = {
+const buttonStyles = [
+  "bg-green-600",
+  "bg-yellow-400",
+  "bg-orange-500",
+  "bg-red-700",
+];
 
 export default function DifficultyButton({
   parameters,
@@ -15,20 +20,24 @@ export default function DifficultyButton({
 }: {
   parameters: DifficultyParameter;
   setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
-  activeDifficulty: string;
-  setActiveDifficulty: React.Dispatch<React.SetStateAction<DifficultyTitle>>;
+  activeDifficulty: number;
+  setActiveDifficulty: React.Dispatch<React.SetStateAction<number>>;
 }) {
+  // const difficultyIndex = parameters.difficultyIndex;
+  // const style = buttonStyles.difficultyIndex;
   return (
     <button
-      className={`gamecontrol_button ${buttonStyles[parameters.title]} ${
-        activeDifficulty == parameters.title && "gamecontrol_active"
+      className={`gamecontrol_button ${
+        buttonStyles[parameters.difficultyIndex]
+      } ${
+        activeDifficulty == parameters.difficultyIndex && "gamecontrol_active"
       }`}
       onClick={(e) => {
         setGameParameters(parameters);
-        setActiveDifficulty(parameters.title);
+        setActiveDifficulty(parameters.difficultyIndex);
       }}
     >
-      {parameters.title}
+      {parameters.difficultyDescriptor}
     </button>
   );
 }

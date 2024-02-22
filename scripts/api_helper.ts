@@ -1,10 +1,13 @@
 // NOTE: Documentation for the functions in this file has been written with the help of ChatGPT.
 
 import axios from "axios";
-import { commonWords } from "../assets/1000_most_common_english_words";
-import { WikiDocument } from "../resources/TypesEnums";
+import { THOUSAND_MOST_COMMON_WORDS } from "../assets/1000_most_common_words";
+import { Language, Languages, WikiDocument } from "../resources/TypesEnums";
 
-const WIKI_ENDPOINT = "https://en.wikipedia.org/w/api.php?action=query";
+function wikiEndpoint(language: Language) {
+  return `https://${language}.wikipedia.org/w/api.php?action=query`;
+}
+// const WIKI_ENDPOINT = "https://en.wikipedia.org/w/api.php?action=query";
 const STANDARD_PARAMS = ["&format=json", "&origin=*"];
 const RANDOM_TITLE_EXTRA_PARAMS = [
   "&generator=random",
@@ -35,7 +38,7 @@ const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
 function censorText(rawText: string, phraseToCensor: string): string {
   const censorCandidates: string[] = phraseToCensor.replace(",", "").split(" ");
   const wordsToCensor: string[] = censorCandidates.filter(
-    (word) => word.length > 2 && !commonWords.has(word)
+    (word) => word.length > 2 && !THOUSAND_MOST_COMMON_WORDS.has(word)
   );
   //
   // TODO
@@ -88,11 +91,12 @@ function extractSnippetFromText(fullText: string, snippetLength: number) {
  * @throws {Error} If there's an issue with the HTTP request or if the response doesn't match the expected format.
  */
 export async function fetchRandomWikiPageTitles(
-  numPages: number
+  numPages: number,
+  language: Language
 ): Promise<WikiDocument[]> {
   const numPagesParam = "&grnlimit=" + numPages;
   const randomTitlesEndpoint =
-    WIKI_ENDPOINT + numPagesParam + RANDOM_TITLE_PARAMS.join("");
+    wikiEndpoint(language) + numPagesParam + RANDOM_TITLE_PARAMS.join("");
   const randomWikiTitles: WikiDocument[] = [];
   const result = await axios.get(randomTitlesEndpoint);
 
@@ -118,9 +122,15 @@ export async function fetchRandomWikiPageTitles(
  * @returns A Promise that resolves to the content of the Wikipedia page as a string.
  * @throws {Error} If there's an issue with the HTTP request, if the page is not found, or if the response doesn't match the expected format.
  */
-export async function fetchWikiPageContent(pageTitle: string): Promise<string> {
+export async function fetchWikiPageContent(
+  pageTitle: string,
+  language: Language
+): Promise<string> {
   const randomPageEndpoint =
-    WIKI_ENDPOINT + "&titles=" + pageTitle + RANDOM_WIKIPAGE_PARAMS.join("");
+    wikiEndpoint(language) +
+    "&titles=" +
+    pageTitle +
+    RANDOM_WIKIPAGE_PARAMS.join("");
   const wikiConfig = {
     timeout: 5000,
   };
@@ -137,11 +147,18 @@ export async function fetchWikiPageContent(pageTitle: string): Promise<string> {
  * @returns A Promise that resolves to an array of WikiPageObject, each containing title, raw content, placeholder field for censored content, and ID.
  */
 export async function fetchRandomWikiPages(
-  numPages: number
+  numPages: number,
+  language: Language
 ): Promise<WikiDocument[]> {
-  const wikiPages: WikiDocument[] = await fetchRandomWikiPageTitles(numPages);
+  const wikiPages: WikiDocument[] = await fetchRandomWikiPageTitles(
+    numPages,
+    language
+  );
   for await (const wikiPage of wikiPages) {
-    const wikiPageContent = await fetchWikiPageContent(wikiPage.title);
+    const wikiPageContent = await fetchWikiPageContent(
+      wikiPage.title,
+      language
+    );
     wikiPage["content_raw"] = wikiPageContent;
   }
 
@@ -157,9 +174,10 @@ export async function fetchRandomWikiPages(
  */
 export async function fetchAndSnippetRandomWikiPages(
   numPages: number,
-  snippetLength: number
+  snippetLength: number,
+  language: Language
 ): Promise<WikiDocument[]> {
-  const wikiPages = await fetchRandomWikiPages(numPages);
+  const wikiPages = await fetchRandomWikiPages(numPages, language);
 
   for (const wikiPage of wikiPages) {
     if (!wikiPage.content_raw) {

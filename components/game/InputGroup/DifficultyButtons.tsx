@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DifficultyButton from "./DifficultyButton";
-import { DifficultyParameter, DifficultyTitle } from "./GameControls";
+import { DifficultyParameter } from "./GameControls";
+// import { DifficultyTitles } from "@/resources/TypesEnums";
 
 export default function DifficultyButtons({
   difficulties,
@@ -9,9 +10,7 @@ export default function DifficultyButtons({
   difficulties: DifficultyParameter[];
   setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
 }) {
-  const [activeDifficulty, setActiveDifficulty] = useState<DifficultyTitle>(
-    difficulties[1].title
-  );
+  const [activeDifficulty, setActiveDifficulty] = useState<number>(1);
   return difficulties.map((difficulty) => {
     return (
       <span>

@@ -1,3 +1,6 @@
+import { DK, GB, FR } from "country-flag-icons/react/3x2";
+import Flag from "country-flag-icons/react/3x2";
+
 export type WikiDocument = {
   title: string;
   content_raw: string | null;
@@ -5,6 +8,21 @@ export type WikiDocument = {
   url: string;
   id: number;
 };
+
+// export enum DifficultyTitlesENUM {
+//   Easy = "Easy",
+//   Medium = "Medium",
+//   Hard = "Hard",
+//   Extreme = "Extreme",
+// }
+// export type DifficultyTitles = "Easy" | "Medium" | "Hard" | "Extreme";
+
+export enum Difficulties {
+  Easy,
+  Medium,
+  Hard,
+  Extreme,
+}
 
 export enum LoadingStatus {
   Idle = "IDLE",
@@ -25,3 +43,32 @@ export enum BackgroundColors {
   CORRECT = "rgb(22 163 74)",
   INCORRECT = "rgb(185 28 28)",
 }
+
+export enum Languages {
+  Danish = "da",
+  English = "en",
+  French = "fr",
+  // German = "de",
+  // Spanish = "es",
+}
+
+export type Language = Languages;
+
+// export type Languages = { dk: string | "en": string | "fr": string };
+
+export enum Countries {
+  Denmark = "DK",
+  UnitedKingdom = "GB",
+  France = "FR",
+  // Spain = "ES",
+  // Germany = "DE",
+}
+
+export const flagComponents: { [key: string]: Flag.FlagComponent } = {
+  da: DK,
+  fr: FR,
+  gb: GB,
+  // Add more mappings as needed
+};
+
+export const DEFAULT_LANGUAGE = Languages.English;

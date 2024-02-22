@@ -1,28 +1,62 @@
+"use client";
 import { useState } from "react";
-import { WikiDocument } from "@/resources/TypesEnums";
+import {
+  // DifficultyTitles,
+  // DifficultyTitlesENUM,
+  Languages,
+  WikiDocument,
+} from "@/resources/TypesEnums";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import DifficultyButtons from "./DifficultyButtons";
+import { GB, DK, FR } from "country-flag-icons/react/3x2";
+import { useLanguageContext } from "@/contexts/LanguageContext";
+import { DIFFICULTY_DESCRIPTORS, PLAY_GAME_BUTTON } from "@/assets/strings";
+import { setCookie } from "cookies-next";
+import LanguageButtons from "./LanguageButtons";
+// import US from "country-flag-icons/react/3x2/US";
+// import US from "country-flag-icons/react/3x2/US";
+// import { Languages } from "@/resources/TypesEnums";
 
 interface InputProps {
   onPlayGame: (wikiPages: WikiDocument[]) => void;
 }
 
-export type DifficultyTitle = "Easy" | "Medium" | "Hard" | "Extreme";
-
 export type DifficultyParameter = {
-  title: DifficultyTitle;
+  // difficultyDescriptor: { [key in DifficultyTitlesENUM]: string };
+  difficultyIndex: number;
+  difficultyDescriptor: string;
   snippetAmount: number;
   snippetLength: number;
 };
-
-const DIFFICULTY_PARAMETERS: DifficultyParameter[] = [
-  { title: "Easy", snippetAmount: 2, snippetLength: 50 },
-  { title: "Medium", snippetAmount: 3, snippetLength: 40 },
-  { title: "Hard", snippetAmount: 4, snippetLength: 30 },
-  { title: "Extreme", snippetAmount: 5, snippetLength: 20 },
-];
-
 export default function GameControls(props: InputProps) {
+  const languageContext = useLanguageContext();
+  const language = languageContext.language;
+  const DIFFICULTY_PARAMETERS: DifficultyParameter[] = [
+    {
+      difficultyIndex: 0,
+      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][0],
+      snippetAmount: 2,
+      snippetLength: 50,
+    },
+    {
+      difficultyIndex: 1,
+      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][1],
+      snippetAmount: 3,
+      snippetLength: 40,
+    },
+    {
+      difficultyIndex: 2,
+      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][2],
+      snippetAmount: 4,
+      snippetLength: 30,
+    },
+    {
+      difficultyIndex: 3,
+      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][3],
+      snippetAmount: 5,
+      snippetLength: 20,
+    },
+  ];
   const [loading, setLoading] = useState(false);
   const [gameParameters, setGameParameters] = useState(
     DIFFICULTY_PARAMETERS[1]
@@ -32,7 +66,8 @@ export default function GameControls(props: InputProps) {
     setLoading(true);
     const wikiDocuments: WikiDocument[] = await fetchAndSnippetRandomWikiPages(
       gameParameters.snippetAmount,
-      gameParameters.snippetLength
+      gameParameters.snippetLength,
+      languageContext.language
     );
     setLoading(false);
     props.onPlayGame(wikiDocuments);
@@ -147,8 +182,14 @@ export default function GameControls(props: InputProps) {
       </div>
 
       <div className="flex flex-col gap-y-2">
-        <h2 className="text-2xl w-full text-center">Difficulty:</h2>
-        <div id="buttons" className="flex flex-shrink gap-x-4 flex-wrap ">
+        <div className="flex flex-row gap-x-2">
+          <h2 className="text-2xl w-full text-center">Difficulty:</h2>
+          <LanguageButtons />
+        </div>
+        <div
+          id="buttons"
+          className="flex flex-shrink gap-x-4 items-center flex-wrap "
+        >
           <DifficultyButtons
             difficulties={DIFFICULTY_PARAMETERS}
             setGameParameters={setGameParameters}
@@ -162,7 +203,7 @@ export default function GameControls(props: InputProps) {
                 handlePlayGame();
               }}
             >
-              PLAY GAME
+              {PLAY_GAME_BUTTON[language]}
             </button>
           </div>
         </div>
