@@ -10,11 +10,7 @@ import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import DifficultyButtons from "./DifficultyButtons";
 import { GB, DK, FR } from "country-flag-icons/react/3x2";
 import { useLanguageContext } from "@/contexts/LanguageContext";
-import {
-  DIFFICULTY_DESCRIPTORS,
-  PLAY_GAME_BUTTON,
-  TWEAK_DIFFICULTY,
-} from "@/assets/strings";
+import { DIFFICULTY_DESCRIPTORS, GAME_SETTINGS } from "@/assets/strings";
 import { setCookie } from "cookies-next";
 import LanguageButtons from "./LanguageButtons";
 // import US from "country-flag-icons/react/3x2/US";
@@ -80,21 +76,21 @@ export default function GameControls(props: InputProps) {
   return (
     <form
       action={async () => {}}
-      className="flex border-2 bg-amber-500 rounded-lg p-2 px-4 justify-evenly flex-row gap-x-8"
+      className="flex border-2 bg-amber-500 rounded-lg p-2 px-4 justify-between flex-row lg:gap-x-32"
     >
       {loading && (
         <div className="min-w-[100%] top-0 left-0 min-h-screen flex items-center justify-center z-10 absolute bg-purple-300 bg-opacity-40">
           <span className="text-4xl">LOADING..</span>
         </div>
       )}
-      <div id="sliders" className="flex gap-y-2 flex-col">
+      <div id="sliders" className="flex  gap-y-2 flex-col">
         <h2 className="text-2xl font-semibold w-full text-center">
-          {TWEAK_DIFFICULTY[language].tweak}
+          {GAME_SETTINGS[language].tweak}
         </h2>
-        <div className="flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-2 ">
           <div className="flex flex-row gap-x-2 justify-end">
             <label className="w-full" htmlFor="snippetsAmountSlider">
-              {TWEAK_DIFFICULTY[language].snippetCount}
+              {GAME_SETTINGS[language].snippetCount}
             </label>
             <input
               min="2"
@@ -142,7 +138,7 @@ export default function GameControls(props: InputProps) {
           </div>
           <div className="flex flex-row gap-x-2 justify-end">
             <label className="w-full" htmlFor="snippetLengthSlider">
-              {TWEAK_DIFFICULTY[language].snippetLength}
+              {GAME_SETTINGS[language].snippetLength}
             </label>
             <input
               min="0"
@@ -187,22 +183,23 @@ export default function GameControls(props: InputProps) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-2">
+      <div className="flex flex-col  gap-y-2">
         <div className="flex flex-row gap-x-2">
           <h2 className="text-2xl font-semibold w-full text-center">
-            {TWEAK_DIFFICULTY[language].difficulty}
+            {GAME_SETTINGS[language].difficulty}
           </h2>
           <LanguageButtons />
         </div>
         <div
           id="buttons"
-          className="flex flex-shrink gap-x-4 items-center flex-wrap "
+          className="flex flex-row flex-wrap w-full justify-center gap-x-4 gap-y-4 items-center "
         >
+          {/* <div className="grid xl:col-span-1 col-span-2"> */}
           <DifficultyButtons
             difficulties={DIFFICULTY_PARAMETERS}
             setGameParameters={setGameParameters}
           ></DifficultyButtons>
-          <div className="flex items-center justify-around ">
+          <div className="flex items-center justify-around xl:w-auto w-full">
             <button
               className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
               type="submit"
@@ -211,9 +208,10 @@ export default function GameControls(props: InputProps) {
                 handlePlayGame();
               }}
             >
-              {PLAY_GAME_BUTTON[language]}
+              {GAME_SETTINGS[language].play}
             </button>
           </div>
+          {/* </div> */}
         </div>
       </div>
     </form>

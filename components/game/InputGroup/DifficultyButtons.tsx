@@ -11,16 +11,18 @@ export default function DifficultyButtons({
   setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
 }) {
   const [activeDifficulty, setActiveDifficulty] = useState<number>(1);
-  return difficulties.map((difficulty) => {
-    return (
-      <span>
-        <DifficultyButton
-          parameters={difficulty}
-          setGameParameters={setGameParameters}
-          activeDifficulty={activeDifficulty}
-          setActiveDifficulty={setActiveDifficulty}
-        ></DifficultyButton>
-      </span>
-    );
-  });
+  return (
+    <div className="flex flex-row flex-wrap gap-x-4">
+      {difficulties.map((difficulty) => {
+        return (
+          <DifficultyButton
+            parameters={difficulty}
+            setGameParameters={setGameParameters}
+            activeDifficulty={activeDifficulty}
+            setActiveDifficulty={setActiveDifficulty}
+          ></DifficultyButton>
+        );
+      })}
+    </div>
+  );
 }

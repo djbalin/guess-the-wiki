@@ -60,12 +60,13 @@ export const DIFFICULTY_DESCRIPTORS: {
   },
 };
 
-export const TWEAK_DIFFICULTY: {
+export const GAME_SETTINGS: {
   [key in Languages]: {
     tweak: string;
     snippetCount: string;
     snippetLength: string;
     difficulty: string;
+    play: string;
   };
 } = {
   en: {
@@ -73,39 +74,34 @@ export const TWEAK_DIFFICULTY: {
     snippetCount: "Number of snippets",
     snippetLength: "Words per snippet",
     difficulty: "Difficulty",
+    play: "PLAY GAME!",
   },
   da: {
     tweak: "Justér sværhedsgrad",
     snippetCount: "Antal brødtekster",
     snippetLength: "Ord i brødtekster",
     difficulty: "Sværhedsgrad",
+    play: "SPIL!",
   },
   fr: {
     tweak: "Ajuster la difficulté",
     snippetCount: "Nombre de snippets",
     snippetLength: "Longueur de snippet",
     difficulty: "Difficulté",
+    play: "Á JOUER !",
   },
   de: {
     tweak: "Schwierigkeit anpassen",
     snippetCount: "Anzahl der Snippets",
     snippetLength: "Wörter pro Snippet",
     difficulty: "Schwierigkeit",
+    play: "SPIELEN!",
   },
   es: {
     tweak: "Ajustar dificultad",
     snippetCount: "Número de fragmentos",
     snippetLength: "Palabras por fragmento",
     difficulty: "Dificultad",
+    play: "JUGAR!",
   },
-};
-
-export const PLAY_GAME_BUTTON: {
-  [key in Languages]: string;
-} = {
-  en: "PLAY GAME !",
-  da: "SPIL !",
-  fr: "Á JOUER !",
-  de: "SPIELEN !",
-  es: "JUGAR !",
 };
