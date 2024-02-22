@@ -40,6 +40,34 @@ export const DIFFICULTY_DESCRIPTORS: {
   },
 };
 
+export const TWEAK_DIFFICULTY: {
+  [key in Languages]: {
+    tweak: string;
+    snippetCount: string;
+    snippetLength: string;
+    difficulty: string;
+  };
+} = {
+  en: {
+    tweak: "Tweak difficulty",
+    snippetCount: "Number of snippets",
+    snippetLength: "Words per snippet",
+    difficulty: "Difficulty",
+  },
+  da: {
+    tweak: "Justér sværhedsgrad",
+    snippetCount: "Antal brødtekster",
+    snippetLength: "Ord i brødtekster",
+    difficulty: "Sværhedsgrad",
+  },
+  fr: {
+    tweak: "Ajuster la difficulté",
+    snippetCount: "Nombre de snippets",
+    snippetLength: "Longueur de snippet",
+    difficulty: "Difficulté",
+  },
+};
+
 export const PLAY_GAME_BUTTON: {
   [key in Languages]: string;
 } = {

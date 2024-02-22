@@ -10,7 +10,11 @@ import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import DifficultyButtons from "./DifficultyButtons";
 import { GB, DK, FR } from "country-flag-icons/react/3x2";
 import { useLanguageContext } from "@/contexts/LanguageContext";
-import { DIFFICULTY_DESCRIPTORS, PLAY_GAME_BUTTON } from "@/assets/strings";
+import {
+  DIFFICULTY_DESCRIPTORS,
+  PLAY_GAME_BUTTON,
+  TWEAK_DIFFICULTY,
+} from "@/assets/strings";
 import { setCookie } from "cookies-next";
 import LanguageButtons from "./LanguageButtons";
 // import US from "country-flag-icons/react/3x2/US";
@@ -84,11 +88,13 @@ export default function GameControls(props: InputProps) {
         </div>
       )}
       <div id="sliders" className="flex gap-y-2 flex-col">
-        <h2 className="text-2xl w-full text-center">Tweak difficulty:</h2>
+        <h2 className="text-2xl font-semibold w-full text-center">
+          {TWEAK_DIFFICULTY[language].tweak}
+        </h2>
         <div className="flex flex-col gap-y-2">
           <div className="flex flex-row gap-x-2 justify-end">
             <label className="w-full" htmlFor="snippetsAmountSlider">
-              Number of snippets:{" "}
+              {TWEAK_DIFFICULTY[language].snippetCount}
             </label>
             <input
               min="2"
@@ -136,7 +142,7 @@ export default function GameControls(props: InputProps) {
           </div>
           <div className="flex flex-row gap-x-2 justify-end">
             <label className="w-full" htmlFor="snippetLengthSlider">
-              Words in snippets:
+              {TWEAK_DIFFICULTY[language].snippetLength}
             </label>
             <input
               min="0"
@@ -183,7 +189,9 @@ export default function GameControls(props: InputProps) {
 
       <div className="flex flex-col gap-y-2">
         <div className="flex flex-row gap-x-2">
-          <h2 className="text-2xl w-full text-center">Difficulty:</h2>
+          <h2 className="text-2xl font-semibold w-full text-center">
+            {TWEAK_DIFFICULTY[language].difficulty}
+          </h2>
           <LanguageButtons />
         </div>
         <div
