@@ -39,7 +39,7 @@ export enum Result {
 export enum BackgroundColors {
   SATURATED = "rgb(51 65 85)",
   UNSATURATED = "rgb(34 211 238)",
-  CURRENTLY_DRAGGED_OVER = "#f3af99",
+  EMPHASIZED = "#f3af99",
   CORRECT = "rgb(22 163 74)",
   INCORRECT = "rgb(185 28 28)",
 }

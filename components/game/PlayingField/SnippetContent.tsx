@@ -7,14 +7,16 @@ export default function SnippetContent({
   dragEnterHandler,
   dragLeaveHandler,
   dragDropHandler,
-  onClickHandler,
+  onClickContentHandler: onClickContentHandler,
   htmlId,
 }: {
   wikiPageObject: WikiDocument;
   dragEnterHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
   dragLeaveHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
   dragDropHandler: (event: React.DragEvent<HTMLParagraphElement>) => void;
-  onClickHandler: (event: React.MouseEvent<HTMLParagraphElement>) => void;
+  onClickContentHandler: (
+    event: React.MouseEvent<HTMLParagraphElement>
+  ) => void;
   htmlId: string;
 }) {
   const context = useGameStatusContext();
@@ -26,7 +28,7 @@ export default function SnippetContent({
       onDragEnter={dragEnterHandler}
       onDragLeave={dragLeaveHandler}
       onDrop={dragDropHandler}
-      onClick={onClickHandler}
+      onClick={onClickContentHandler}
       style={{ backgroundColor: BackgroundColors.UNSATURATED }}
       className="wikiSnippet p-2 text-sm  md:text-base  text-left lg:p-4 relative h-full rounded-sm lg:rounded-lg"
       id={htmlId}

@@ -17,6 +17,13 @@
     }
   } */
 }
+/* #playingField {
+  --SATURATED: rgb(51 65 85);
+  --UNSATURATED: rgb(34 211 238);
+  --CURRENTLY_DRAGGED_OVER: #f3af99;
+  --CORRECT: rgb(22 163 74);
+  --INCORRECT: rgb(185 28 28);
+} */
 
 @layer base {
   * {
@@ -57,12 +64,33 @@ a:hover {
 .wikiTitle.greyed_out {
   opacity: 0.4;
 }
+.wikiTitle.selected {
+  background-color: #5500ff62;
+  border: 2px solid #00000058;
+}
 
-.wikiSnippet.currently_dragging_over {
+/* .wikiSnippet {
+  background-color: var(--UNSATURATED);
+} */
+
+.wikiSnippet.emphasized {
   opacity: 1;
   transform: scale(1.03);
   transition-timing-function: ease-in-out;
   transition-duration: 200ms;
+  /* background-color: var(--CURRENTLY_DRAGGED_OVER); */
+}
+
+/* .wikiSnippet.correctGuess {
+  background-color: var(--CORRECT);
+}
+
+.wikiSnippet.incorrectGuess {
+  background-color: var(--INCORRECT);
+} */
+
+.wikiSnippet.emphasized:hover {
+  cursor: pointer;
 }
 
 button {

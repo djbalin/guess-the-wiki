@@ -5,6 +5,7 @@ interface SnippetTitleProps {
   wikiPage: WikiDocument;
   dragStartHandler: (event: React.DragEvent<HTMLLIElement>) => void;
   dragEndHandler: (event: React.DragEvent<HTMLLIElement>) => void;
+  clickTitleHandler: (event: React.MouseEvent<HTMLLIElement>) => void;
   htmlId: string;
 }
 
@@ -25,6 +26,7 @@ function SnippetTitle(props: SnippetTitleProps) {
     <li
       onDragStart={(e) => props.dragStartHandler(e)}
       onDragEnd={(e) => props.dragEndHandler(e)}
+      onClick={props.clickTitleHandler}
       draggable="true"
       className="wikiTitle flex justify-center text-center list-none font-semibold xl:w-auto text-lg bg-blue-500 leading-6  rounded-[1rem] lg:rounded-xl py-2 px-4 items-center hover:cursor-move"
       id={props.htmlId}
