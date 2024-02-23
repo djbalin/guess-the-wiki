@@ -8,7 +8,6 @@ import { setCookie, getCookie } from "cookies-next";
 import { DK, FR, GB, ES, DE } from "country-flag-icons/react/3x2";
 
 function storeLanguageSettings(language: Languages) {
-  console.log("STORING LANGUAGE COOKIE: " + language);
   setCookie("language", language);
 }
 

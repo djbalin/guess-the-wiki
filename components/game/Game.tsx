@@ -27,8 +27,6 @@ function produceRandomArrayIndices(length: number) {
 export default function Game() {
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
-  console.log("GAME RENDERED");
-
   const context = useGameStatusContext();
 
   const [wikiPageObjects, setWikiPageObjects] = useState<WikiDocument[]>([]);
@@ -56,13 +54,12 @@ export default function Game() {
       });
     }
 
-    console.log("VICTORY WAS : " + isVictory);
+    // console.log("VICTORY WAS : " + isVictory);
 
     // setGameIsFinished(true);
   }
 
   function evaluateGuess(guess: Map<Element, Element>): boolean {
-    console.log("EVALUATING GUESS");
     let isVictory = true;
     for (const [key, value] of guess) {
       if (key.id.substring(1) != value.id.substring(1)) {

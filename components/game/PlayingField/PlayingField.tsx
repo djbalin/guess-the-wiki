@@ -49,7 +49,6 @@ export default function PlayingField({
   randomizerArray: number[];
 }) {
   const gameStatusContext = useGameStatusContext();
-  console.log("Playingfield, randomizer is: " + randomizerArray);
 
   const playingFieldRef = useRef<HTMLDivElement | null>(null);
   const titlesContainerRef = useRef<HTMLUListElement | null>(null);
@@ -81,16 +80,11 @@ export default function PlayingField({
     titleHtmlIdsAndPages[generateSnippetTitleId()] = wikiPage;
   });
 
-  console.log(contentHtmlIdsAndPages);
-  console.log(titleHtmlIdsAndPages);
-
   const contentHtmlIds: string[] = Object.keys(contentHtmlIdsAndPages);
-  console.log("contentHtmlIds: " + contentHtmlIds);
 
   const randomizedContentHtmlIds: string[] = randomizerArray.flatMap(
     (rnd) => contentHtmlIds[rnd]
   );
-  console.log("randomized contenthtmlids: " + randomizedContentHtmlIds);
 
   function handleDragEnd(event: React.DragEvent<HTMLLIElement>): void {
     const target = event.target as HTMLElement;
@@ -136,15 +130,9 @@ export default function PlayingField({
   }
 
   function handleClickMakeGuess(): void {
-    console.log("Handling click make guesss");
-    console.log("droptargetandsats size: " + dropTargetsAndSaturators.size);
     const playingFieldObject = playingFieldRef.current!;
 
     if (dropTargetsAndSaturators.size != wikiPages.length) {
-      console.log(
-        "HEY! You need to make a guess for each title!" +
-          playingFieldObject.classList
-      );
       playingFieldObject.classList.add("shake");
     } else {
       for (const ssb of dropTargetsAndSaturators.keys()) {

@@ -4,8 +4,6 @@ import Game from "./Game";
 import GameStatusContextProvider from "@/contexts/GameStatusContext";
 
 export default async function Dashboard() {
-  console.log("DASHBOARD RENDERED");
-
   return (
     <section
       id="game-container"

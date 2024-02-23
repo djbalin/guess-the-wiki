@@ -181,7 +181,6 @@ export async function fetchAndSnippetRandomWikiPages(
 
   for (const wikiPage of wikiPages) {
     if (!wikiPage.content_raw) {
-      console.log(wikiPage);
       throw Error("Error fetching Wiki snippets: raw content is null");
     }
     const raw_censored: string = censorText(
