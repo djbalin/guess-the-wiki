@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@vercel/analytics": "^1.2.2",
     "autoprefixer": "10.4.17",
     "axios": "^1.6.7",
     "cookies-next": "^4.1.1",
