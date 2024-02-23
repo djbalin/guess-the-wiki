@@ -136,7 +136,6 @@ export default function PlayingField({
       playingFieldObject.classList.add("shake");
     } else {
       for (const ssb of dropTargetsAndSaturators.keys()) {
-        console.log(ssb);
         if (dropTargetsAndSaturators.get(ssb) == null) {
           console.log("NO GUESS MADE");
         }
