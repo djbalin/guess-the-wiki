@@ -168,10 +168,6 @@ export default function PlayingField({
       });
       onMakeGuess(dropTargetsAndSaturatorsRef.current);
     }
-    console.log(
-      "End of make guess, droptargetssats size: " +
-        dropTargetsAndSaturatorsRef.current.size
-    );
   }
 
   function handleClickReset() {
@@ -196,7 +192,6 @@ export default function PlayingField({
     //   dropTarget.classList.remove("emphasized");
     //   dropTarget.style.backgroundColor = "var(--UNSATURATED)";
     // });
-    console.log(dropTargetsAndSaturatorsRef.current.size);
 
     for (const dropTarget of dropTargetsAndSaturatorsRef.current.keys()) {
       dropTarget.classList.remove("contains_guess");
@@ -223,10 +218,6 @@ export default function PlayingField({
         currentlySelectedTitleRef.current?.classList.remove("selected");
         currentlySelectedTitleRef.current = clickedTitle!;
         document.body.style.cursor = "grabbing";
-        console.log(
-          "currentlySelectedTitleRef: ",
-          currentlySelectedTitleRef.current
-        );
 
         currentlySelectedTitleRef.current.classList.add("selected");
         // document.body.style.cursor = "grabbing";
