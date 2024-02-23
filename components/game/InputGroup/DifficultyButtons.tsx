@@ -16,6 +16,7 @@ export default function DifficultyButtons({
       {difficulties.map((difficulty) => {
         return (
           <DifficultyButton
+            key={difficulty.difficultyIndex}
             parameters={difficulty}
             setGameParameters={setGameParameters}
             activeDifficulty={activeDifficulty}

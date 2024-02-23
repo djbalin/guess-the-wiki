@@ -344,7 +344,7 @@ export default function PlayingField({
         <ul
           id="titlesContainer"
           ref={titlesContainerRef}
-          className="flex flex-row w-full gap-x-6 items-center justify-between pr-4"
+          className="flex flex-row w-full gap-x-6 items-center justify-evenly pr-4"
         >
           {Array.from(
             Object.entries(titleHtmlIdsAndPages).map((titleHtmlIdAndPage) => {
