@@ -25,6 +25,17 @@ function produceRandomArrayIndices(length: number) {
 }
 
 export default function Game() {
+  const windowSize = window.innerWidth;
+
+  if (windowSize < 768) {
+    return (
+      <div className="bg-red-200 text-4xl p-8 rounded-xl w-full text-center my-16">
+        This game is not optimized for mobile phones/small screens yet :({" "}
+        <br></br>
+        Please try to play it on a larger screen!
+      </div>
+    );
+  }
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
   const context = useGameStatusContext();
