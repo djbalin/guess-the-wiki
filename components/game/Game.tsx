@@ -26,7 +26,6 @@ function produceRandomArrayIndices(length: number) {
 
 export default function Game() {
   useEffect(() => {
-    console.log("Useffect ran.");
     window.addEventListener("resize", handleResize);
   }, []);
   const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
