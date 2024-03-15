@@ -48,13 +48,13 @@ export default function GameControls(props: InputProps) {
       difficultyIndex: 2,
       difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][2],
       snippetAmount: 4,
-      snippetLength: 30,
+      snippetLength: 25,
     },
     {
       difficultyIndex: 3,
       difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][3],
       snippetAmount: 5,
-      snippetLength: 20,
+      snippetLength: 10,
     },
   ];
   const [loading, setLoading] = useState(false);

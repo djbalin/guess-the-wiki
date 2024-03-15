@@ -25,17 +25,20 @@ function produceRandomArrayIndices(length: number) {
 }
 
 export default function Game() {
-  const windowSize = window.innerWidth;
+  useEffect(() => {
+    console.log("Useffect ran.");
+    window.addEventListener("resize", handleResize);
+  }, []);
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>(false);
 
-  if (windowSize < 768) {
-    return (
-      <div className="bg-red-200 text-4xl p-8 rounded-xl w-full text-center my-16">
-        This game is not optimized for mobile phones/small screens yet :({" "}
-        <br></br>
-        Please try to play it on a larger screen!
-      </div>
-    );
+  function handleResize(this: Window, ev: UIEvent) {
+    if (this.innerWidth < 865) {
+      setIsSmallScreen(true);
+    } else {
+      setIsSmallScreen(false);
+    }
   }
+
   // const [gameIsFinished, setGameIsFinished] = useState<boolean>(false);
 
   const context = useGameStatusContext();
@@ -94,6 +97,15 @@ export default function Game() {
 
   const [randomizerArray, setRandomizerArray] = useState<number[]>([]);
 
+  if (isSmallScreen) {
+    return (
+      <div className="bg-red-200 text-4xl p-8 rounded-xl w-full text-center my-16">
+        This game is not optimized for mobile phones/small screens yet :({" "}
+        <br></br>
+        Please try to play it on a larger screen!
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-y-12">
       <GameControls
