@@ -1,427 +1,411 @@
 "use client";
-// Inspiration for implementation: https://kennethlange.com/drag-and-drop-in-pure-typescript-and-react/
-// and: https://www.youtube.com/watch?v=jfYWwQrtzzY
-import SnippetTitle from "./SnippetTitle";
+import { useRef, useState } from "react";
 import SnippetContent from "./SnippetContent";
+import { WikiDocument } from "@/resources/TypesEnums";
 
-import { useEffect, useRef } from "react";
-import { BackgroundColors, Result, WikiDocument } from "@/resources/TypesEnums";
-import { useGameStatusContext } from "@/contexts/GameStatusContext";
-import { JsxElement } from "typescript";
-// import GameStatusContext from "@/contexts/GameStatusContext";
-
-function toggleGreyedOut(element: HTMLElement) {
-  if (element.classList.contains("greyed_out")) {
-    element.classList.remove("greyed_out");
-    return;
-  }
-  element.classList.add("greyed_out");
-}
-
-function toggleCurrentlyDraggingOver(elementBeingDraggedOver: HTMLElement) {
-  if (elementBeingDraggedOver.classList.contains("emphasized")) {
-    elementBeingDraggedOver.classList.remove("emphasized");
-    // elementBeingDraggedOver.style.backgroundColor =
-    //   BackgroundColors.UNSATURATED;
-  } else {
-    // elementBeingDraggedOver.style.backgroundColor =
-    //   BackgroundColors.CURRENTLY_DRAGGED_OVER;
-    elementBeingDraggedOver.classList.add("emphasized");
-  }
-}
-
-function toggleDraggable(element: HTMLElement) {
-  if (element.getAttribute("draggable") == "true") {
-    element.setAttribute("draggable", "false");
-    element.classList.remove("hover:cursor-grab");
-  } else {
-    element.setAttribute("draggable", "true");
-    element.classList.add("hover:cursor-grab");
-  }
+interface Props {
+  wikiPages: WikiDocument[];
+  randomizerArray: number[];
+  onMakeGuess: (isVictory: boolean) => void;
+  onBack: () => void;
 }
 
 export default function PlayingField({
   wikiPages,
-  onMakeGuess,
   randomizerArray,
-}: {
-  wikiPages: WikiDocument[];
-  onMakeGuess: (guess: Map<HTMLElement, HTMLElement>) => void;
-  randomizerArray: number[];
-}) {
-  const gameStatusContext = useGameStatusContext();
+  onMakeGuess,
+  onBack,
+}: Props) {
+  const [assignments, setAssignments] = useState<{ [snippetId: string]: string }>({});
+  const [cardResults, setCardResults] = useState<{ [snippetId: string]: boolean }>({});
+  const [phase, setPhase] = useState<"playing" | "result">("playing");
+  const [showSol, setShowSol] = useState(false);
+  const [shaking, setShaking] = useState(false);
+  const [dragoverSnippet, setDragoverSnippet] = useState<string | null>(null);
+  const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
+  const [isDraggingActive, setIsDraggingActive] = useState(false);
 
-  const playingFieldRef = useRef<HTMLDivElement>(null);
-  const titlesContainerRef = useRef<HTMLUListElement>(null);
-  const snippetsContainerRef = useRef<HTMLDivElement>(null);
+  const currentlyDragging = useRef<string | null>(null);
 
-  const currentlySelectedTitleRef = useRef<HTMLLIElement | null>(null);
-  const currentlyDragging = useRef<HTMLLIElement | null>(null);
-
-  const cloneIdCounter = useRef(0);
-  // let cloneIdCounter = 0;
-
-  // Clear map when new game is launched
-  useEffect(() => {
-    dropTargetsAndSaturatorsRef.current.clear();
-  }, [randomizerArray]);
-
-  const dropTargetsAndSaturatorsRef = useRef(
-    new Map<HTMLElement, HTMLElement>()
-  );
-  // let dropTargetsAndSaturators: Map<HTMLElement, HTMLElement> = new Map();
-
-  let titleIdCounter = 0;
-  let snippetIdCounter = 0;
-  function generateSnippetContentId(): string {
-    snippetIdCounter += 1;
-    return "s" + snippetIdCounter;
-  }
-  function generateSnippetTitleId(): string {
-    titleIdCounter += 1;
-    return "t" + titleIdCounter;
-  }
-
+  // Build deterministic ID maps from wikiPages (stable across renders while pages don't change)
   const contentHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
   const titleHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
-
-  wikiPages.forEach((wikiPage) => {
-    contentHtmlIdsAndPages[generateSnippetContentId()] = wikiPage;
-    titleHtmlIdsAndPages[generateSnippetTitleId()] = wikiPage;
+  wikiPages.forEach((page, i) => {
+    contentHtmlIdsAndPages[`s${i + 1}`] = page;
+    titleHtmlIdsAndPages[`t${i + 1}`] = page;
   });
 
-  const contentHtmlIds: string[] = Object.keys(contentHtmlIdsAndPages);
+  const contentHtmlIds = Object.keys(contentHtmlIdsAndPages);
+  const randomizedContentHtmlIds = randomizerArray.map((rnd) => contentHtmlIds[rnd]);
 
-  const randomizedContentHtmlIds: string[] = randomizerArray.flatMap(
-    (rnd) => contentHtmlIds[rnd]
-  );
+  const usedTitleIds = new Set(Object.values(assignments));
+  const placed = Object.keys(assignments).length;
+  const isComplete = placed === wikiPages.length;
+  const isVictory = phase === "result" && Object.values(cardResults).every(Boolean);
+  const hasIncoming = isDraggingActive || selectedTitleId !== null;
 
-  function handleDragEnd(event: React.DragEvent<HTMLLIElement>): void {
-    const target = event.currentTarget;
-    if (event.dataTransfer.dropEffect == "none") {
-      toggleGreyedOut(target);
-    }
-    currentlyDragging.current = null;
+  function assign(snippetId: string, titleId: string) {
+    setAssignments((prev) => {
+      const next = { ...prev };
+      for (const [k, v] of Object.entries(next)) {
+        if (v === titleId) delete next[k];
+      }
+      next[snippetId] = titleId;
+      return next;
+    });
+    setSelectedTitleId(null);
   }
 
-  const handleDragLeave = (
-    event: React.DragEvent<HTMLParagraphElement>
-  ): void => {
-    const target = event.target as HTMLElement;
-    if (target.nodeName != "LI") {
-      if (!target.classList.contains("contains_guess")) {
-        toggleCurrentlyDraggingOver(target);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const ncols: string = wikiPages.length.toString();
-
-    const titlesContainer = titlesContainerRef.current;
-    const snippetsContainer = snippetsContainerRef.current;
-
-    if (titlesContainer && snippetsContainer) {
-      titlesContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
-      snippetsContainer.style.gridTemplateColumns = `repeat(${ncols}, minmax(0, 1fr))`;
-    }
-  });
-
-  function evaluateSingleGuess(dropTarget: HTMLElement): boolean {
-    const saturator = dropTargetsAndSaturatorsRef.current.get(dropTarget);
-
-    const wikiIdOfTitle: number = titleHtmlIdsAndPages[saturator!.id]!.id;
-    const wikiIdOfContent: number = contentHtmlIdsAndPages[dropTarget.id].id;
-    if (wikiIdOfContent == wikiIdOfTitle) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  function handleClickMakeGuess(): void {
-    const playingFieldObject = playingFieldRef.current!;
-
-    if (dropTargetsAndSaturatorsRef.current.size != wikiPages.length) {
-      playingFieldObject.classList.add("shake");
-    } else {
-      for (const contentContainer of dropTargetsAndSaturatorsRef.current.keys()) {
-        // if (dropTargetsAndSaturators.get(contentContainer) == null) {
-        //   console.log("NO GUESS MADE");
-        // }
-
-        const result: boolean = evaluateSingleGuess(contentContainer);
-        // contentContainer.classList.remove("currently_dragging_over");
-        if (result == true) {
-          // contentContainer.style.backgroundColor = "var(--CORRECT)";
-          // contentContainer.classList.add("correctGuess");
-          contentContainer.style.backgroundColor = BackgroundColors.CORRECT;
-        } else {
-          // contentContainer.style.backgroundColor = "var(--INCORRECT)";
-          // contentContainer.classList.add("incorrectGuess");
-          contentContainer.style.backgroundColor = BackgroundColors.INCORRECT;
-        }
-      }
-      gameStatusContext.setGameStatusContext({
-        ...gameStatusContext.gameStatusContext,
-        guessHasBeenMade: true,
-      });
-      onMakeGuess(dropTargetsAndSaturatorsRef.current);
-    }
-  }
-
-  function handleClickReset() {
-    const titlesContainer = titlesContainerRef.current;
-    const snippetsContainer = snippetsContainerRef.current;
-    if (titlesContainer && snippetsContainer) {
-      for (const title of titlesContainer.children) {
-        toggleDraggable(title as HTMLElement);
-        toggleGreyedOut(title as HTMLElement);
-      }
-      for (const snippet of snippetsContainer.children) {
-        if (snippet) {
-          snippet.removeChild(snippet.children[0]);
-        }
-        // (snippet as HTMLElement).style.backgroundColor =
-        //   BackgroundColors.UNSATURATED;
-      }
-    }
-    // dropTargets?.forEach((dropTarget) => {
-    //   // dropTargetsAndSaturators.set(dropTarget, null);
-    //   dropTarget.classList.remove("contains_guess");
-    //   dropTarget.classList.remove("emphasized");
-    //   dropTarget.style.backgroundColor = "var(--UNSATURATED)";
-    // });
-
-    for (const dropTarget of dropTargetsAndSaturatorsRef.current.keys()) {
-      dropTarget.classList.remove("contains_guess");
-      dropTarget.classList.remove("emphasized");
-      dropTarget.style.backgroundColor = BackgroundColors.UNSATURATED;
-    }
-
-    dropTargetsAndSaturatorsRef.current.clear();
-    gameStatusContext.setGameStatusContext({
-      ...gameStatusContext.gameStatusContext,
-      guessHasBeenMade: false,
+  function unassign(snippetId: string) {
+    setAssignments((prev) => {
+      const next = { ...prev };
+      delete next[snippetId];
+      return next;
     });
   }
 
-  function onClickTitle(event: React.MouseEvent<HTMLLIElement>) {
-    // console.log(event.currentTarget);
-    const clickedTitle = event.currentTarget;
-    if (clickedTitle.draggable) {
-      if (clickedTitle.classList.contains("selected")) {
-        clickedTitle.classList.remove("selected");
-        // document.body.style.cursor = "auto";
-      } else {
-        // currentlyClickedRef.current.classList.add("selected");
-        currentlySelectedTitleRef.current?.classList.remove("selected");
-        currentlySelectedTitleRef.current = clickedTitle!;
-        document.body.style.cursor = "grabbing";
-
-        currentlySelectedTitleRef.current.classList.add("selected");
-        // document.body.style.cursor = "grabbing";
-      }
-    }
-
-    // event.currentTarget.classList.add("selected");
-    // currentlyDragging = clickedTitle;
-    // cur;
+  function handleDragStart(e: React.DragEvent, titleId: string) {
+    e.dataTransfer.effectAllowed = "move";
+    currentlyDragging.current = titleId;
+    setIsDraggingActive(true);
+    setSelectedTitleId(null);
   }
 
-  const onClickContent = (event: React.MouseEvent<HTMLDivElement>): void => {
-    let clickedContent = event.target as HTMLElement;
-    if (clickedContent.id.startsWith("placed_title_")) {
-      clickedContent = clickedContent.parentElement!;
-    }
-    if (!gameStatusContext.gameStatusContext.guessHasBeenMade) {
-      const saturator = dropTargetsAndSaturatorsRef.current.get(clickedContent);
-      if (saturator != null) {
-        clickedContent.removeChild(clickedContent.children[0]);
-        toggleDraggable(saturator);
-        toggleGreyedOut(saturator);
-        clickedContent.classList.remove("hover:cursor-pointer");
-        clickedContent.style.backgroundColor = BackgroundColors.UNSATURATED;
-        dropTargetsAndSaturatorsRef.current.delete(clickedContent);
-        toggleCurrentlyDraggingOver(clickedContent);
-      }
-
-      const currentlySelectedTitle = currentlySelectedTitleRef.current;
-      if (currentlySelectedTitle != null) {
-        // Make a copy of the title
-        const clonedSelectedTitle: HTMLElement =
-          currentlySelectedTitle.cloneNode(true) as HTMLLIElement;
-        clonedSelectedTitle.classList.remove("selected");
-        clonedSelectedTitle.id =
-          "placed_title_" + (cloneIdCounter.current++).toString();
-        clonedSelectedTitle.classList.remove("hover:cursor-move");
-        clonedSelectedTitle.classList.add("hover:cursor-pointer");
-        clonedSelectedTitle.setAttribute("draggable", "false");
-
-        dropTargetsAndSaturatorsRef.current.set(
-          clickedContent,
-          currentlySelectedTitle
-        );
-
-        clickedContent.prepend(clonedSelectedTitle);
-        clickedContent.classList.add("contains_guess", "emphasized");
-        clickedContent.style.backgroundColor = BackgroundColors.EMPHASIZED;
-        currentlySelectedTitle.classList.remove("selected");
-        toggleDraggable(currentlySelectedTitle);
-        toggleGreyedOut(currentlySelectedTitle);
-        currentlySelectedTitleRef.current = null;
-        document.body.style.cursor = "auto";
-      }
-    }
-  };
-
-  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>): void => {
-    event.preventDefault();
-    const target = event.target as HTMLElement;
-    if (target.nodeName != "LI") {
-      if (dropTargetsAndSaturatorsRef.current.get(target) == null) {
-        toggleCurrentlyDraggingOver(target);
-      }
-    }
-  };
-  const handleDragStart = (event: React.DragEvent<HTMLLIElement>): void => {
-    const dragging = event.currentTarget;
-    currentlyDragging.current = dragging;
-    toggleGreyedOut(dragging);
-    event.dataTransfer.setData("text", event.currentTarget.id);
-    if (playingFieldRef.current?.classList.contains("shake")) {
-      playingFieldRef.current.classList.remove("shake");
-    }
-  };
-
-  const handleDragDropOnDiv = (
-    event: React.DragEvent<HTMLDivElement>
-  ): void => {
-    let dropTarget: HTMLDivElement | HTMLParagraphElement = event.currentTarget;
-    if (dropTarget.classList.contains("wikiTitle") == true) {
-      dropTarget = dropTarget.parentElement as HTMLParagraphElement;
-    }
-    const previousGuess = dropTargetsAndSaturatorsRef.current.get(dropTarget);
-    if (previousGuess != null) {
-      toggleGreyedOut(previousGuess);
-      toggleDraggable(previousGuess);
-      dropTarget.removeChild(dropTarget.children[0]);
-    }
-    // dropTarget.classList.add("hover:cursor-pointer");
-
-    dropTargetsAndSaturatorsRef.current.set(
-      dropTarget,
-      currentlyDragging.current!
-    );
-    toggleDraggable(currentlyDragging.current!);
-
-    const clonedDragElement: HTMLElement = currentlyDragging.current!.cloneNode(
-      true
-    ) as HTMLLIElement;
-
-    clonedDragElement.id =
-      "placed_title_" + (cloneIdCounter.current++).toString();
-    clonedDragElement.classList.remove("hover:cursor-move");
-    clonedDragElement.classList.add("hover:cursor-pointer");
-    // clonedDragElement.setAttribute("draggable", "true");
-    toggleGreyedOut(clonedDragElement);
-
-    dropTarget.prepend(clonedDragElement);
-    dropTarget.classList.add("contains_guess");
-    dropTarget.classList.add("emphasized");
-    dropTarget.style.backgroundColor = BackgroundColors.EMPHASIZED;
-
+  function handleDragEnd() {
     currentlyDragging.current = null;
-  };
+    setIsDraggingActive(false);
+    setDragoverSnippet(null);
+  }
+
+  function handleDrop(snippetId: string) {
+    const incoming = currentlyDragging.current ?? selectedTitleId;
+    if (!incoming) return;
+    assign(snippetId, incoming);
+    currentlyDragging.current = null;
+    setIsDraggingActive(false);
+    setDragoverSnippet(null);
+  }
+
+  function handleClickTitle(titleId: string) {
+    if (phase === "result" || usedTitleIds.has(titleId)) return;
+    setSelectedTitleId((prev) => (prev === titleId ? null : titleId));
+  }
+
+  function handleClickSnippet(snippetId: string) {
+    if (phase === "result") return;
+    if (selectedTitleId) {
+      assign(snippetId, selectedTitleId);
+      return;
+    }
+    if (assignments[snippetId]) {
+      unassign(snippetId);
+    }
+  }
+
+  function handleSubmit() {
+    if (!isComplete) {
+      setShaking(true);
+      setTimeout(() => setShaking(false), 450);
+      return;
+    }
+    const results: { [snippetId: string]: boolean } = {};
+    for (const [snippetId, titleId] of Object.entries(assignments)) {
+      results[snippetId] = snippetId.substring(1) === titleId.substring(1);
+    }
+    setCardResults(results);
+    setPhase("result");
+    onMakeGuess(Object.values(results).every(Boolean));
+  }
+
+  function handleReset() {
+    setAssignments({});
+    setCardResults({});
+    setPhase("playing");
+    setShowSol(false);
+    setSelectedTitleId(null);
+    setDragoverSnippet(null);
+    setIsDraggingActive(false);
+  }
+
+  const cols = Math.min(wikiPages.length, 4);
 
   return (
     <div
-      id="playingField"
-      ref={playingFieldRef}
-      className="flex flex-col bg-amber-500 border-2 rounded-lg p-6"
+      className="fade-up"
+      style={{ padding: "20px 28px 48px", maxWidth: 1400, margin: "0 auto" }}
     >
-      <div className="flex flex-row w-full">
-        <ul
-          id="titlesContainer"
-          ref={titlesContainerRef}
-          className="flex flex-row w-full gap-x-6 items-center justify-evenly pr-4"
+      {/* Titles bar */}
+      <div
+        style={{ display: "flex", alignItems: "stretch", gap: 12, marginBottom: 18 }}
+        className={shaking ? "shake" : ""}
+      >
+        <div
+          style={{
+            flex: 1,
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: 12,
+            padding: "10px 16px",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap",
+            minHeight: 56,
+          }}
         >
-          {Array.from(
-            Object.entries(titleHtmlIdsAndPages).map((titleHtmlIdAndPage) => {
-              const [htmlId, page] = titleHtmlIdAndPage;
-              return (
-                <SnippetTitle
-                  wikiPage={page}
-                  dragStartHandler={(e) => {
-                    handleDragStart(e);
-                  }}
-                  dragEndHandler={handleDragEnd}
-                  clickTitleHandler={onClickTitle}
-                  key={page.id}
-                  htmlId={htmlId}
-                />
-              );
-            })
-          )}
-        </ul>
-        <div className="flex items-center w-auto">
-          {gameStatusContext.gameStatusContext.guessHasBeenMade ? (
+          <span
+            style={{
+              fontFamily: "var(--font-barlow-condensed), sans-serif",
+              fontSize: 13,
+              fontWeight: 900,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--textdim)",
+              flexShrink: 0,
+              marginRight: 2,
+            }}
+          >
+            Titles
+          </span>
+
+          {Object.entries(titleHtmlIdsAndPages).map(([titleId, page]) => {
+            const used = usedTitleIds.has(titleId);
+            const selected = selectedTitleId === titleId;
+            return (
+              <li
+                key={titleId}
+                draggable={!used && phase !== "result"}
+                onDragStart={(e) => handleDragStart(e, titleId)}
+                onDragEnd={handleDragEnd}
+                onClick={() => handleClickTitle(titleId)}
+                className={[
+                  "title-pill",
+                  used ? "used" : "",
+                  selected ? "selected" : "",
+                  phase === "result" ? "disabled" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              >
+                {page.title}
+              </li>
+            );
+          })}
+
+          <span
+            style={{
+              marginLeft: "auto",
+              flexShrink: 0,
+              fontFamily: "var(--font-barlow-condensed), sans-serif",
+              fontSize: 15,
+              fontWeight: 900,
+              color: placed === wikiPages.length ? "var(--lime)" : "var(--textdim)",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              textShadow:
+                placed === wikiPages.length ? "0 0 12px var(--limeglow)" : "none",
+              transition: "color 0.3s, text-shadow 0.3s",
+            }}
+          >
+            {placed}/{wikiPages.length} placed
+          </span>
+        </div>
+
+        {/* Action button */}
+        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+          {phase === "playing" ? (
             <button
-              disabled={gameStatusContext.gameStatusContext.result == 1}
-              className="text-2xl text-nowrap bg-yellow-300 p-2 border-4 disabled:hover:cursor-not-allowed"
-              onClick={handleClickReset}
+              onClick={handleSubmit}
+              disabled={!isComplete}
+              className="btn-lime"
+              style={{ padding: "0 26px", height: "100%", borderRadius: 10, fontSize: 19 }}
             >
-              {gameStatusContext.gameStatusContext.result == 1
-                ? "BRAVO!"
-                : "TRY AGAIN!"}
+              Submit →
+            </button>
+          ) : isVictory ? (
+            <button
+              onClick={handleReset}
+              className="btn-lime"
+              style={{ padding: "0 22px", height: "100%", borderRadius: 10, fontSize: 17 }}
+            >
+              Play Again
             </button>
           ) : (
             <button
-              className="right-0 text-2xl text-nowrap bg-yellow-300 p-2 border-4"
-              onClick={handleClickMakeGuess}
+              onClick={handleReset}
+              style={{
+                background: "var(--surface2)",
+                color: "var(--text)",
+                border: "1px solid var(--border)",
+                borderRadius: 10,
+                padding: "0 20px",
+                height: "100%",
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: "pointer",
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                whiteSpace: "nowrap",
+              }}
             >
-              MAKE GUESS!
+              ↩ Try Again
             </button>
           )}
         </div>
       </div>
 
+      {/* Result banner */}
+      {phase === "result" && (
+        <div
+          className="pop"
+          style={{
+            background: isVictory ? "var(--greenbg)" : "var(--redbg)",
+            border: `1px solid ${isVictory ? "var(--green)" : "var(--red)"}`,
+            borderRadius: 10,
+            padding: "14px 20px",
+            marginBottom: 16,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+          }}
+        >
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-barlow-condensed), sans-serif",
+                fontWeight: 900,
+                fontSize: 22,
+                letterSpacing: "0.5px",
+                textTransform: "uppercase",
+                color: isVictory ? "var(--green)" : "var(--red)",
+                marginBottom: 4,
+              }}
+            >
+              {isVictory
+                ? "🎉 Perfect Score! All articles matched."
+                : "❌ Not quite — some matches were wrong!"}
+            </div>
+            <div style={{ fontSize: 13.5, color: "var(--textdim)" }}>
+              {isVictory
+                ? `You matched all ${wikiPages.length} Wikipedia articles correctly.`
+                : "Incorrect cards are outlined in red. Reveal the solution below to check answers."}
+            </div>
+          </div>
+          {!isVictory && (
+            <button
+              onClick={handleReset}
+              style={{
+                background: "var(--surface2)",
+                color: "var(--text)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                padding: "8px 18px",
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                fontFamily: "var(--font-dm-sans), sans-serif",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              Try Again
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Snippet grid */}
       <div
-        id="snippetsContainer"
-        ref={snippetsContainerRef}
-        className="grid h-min pt-6 place-items-center gap-x-6"
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+          gap: 10,
+        }}
       >
-        {randomizedContentHtmlIds.map((htmlId: string) => {
-          const wikiPage: WikiDocument = contentHtmlIdsAndPages[htmlId];
+        {randomizedContentHtmlIds.map((snippetId, idx) => {
+          const page = contentHtmlIdsAndPages[snippetId];
+          const assignedTitleId = assignments[snippetId];
+          const assignedTitle = assignedTitleId
+            ? titleHtmlIdsAndPages[assignedTitleId]
+            : null;
+          const result =
+            phase === "result" ? cardResults[snippetId] ?? null : null;
+          const isOver = dragoverSnippet === snippetId;
+
+          let cardClass = "snippet-card";
+          if (isOver && hasIncoming) cardClass += " dragover";
+          else if (result === true) cardClass += " result-ok";
+          else if (result === false) cardClass += " result-bad";
+          else if (assignedTitle) cardClass += " assigned";
 
           return (
             <SnippetContent
-              onClickContentHandler={onClickContent}
-              wikiPageObject={wikiPage}
-              // dragOverHandler={handleDragOver}
-              dragEnterHandler={handleDragEnter}
-              dragLeaveHandler={handleDragLeave}
-              dragDropHandler={handleDragDropOnDiv}
-              key={wikiPage.id}
-              htmlId={htmlId}
+              key={snippetId}
+              htmlId={snippetId}
+              wikiPageObject={page}
+              assignedTitle={assignedTitle}
+              result={result}
+              cardClass={cardClass}
+              isDragOver={isOver && hasIncoming}
+              hasIncoming={hasIncoming}
+              showSol={showSol}
+              snippetIndex={idx + 1}
+              totalSnippets={wikiPages.length}
+              phase={phase}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragoverSnippet(snippetId);
+              }}
+              onDragLeave={() => {
+                if (dragoverSnippet === snippetId) setDragoverSnippet(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                handleDrop(snippetId);
+              }}
+              onClick={() => handleClickSnippet(snippetId)}
             />
           );
         })}
       </div>
-      <div className="w-full flex items-end mt-4 justify-end">
+
+      {/* Bottom bar */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: 16,
+        }}
+      >
         <button
-          className="right-0 text-xl text-nowrap bg-yellow-300 p-2 border-4"
-          onClick={(e) =>
-            gameStatusContext.setGameStatusContext({
-              ...gameStatusContext.gameStatusContext,
-              revealSolution:
-                !gameStatusContext.gameStatusContext.revealSolution,
-            })
-          }
+          onClick={onBack}
+          style={{
+            background: "transparent",
+            color: "var(--textdim)",
+            border: "none",
+            fontSize: 13.5,
+            cursor: "pointer",
+            fontFamily: "var(--font-dm-sans), sans-serif",
+          }}
         >
-          {gameStatusContext.gameStatusContext.revealSolution
-            ? "Hide solution"
-            : "Reveal solution"}
+          ← New game
+        </button>
+        <button
+          onClick={() => setShowSol((s) => !s)}
+          style={{
+            background: showSol ? "var(--surface2)" : "transparent",
+            color: showSol ? "var(--text)" : "var(--textdim)",
+            border: "1px solid var(--border)",
+            borderRadius: 8,
+            padding: "7px 16px",
+            fontSize: 13,
+            cursor: "pointer",
+            fontFamily: "var(--font-dm-sans), sans-serif",
+            transition: "all 0.15s",
+          }}
+        >
+          {showSol ? "🙈 Hide solution" : "👁 Reveal solution"}
         </button>
       </div>
     </div>

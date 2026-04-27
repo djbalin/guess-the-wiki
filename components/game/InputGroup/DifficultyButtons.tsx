@@ -1,29 +1,4 @@
-import { useState } from "react";
-import DifficultyButton from "./DifficultyButton";
-import { DifficultyParameter } from "./GameControls";
-// import { DifficultyTitles } from "@/resources/TypesEnums";
-
-export default function DifficultyButtons({
-  difficulties,
-  setGameParameters,
-}: {
-  difficulties: DifficultyParameter[];
-  setGameParameters: React.Dispatch<React.SetStateAction<DifficultyParameter>>;
-}) {
-  const [activeDifficulty, setActiveDifficulty] = useState<number>(1);
-  return (
-    <div className="flex flex-row flex-wrap gap-x-4">
-      {difficulties.map((difficulty) => {
-        return (
-          <DifficultyButton
-            key={difficulty.difficultyIndex}
-            parameters={difficulty}
-            setGameParameters={setGameParameters}
-            activeDifficulty={activeDifficulty}
-            setActiveDifficulty={setActiveDifficulty}
-          ></DifficultyButton>
-        );
-      })}
-    </div>
-  );
+// Unused — difficulty buttons are now rendered inline in GameControls.tsx
+export default function DifficultyButtons() {
+  return null;
 }

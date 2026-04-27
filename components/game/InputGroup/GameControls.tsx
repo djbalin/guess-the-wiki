@@ -1,219 +1,293 @@
 "use client";
 import { useState } from "react";
-import {
-  // DifficultyTitles,
-  // DifficultyTitlesENUM,
-  Languages,
-  WikiDocument,
-} from "@/resources/TypesEnums";
+import { WikiDocument } from "@/resources/TypesEnums";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
-import DifficultyButtons from "./DifficultyButtons";
-import { GB, DK, FR } from "country-flag-icons/react/3x2";
 import { useLanguageContext } from "@/contexts/LanguageContext";
-import { DIFFICULTY_DESCRIPTORS, GAME_SETTINGS } from "@/assets/strings";
-import { setCookie } from "cookies-next";
-import LanguageButtons from "./LanguageButtons";
-// import US from "country-flag-icons/react/3x2/US";
-// import US from "country-flag-icons/react/3x2/US";
-// import { Languages } from "@/resources/TypesEnums";
+import { DIFFICULTY_DESCRIPTORS, GAME_DESCRIPTION, GAME_SETTINGS } from "@/assets/strings";
 
-interface InputProps {
+interface Props {
   onPlayGame: (wikiPages: WikiDocument[]) => void;
 }
 
-export type DifficultyParameter = {
-  // difficultyDescriptor: { [key in DifficultyTitlesENUM]: string };
-  difficultyIndex: number;
-  difficultyDescriptor: string;
-  snippetAmount: number;
-  snippetLength: number;
-};
-export default function GameControls(props: InputProps) {
-  const languageContext = useLanguageContext();
-  const language = languageContext.language;
-  const DIFFICULTY_PARAMETERS: DifficultyParameter[] = [
-    {
-      difficultyIndex: 0,
-      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][0],
-      snippetAmount: 2,
-      snippetLength: 50,
-    },
-    {
-      difficultyIndex: 1,
-      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][1],
-      snippetAmount: 3,
-      snippetLength: 40,
-    },
-    {
-      difficultyIndex: 2,
-      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][2],
-      snippetAmount: 4,
-      snippetLength: 25,
-    },
-    {
-      difficultyIndex: 3,
-      difficultyDescriptor: DIFFICULTY_DESCRIPTORS[language][3],
-      snippetAmount: 5,
-      snippetLength: 10,
-    },
-  ];
-  const [loading, setLoading] = useState(false);
-  const [gameParameters, setGameParameters] = useState(
-    DIFFICULTY_PARAMETERS[1]
-  );
+const DIFFS = [
+  { snippetAmount: 2, snippetLength: 50 },
+  { snippetAmount: 3, snippetLength: 40 },
+  { snippetAmount: 4, snippetLength: 25 },
+  { snippetAmount: 5, snippetLength: 10 },
+];
 
-  async function handlePlayGame() {
-    setLoading(true);
-    const wikiDocuments: WikiDocument[] = await fetchAndSnippetRandomWikiPages(
-      gameParameters.snippetAmount,
-      gameParameters.snippetLength,
-      languageContext.language
-    );
-    setLoading(false);
-    props.onPlayGame(wikiDocuments);
+function SpinIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      style={{ animation: "spin 0.75s linear infinite", flexShrink: 0 }}
+    >
+      <circle
+        cx="9" cy="9" r="7"
+        fill="none" stroke="rgba(0,0,0,0.25)" strokeWidth="2.5"
+      />
+      <path
+        d="M9 2a7 7 0 0 1 7 7"
+        fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        fontFamily: "var(--font-barlow-condensed), sans-serif",
+        fontSize: 13,
+        fontWeight: 700,
+        letterSpacing: "0.1em",
+        textTransform: "uppercase",
+        color: "var(--textdim)",
+        marginBottom: 10,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function Slider({
+  label,
+  min,
+  max,
+  step,
+  value,
+  onChange,
+}: {
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          marginBottom: 10,
+        }}
+      >
+        <Label>{label}</Label>
+        <span
+          style={{
+            fontFamily: "var(--font-barlow-condensed), sans-serif",
+            fontSize: 28,
+            fontWeight: 900,
+            color: "var(--lime)",
+            lineHeight: 1,
+          }}
+        >
+          {value}
+        </span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value))}
+        style={{ width: "100%" }}
+      />
+    </div>
+  );
+}
+
+export default function GameControls({ onPlayGame }: Props) {
+  const { language } = useLanguageContext();
+  const [diffIdx, setDiffIdx] = useState(1);
+  const [snippetAmount, setSnippetAmount] = useState(DIFFS[1].snippetAmount);
+  const [snippetLength, setSnippetLength] = useState(DIFFS[1].snippetLength);
+  const [loading, setLoading] = useState(false);
+
+  function pickDiff(i: number) {
+    setDiffIdx(i);
+    setSnippetAmount(DIFFS[i].snippetAmount);
+    setSnippetLength(DIFFS[i].snippetLength);
   }
 
+  async function handlePlay() {
+    setLoading(true);
+    const wikiDocuments = await fetchAndSnippetRandomWikiPages(
+      snippetAmount,
+      snippetLength,
+      language
+    );
+    setLoading(false);
+    onPlayGame(wikiDocuments);
+  }
+
+  const diffLabels = DIFFICULTY_DESCRIPTORS[language];
+
   return (
-    <form
-      action={async () => {}}
-      className="flex border-2 bg-amber-500 rounded-lg p-2 px-4 justify-between flex-row lg:gap-x-32"
+    <div
+      className="fade-up"
+      style={{
+        maxWidth: 580,
+        margin: "60px auto 0",
+        padding: "0 20px 80px",
+      }}
     >
-      {loading && (
-        <div className="min-w-[100%] top-0 left-0 min-h-screen flex items-center justify-center z-10 absolute bg-purple-300 bg-opacity-40">
-          <span className="text-4xl">LOADING..</span>
+      {/* Hero */}
+      <div style={{ textAlign: "center", marginBottom: 44 }}>
+        <div
+          style={{
+            fontFamily: "var(--font-barlow-condensed), sans-serif",
+            fontSize: 76,
+            fontWeight: 900,
+            lineHeight: 0.92,
+            textTransform: "uppercase",
+            letterSpacing: "-1px",
+            marginBottom: 20,
+          }}
+        >
+          <span>Guess the</span>
+          <br />
+          <span
+            style={{
+              color: "var(--lime)",
+              textShadow: "0 0 40px var(--limeglow)",
+            }}
+          >
+            Wikipedia
+          </span>
+          <br />
+          <span>Article!</span>
         </div>
-      )}
-      <div id="sliders" className="flex  gap-y-2 flex-col">
-        <h2 className="text-2xl font-semibold w-full text-center">
-          {GAME_SETTINGS[language].tweak}
-        </h2>
-        <div className="flex flex-col gap-y-2 ">
-          <div className="flex flex-row gap-x-2 justify-end">
-            <label className="w-full" htmlFor="snippetsAmountSlider">
-              {GAME_SETTINGS[language].snippetCount}
-            </label>
-            <input
-              min="2"
-              max="5"
-              step="1"
-              type="range"
-              id="snippetLengthChoice"
-              className="w-32"
-              onChange={(val) => {
-                try {
-                  setGameParameters({
-                    ...gameParameters,
-                    snippetAmount: parseInt(val.target.value),
-                  });
-                } catch (error) {
-                  alert("WRONG INPUT!");
-                }
-              }}
-              value={gameParameters.snippetAmount}
-            />
-            <input
-              className="w-8  text-center bg-zinc-700 text-white"
-              type="text"
-              name=""
-              id="snippetsAmountSlider"
-              value={gameParameters.snippetAmount}
-              onFocus={(e) => {
-                e.target.select();
-              }}
-              onChange={(e) => {
-                const intVal = parseInt(e.target.value);
-                if (intVal > 10) {
-                  setGameParameters({
-                    ...gameParameters,
-                    snippetAmount: 10,
-                  });
-                } else {
-                  setGameParameters({
-                    ...gameParameters,
-                    snippetAmount: intVal,
-                  });
-                }
-              }}
-            />
+        <p
+          style={{
+            color: "var(--textdim)",
+            fontSize: 16,
+            lineHeight: 1.65,
+            maxWidth: 420,
+            margin: "0 auto",
+          }}
+        >
+          {GAME_DESCRIPTION[language].body}
+        </p>
+      </div>
+
+      {/* Settings card */}
+      <div
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: 18,
+          padding: 28,
+          display: "flex",
+          flexDirection: "column",
+          gap: 26,
+        }}
+      >
+        {/* Difficulty presets */}
+        <div>
+          <Label>{GAME_SETTINGS[language].difficulty}</Label>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(4, 1fr)",
+              gap: 8,
+            }}
+          >
+            {([0, 1, 2, 3] as const).map((i) => (
+              <button
+                key={i}
+                onClick={() => pickDiff(i)}
+                style={{
+                  background: diffIdx === i ? "var(--lime)" : "var(--surface2)",
+                  color: diffIdx === i ? "var(--limedark)" : "var(--textdim)",
+                  border:
+                    diffIdx === i
+                      ? "1px solid var(--lime)"
+                      : "1px solid var(--border)",
+                  borderRadius: 9,
+                  padding: "11px 4px",
+                  fontFamily: "var(--font-barlow-condensed), sans-serif",
+                  fontSize: 16,
+                  fontWeight: 900,
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  boxShadow: diffIdx === i ? "0 2px 16px var(--limeglow)" : "none",
+                }}
+              >
+                {diffLabels[i]}
+              </button>
+            ))}
           </div>
-          <div className="flex flex-row gap-x-2 justify-end">
-            <label className="w-full" htmlFor="snippetLengthSlider">
-              {GAME_SETTINGS[language].snippetLength}
-            </label>
-            <input
-              min="0"
-              max="50"
-              step="5"
-              type="range"
-              id="snippetLengthChoice"
-              className="w-32"
-              onChange={(val) => {
-                setGameParameters({
-                  ...gameParameters,
-                  snippetLength: parseInt(val.target.value),
-                });
-              }}
-              value={gameParameters.snippetLength}
-            />
-            <input
-              className="text-center w-8  bg-zinc-700 text-white"
-              type="text"
-              name=""
-              id="snippetLengthSsider"
-              value={gameParameters.snippetLength}
-              onFocus={(e) => {
-                e.target.select();
-              }}
-              onChange={(e) => {
-                const intVal = parseInt(e.target.value);
-                if (intVal > 100) {
-                  setGameParameters({
-                    ...gameParameters,
-                    snippetAmount: 100,
-                  });
-                } else {
-                  setGameParameters({
-                    ...gameParameters,
-                    snippetLength: intVal,
-                  });
-                }
-              }}
-            />
-          </div>
+        </div>
+
+        {/* Fine-tune sliders */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22 }}>
+          <Slider
+            label={GAME_SETTINGS[language].snippetCount}
+            min={2}
+            max={5}
+            step={1}
+            value={snippetAmount}
+            onChange={(v) => { setSnippetAmount(v); setDiffIdx(-1); }}
+          />
+          <Slider
+            label={GAME_SETTINGS[language].snippetLength}
+            min={5}
+            max={50}
+            step={5}
+            value={snippetLength}
+            onChange={(v) => { setSnippetLength(v); setDiffIdx(-1); }}
+          />
         </div>
       </div>
 
-      <div className="flex flex-col  gap-y-2">
-        <div className="flex flex-row gap-x-2">
-          <h2 className="text-2xl font-semibold w-full text-center">
-            {GAME_SETTINGS[language].difficulty}
-          </h2>
-          <LanguageButtons />
-        </div>
-        <div
-          id="buttons"
-          className="flex flex-row flex-wrap w-full justify-center gap-x-4 gap-y-4 items-center "
-        >
-          {/* <div className="grid xl:col-span-1 col-span-2"> */}
-          <DifficultyButtons
-            difficulties={DIFFICULTY_PARAMETERS}
-            setGameParameters={setGameParameters}
-          ></DifficultyButtons>
-          <div className="flex items-center justify-around xl:w-auto w-full">
-            <button
-              className="text-xs md:text-sm lg:text-lg font-semibold border-4 border-rose-400 border-opacity-20  w-[16rem] px-4 py-3 bg-purple-600 transition hover:duration-[250ms] hover:ease-in-out hover:bg-fuchsia-700"
-              type="submit"
-              onClick={(e) => {
-                e.preventDefault();
-                handlePlayGame();
-              }}
-            >
-              {GAME_SETTINGS[language].play}
-            </button>
-          </div>
-          {/* </div> */}
-        </div>
-      </div>
-    </form>
+      {/* Play CTA */}
+      <button
+        onClick={handlePlay}
+        disabled={loading}
+        className="btn-lime"
+        style={{
+          marginTop: 16,
+          width: "100%",
+          padding: "18px 0",
+          borderRadius: 14,
+          fontSize: 21,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+        }}
+      >
+        {loading ? (
+          <>
+            <SpinIcon /> Fetching articles…
+          </>
+        ) : (
+          GAME_SETTINGS[language].play
+        )}
+      </button>
+
+      <p
+        style={{
+          textAlign: "center",
+          marginTop: 18,
+          fontSize: 12.5,
+          color: "var(--textfaint)",
+        }}
+      >
+        {snippetAmount} random Wikipedia articles · {snippetLength} words per
+        snippet
+      </p>
+    </div>
   );
 }

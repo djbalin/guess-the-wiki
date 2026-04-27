@@ -1,18 +1,15 @@
 "use server";
-import { GameDescription } from "./GameDescription";
 import Game from "./Game";
+import GameHeader from "./GameHeader";
 import GameStatusContextProvider from "@/contexts/GameStatusContext";
 
 export default async function Dashboard() {
   return (
-    <section
-      id="game-container"
-      className="py-8 px-16 flex flex-col min-w-full min-h-full border-red-300 border-solid border-2"
-    >
-      <GameDescription />
+    <div style={{ minHeight: "100vh" }}>
+      <GameHeader />
       <GameStatusContextProvider>
-        <Game></Game>
+        <Game />
       </GameStatusContextProvider>
-    </section>
+    </div>
   );
 }
