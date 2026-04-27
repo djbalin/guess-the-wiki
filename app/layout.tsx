@@ -1,7 +1,9 @@
 import { Barlow_Condensed, Spectral, DM_Sans } from "next/font/google";
 import "./globals.css";
 import LanguageContextProvider from "@/contexts/LanguageContext";
+import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
+import { darkTokens, lightTokens, tokensToCSS } from "./theme";
 
 const barlowCondensed = Barlow_Condensed({
   weight: ["700", "900"],
@@ -34,6 +36,15 @@ export const metadata = {
   description: "Match Wikipedia article titles to their snippets!",
 };
 
+// Generate CSS from theme.ts — single source of truth for all color tokens
+const themeCSS = [
+  tokensToCSS(":root, [data-theme='dark']", darkTokens),
+  tokensToCSS("[data-theme='light']", lightTokens),
+].join("\n\n");
+
+// Inline script that runs before React hydration to avoid flash of wrong theme
+const initThemeScript = `(function(){try{var t=localStorage.getItem('gtw-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
@@ -45,8 +56,16 @@ export default function RootLayout({
       className={`${barlowCondensed.variable} ${spectral.variable} ${dmSans.variable}`}
       style={{ fontFamily: "var(--font-dm-sans), system-ui, sans-serif" }}
     >
+      <head>
+        {/* Inject theme CSS generated from theme.ts */}
+        <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+        {/* Set data-theme before React hydrates to prevent flash */}
+        <script dangerouslySetInnerHTML={{ __html: initThemeScript }} />
+      </head>
       <body>
-        <LanguageContextProvider>{children}</LanguageContextProvider>
+        <ThemeContextProvider>
+          <LanguageContextProvider>{children}</LanguageContextProvider>
+        </ThemeContextProvider>
         <Analytics />
       </body>
     </html>

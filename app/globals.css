@@ -2,45 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg:        oklch(10% 0.008 55);
-  --surface:   oklch(15% 0.010 55);
-  --surface2:  oklch(20% 0.012 55);
-  --surface3:  oklch(26% 0.013 55);
-  --border:    oklch(30% 0.012 55);
-  --border2:   oklch(38% 0.015 55);
+/*
+ * Color tokens are injected as CSS custom properties by layout.tsx
+ * from app/theme.ts — no color values live here.
+ */
 
-  --text:      oklch(91% 0.007 75);
-  --textdim:   oklch(56% 0.014 75);
-  --textfaint: oklch(38% 0.010 75);
-
-  --blue:      oklch(57% 0.17 248);
-  --bluedim:   oklch(40% 0.12 248);
-  --blueglow:  oklch(57% 0.17 248 / 0.25);
-  --bluebg:    oklch(18% 0.06 248);
-
-  --lime:      oklch(86% 0.28 128);
-  --limedark:  oklch(14% 0.07 128);
-  --limeglow:  oklch(86% 0.28 128 / 0.35);
-
-  --gold:      oklch(74% 0.15 82);
-  --green:     oklch(58% 0.18 145);
-  --greenbg:   oklch(17% 0.07 145);
-  --greenglow: oklch(58% 0.18 145 / 0.25);
-  --red:       oklch(54% 0.21 25);
-  --redbg:     oklch(16% 0.08 25);
-  --redglow:   oklch(54% 0.21 25 / 0.25);
-
-  --drop:      oklch(22% 0.06 248);
-}
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   background-color: var(--bg);
-  background-image: radial-gradient(ellipse 110% 55% at 50% -5%, oklch(20% 0.05 248 / 0.55) 0%, transparent 65%);
+  background-image: radial-gradient(
+    ellipse 110% 55% at 50% -5%,
+    var(--bg-gradient-color) 0%,
+    transparent 65%
+  );
   color: var(--text);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -50,6 +25,7 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
+/* ── Animations ────────────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(18px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -72,6 +48,7 @@ body {
 .pop     { animation: pop   0.35s cubic-bezier(0.16,1,0.3,1) both; }
 .shake   { animation: shake 0.4s ease; }
 
+/* ── Range input ───────────────────────────────────────────────────────── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -83,8 +60,7 @@ input[type="range"] {
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 16px; height: 16px;
   border-radius: 50%;
   background: var(--lime);
   cursor: pointer;
@@ -93,7 +69,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-/* Censor block */
+/* ── Censor block ──────────────────────────────────────────────────────── */
 .censor {
   display: inline-block;
   background: var(--text);
@@ -106,7 +82,7 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   user-select: none;
 }
 
-/* Title pills */
+/* ── Title pills ───────────────────────────────────────────────────────── */
 .title-pill {
   list-style: none;
   padding: 8px 18px;
@@ -132,12 +108,12 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 }
 .title-pill.selected {
   transform: scale(1.08);
-  background: oklch(65% 0.20 248) !important;
+  background: var(--blue-selected) !important;
   box-shadow: 0 0 0 2px white, 0 0 0 5px var(--blue), 0 4px 20px var(--blueglow) !important;
 }
 .title-pill.disabled { pointer-events: none; }
 
-/* Snippet cards */
+/* ── Snippet cards ─────────────────────────────────────────────────────── */
 .snippet-card {
   border-radius: 14px;
   border: 1px solid var(--border);
@@ -147,12 +123,12 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   display: flex;
   flex-direction: column;
 }
-.snippet-card.dragover   { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blueglow); background: var(--bluebg); }
-.snippet-card.assigned   { border-color: oklch(57% 0.17 248 / 0.4); }
+.snippet-card.dragover   { border-color: var(--blue);  box-shadow: 0 0 0 3px var(--blueglow); background: var(--bluebg); }
+.snippet-card.assigned   { border-color: var(--blue-border); }
 .snippet-card.result-ok  { border-color: var(--green); background: var(--greenbg); box-shadow: 0 0 0 2px var(--greenglow); }
-.snippet-card.result-bad { border-color: var(--red);   background: var(--redbg);   box-shadow: 0 0 0 2px var(--redglow); }
+.snippet-card.result-bad { border-color: var(--red);   background: var(--redbg);  box-shadow: 0 0 0 2px var(--redglow); }
 
-/* Drop slot */
+/* ── Drop slot ─────────────────────────────────────────────────────────── */
 .drop-slot {
   min-height: 48px;
   display: flex;
@@ -160,15 +136,15 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   justify-content: center;
   padding: 10px 14px;
   border-bottom: 1px solid var(--border);
-  background: oklch(12% 0.006 55);
+  background: var(--slot-bg);
   transition: background 0.2s;
 }
 .snippet-card.dragover   .drop-slot { background: var(--drop); }
-.snippet-card.assigned   .drop-slot { background: transparent; border-bottom-color: oklch(57% 0.17 248 / 0.25); }
-.snippet-card.result-ok  .drop-slot { background: oklch(14% 0.09 145); border-bottom-color: oklch(58% 0.18 145 / 0.4); }
-.snippet-card.result-bad .drop-slot { background: oklch(13% 0.09 25);  border-bottom-color: oklch(54% 0.21 25 / 0.4); }
+.snippet-card.assigned   .drop-slot { background: transparent; border-bottom-color: var(--blueglow); }
+.snippet-card.result-ok  .drop-slot { background: var(--slot-ok-bg);  border-bottom-color: var(--green-border); }
+.snippet-card.result-bad .drop-slot { background: var(--slot-bad-bg); border-bottom-color: var(--red-border); }
 
-/* Lime CTA button */
+/* ── Lime CTA button ───────────────────────────────────────────────────── */
 .btn-lime {
   background: var(--lime);
   color: var(--limedark);

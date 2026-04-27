@@ -1,7 +1,9 @@
 "use client";
 import { useLanguageContext } from "@/contexts/LanguageContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Languages } from "@/resources/TypesEnums";
 import { setCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
 
 const LANGS: { code: Languages; flag: string }[] = [
   { code: Languages.English, flag: "🇬🇧" },
@@ -13,6 +15,8 @@ const LANGS: { code: Languages; flag: string }[] = [
 
 export default function GameHeader() {
   const { language, setLanguage } = useLanguageContext();
+  const { theme, toggleTheme } = useTheme();
+  const router = useRouter();
 
   function handleLang(lang: Languages) {
     setLanguage(lang);
@@ -22,7 +26,7 @@ export default function GameHeader() {
   return (
     <header
       style={{
-        background: "oklch(7.5% 0.006 55)",
+        background: "var(--header-bg)",
         borderBottom: "1px solid var(--border)",
         height: 52,
         display: "flex",
@@ -35,7 +39,10 @@ export default function GameHeader() {
       }}
     >
       {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+      <div
+        onClick={() => router.push("/")}
+        style={{ display: "flex", alignItems: "center", gap: 11, cursor: "pointer" }}
+      >
         <div
           style={{
             width: 36,
@@ -72,8 +79,46 @@ export default function GameHeader() {
         </span>
       </div>
 
-      {/* Language selector */}
-      <div style={{ display: "flex", gap: 4 }}>
+      {/* Right controls */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          style={{
+            background: "transparent",
+            border: "1px solid var(--border2)",
+            borderRadius: 7,
+            padding: "4px 10px",
+            fontSize: 16,
+            cursor: "pointer",
+            lineHeight: 1,
+            transition: "background 0.15s, border-color 0.15s",
+            color: "var(--textdim)",
+          }}
+          onMouseEnter={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "var(--surface2)")
+          }
+          onMouseLeave={(e) =>
+            ((e.currentTarget as HTMLButtonElement).style.background =
+              "transparent")
+          }
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+
+        {/* Divider */}
+        <div
+          style={{
+            width: 1,
+            height: 20,
+            background: "var(--border2)",
+            flexShrink: 0,
+          }}
+        />
+
+        {/* Language selector */}
         {LANGS.map((l) => (
           <button
             key={l.code}

@@ -58,7 +58,7 @@ export default function SnippetContent({
       onClick={onClick}
       style={{
         cursor:
-          (hasIncoming || (assignedTitle && phase !== "result"))
+          hasIncoming || (assignedTitle && phase !== "result")
             ? "pointer"
             : "default",
       }}
@@ -66,15 +66,22 @@ export default function SnippetContent({
       {/* Drop slot */}
       <div className="drop-slot">
         {assignedTitle ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, width: "100%" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              width: "100%",
+            }}
+          >
             <span
               style={{
                 background:
                   result === true
                     ? "var(--green)"
                     : result === false
-                    ? "var(--red)"
-                    : "var(--blue)",
+                      ? "var(--red)"
+                      : "var(--blue)",
                 color: "white",
                 padding: "5px 16px",
                 borderRadius: 99,
@@ -86,8 +93,8 @@ export default function SnippetContent({
                   result === true
                     ? "0 2px 10px var(--greenglow)"
                     : result === false
-                    ? "0 2px 10px var(--redglow)"
-                    : "0 2px 10px var(--blueglow)",
+                      ? "0 2px 10px var(--redglow)"
+                      : "0 2px 10px var(--blueglow)",
               }}
             >
               {assignedTitle.title}
@@ -111,8 +118,8 @@ export default function SnippetContent({
             {isDragOver
               ? "Release to assign"
               : hasIncoming
-              ? "Drop here…"
-              : "No title assigned"}
+                ? "Drop here…"
+                : "No title assigned"}
           </span>
         )}
       </div>
@@ -173,7 +180,7 @@ export default function SnippetContent({
       </div>
 
       {/* Footer */}
-      <div
+      {/* <div
         style={{
           padding: "6px 14px",
           borderTop: "1px solid var(--border)",
@@ -185,7 +192,7 @@ export default function SnippetContent({
         }}
       >
         Snippet {snippetIndex} of {totalSnippets}
-      </div>
+      </div> */}
     </div>
   );
 }
