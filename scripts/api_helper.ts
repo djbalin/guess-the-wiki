@@ -1,7 +1,12 @@
 // NOTE: Documentation for the functions in this file has been written with the help of ChatGPT.
 
 import axios from "axios";
-import { Language, Languages, WikiDocument } from "../resources/TypesEnums";
+import {
+  Language,
+  Languages,
+  WikiDocument,
+  WikiMetaData,
+} from "../resources/TypesEnums";
 import { censorText, extractSnippetFromText } from "./text_processing";
 
 function wikiEndpoint(language: Language) {
@@ -39,24 +44,24 @@ const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
 export async function fetchRandomWikiPageTitles(
   numPages: number,
   language: Language,
-): Promise<WikiDocument[]> {
+): Promise<WikiMetaData[]> {
   const numPagesParam = "&grnlimit=" + numPages;
+
   const randomTitlesEndpoint =
     wikiEndpoint(language) + numPagesParam + RANDOM_TITLE_PARAMS.join("");
-  const randomWikiTitles: WikiDocument[] = [];
-  const result = await axios.get(randomTitlesEndpoint);
 
-  Object.values(result.data.query.pages).forEach((element: any) => {
-    const wikiTitle: WikiDocument = {
+  const apiResult = await axios.get(randomTitlesEndpoint);
+
+  const randomWikiTitles: WikiMetaData[] = Object.values(
+    apiResult.data.query.pages,
+  ).map((element: any) => {
+    return {
       title: element.title,
       id: element.pageid,
       url: element.fullurl,
-      content_censored: null,
-      content_raw: null,
     };
-
-    randomWikiTitles.push(wikiTitle);
   });
+
   return randomWikiTitles;
 }
 
@@ -96,17 +101,25 @@ export async function fetchRandomWikiPages(
   numPages: number,
   language: Language,
 ): Promise<WikiDocument[]> {
-  const wikiPages: WikiDocument[] = await fetchRandomWikiPageTitles(
+  const wikiTitles: WikiMetaData[] = await fetchRandomWikiPageTitles(
     numPages,
     language,
   );
-  for await (const wikiPage of wikiPages) {
-    const wikiPageContent = await fetchWikiPageContent(
-      wikiPage.title,
-      language,
-    );
-    wikiPage["content_raw"] = wikiPageContent;
-  }
+
+  const wikiPages: WikiDocument[] = await Promise.all(
+    wikiTitles.map(async (wikiPage) => {
+      const wikiPageContent = await fetchWikiPageContent(
+        wikiPage.title,
+        language,
+      );
+
+      return {
+        ...wikiPage,
+        content_raw: wikiPageContent,
+        content_censored: null,
+      };
+    }),
+  );
 
   return wikiPages;
 }

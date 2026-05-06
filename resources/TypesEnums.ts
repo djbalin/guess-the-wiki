@@ -1,12 +1,21 @@
-import { DK, GB, FR, DE, ES } from "country-flag-icons/react/3x2";
-import Flag from "country-flag-icons/react/3x2";
+import {
+  DK,
+  GB,
+  FR,
+  DE,
+  ES,
+  FlagComponent,
+} from "country-flag-icons/react/3x2";
 
-export type WikiDocument = {
+export type WikiMetaData = {
   title: string;
-  content_raw: string | null;
-  content_censored: string | null;
   url: string;
   id: number;
+};
+
+export type WikiDocument = WikiMetaData & {
+  content_raw: string | null;
+  content_censored: string | null;
 };
 
 // export enum DifficultyTitlesENUM {
@@ -64,7 +73,7 @@ export enum Countries {
   Germany = "DE",
 }
 
-export const flagComponents: { [key: string]: Flag.FlagComponent } = {
+export const flagComponents: { [key: string]: FlagComponent } = {
   da: DK,
   fr: FR,
   gb: GB,

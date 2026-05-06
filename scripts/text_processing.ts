@@ -52,7 +52,9 @@ export function extractSnippetFromText(
   const endIndex = beginIndex + snippetLength;
 
   return words.slice(beginIndex, endIndex).join(" ");
-} /**
+}
+
+/**
  * Replaces specified words in a given input string.
  *
  * The words to replace/censor are assumed to be provided as a space-separated string. Occurrences of these words are replaced by
