@@ -17,7 +17,7 @@ function shuffleArray(arr: any[], accumulator: any[]): any[] {
 function produceRandomArrayIndices(length: number): number[] {
   return shuffleArray(
     Array.from({ length }, (_, i) => i),
-    []
+    [],
   );
 }
 

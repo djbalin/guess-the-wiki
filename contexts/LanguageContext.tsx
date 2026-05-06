@@ -1,16 +1,12 @@
 "use client";
-import {
-  DEFAULT_LANGUAGE,
-  Language,
-  Languages,
-  Result,
-} from "@/resources/TypesEnums";
+import { DEFAULT_LANGUAGE, LanguageCode } from "@/resources/language";
+import { Result } from "@/resources/TypesEnums";
 import { getCookie } from "cookies-next";
 import React, { createContext, useContext, useState } from "react";
 
 type LanguageContext = {
-  language: Language;
-  setLanguage: React.Dispatch<React.SetStateAction<Language>>;
+  languageCode: LanguageCode;
+  setLanguage: React.Dispatch<React.SetStateAction<LanguageCode>>;
 };
 
 const LanguageContext = createContext<LanguageContext | null>(null);
@@ -27,12 +23,12 @@ export default function LanguageContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [language, setLanguage] = useState<Language>(DEFAULT_LANGUAGE);
+  const [language, setLanguage] = useState<LanguageCode>(DEFAULT_LANGUAGE);
 
   return (
     <LanguageContext.Provider
       value={{
-        language: language,
+        languageCode: language,
         setLanguage: setLanguage,
       }}
     >
@@ -46,7 +42,7 @@ export function useLanguageContext(): LanguageContext {
 
   if (!context) {
     throw new Error(
-      "useLanguageContext must be used within a languageStatusContextProvider"
+      "useLanguageContext must be used within a languageStatusContextProvider",
     );
   }
   return context;

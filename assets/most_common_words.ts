@@ -1,4 +1,4 @@
-import { Languages } from "@/resources/TypesEnums";
+import { LanguageCode } from "@/resources/language";
 
 const EN: string[] = [
   "the",
@@ -1003,6 +1003,7 @@ const EN: string[] = [
   "neck",
 ];
 export const englishWords = new Set(EN);
+export const englishWords_100 = new Set(EN.slice(0, 100));
 
 const FR = [
   "comme",
@@ -2006,6 +2007,7 @@ const FR = [
   "revendication",
 ];
 const frenchWords = new Set(FR);
+const frenchWords_100 = new Set(FR.slice(0, 100));
 
 const DA = [
   "som",
@@ -2496,7 +2498,6 @@ const DA = [
   "centrum",
   "elsker",
   "person",
-  ,
   "penge",
   "tjene",
   "synes",
@@ -3011,6 +3012,7 @@ const DA = [
   "kontinent",
 ];
 const danishWords = new Set(DA);
+const danishWords_100 = new Set(DA.slice(0, 100));
 
 const ES = [
   "como",
@@ -4015,6 +4017,7 @@ const ES = [
   "continente",
 ];
 const spanishWords = new Set(ES);
+const spanishWords_100 = new Set(ES.slice(0, 100));
 
 const DE = [
   "wie",
@@ -5019,10 +5022,24 @@ const DE = [
   "Kontinent",
 ];
 const germanWords = new Set(DE);
+const germanWords_100 = new Set(DE.slice(100));
 
-export const THOUSAND_MOST_COMMON_WORDS = new Map();
-THOUSAND_MOST_COMMON_WORDS.set(Languages.English, englishWords);
-THOUSAND_MOST_COMMON_WORDS.set(Languages.French, frenchWords);
-THOUSAND_MOST_COMMON_WORDS.set(Languages.Danish, danishWords);
-THOUSAND_MOST_COMMON_WORDS.set(Languages.Spanish, spanishWords);
-THOUSAND_MOST_COMMON_WORDS.set(Languages.German, germanWords);
+export const THOUSAND_MOST_COMMON_WORDS: {
+  [key in LanguageCode]: Set<string>;
+} = {
+  en: englishWords,
+  fr: frenchWords,
+  da: danishWords,
+  es: spanishWords,
+  de: germanWords,
+} as const;
+
+export const HUNDRED_MOST_COMMON_WORDS: {
+  [key in LanguageCode]: Set<string>;
+} = {
+  en: englishWords_100,
+  fr: frenchWords_100,
+  da: danishWords_100,
+  es: spanishWords_100,
+  de: germanWords_100,
+} as const;

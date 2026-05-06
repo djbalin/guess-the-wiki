@@ -1,7 +1,8 @@
-import { Difficulties, Languages } from "@/resources/TypesEnums";
+import { LanguageCode } from "@/resources/language";
+import { Difficulties } from "@/resources/TypesEnums";
 
 export const GAME_DESCRIPTION: {
-  [key in Languages]: { header: string; body: string };
+  [key in LanguageCode]: { header: string; body: string };
 } = {
   en: {
     header: "Guess the Wikipedia article!",
@@ -26,7 +27,7 @@ export const GAME_DESCRIPTION: {
 };
 
 export const DIFFICULTY_DESCRIPTORS: {
-  [key in Languages]: { [key in Difficulties]: string };
+  [key in LanguageCode]: { [key in Difficulties]: string };
 } = {
   en: {
     0: "Easy",
@@ -61,7 +62,7 @@ export const DIFFICULTY_DESCRIPTORS: {
 };
 
 export const GAME_SETTINGS: {
-  [key in Languages]: {
+  [key in LanguageCode]: {
     tweak: string;
     snippetCount: string;
     snippetLength: string;
@@ -104,4 +105,4 @@ export const GAME_SETTINGS: {
     difficulty: "Dificultad",
     play: "JUGAR!",
   },
-};
+} as const;

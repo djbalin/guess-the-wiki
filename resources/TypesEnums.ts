@@ -53,25 +53,17 @@ export enum BackgroundColors {
   INCORRECT = "rgb(185 28 28)",
 }
 
-export enum Languages {
-  Danish = "da",
-  English = "en",
-  French = "fr",
-  Spanish = "es",
-  German = "de",
-}
+// export enum Languages {
+//   Danish = "da",
+//   English = "en",
+//   French = "fr",
+//   Spanish = "es",
+//   German = "de",
+// }
 
-export type Language = Languages;
+// export type Language = Languages;
 
 // export type Languages = { dk: string | "en": string | "fr": string };
-
-export enum Countries {
-  Denmark = "DK",
-  UnitedKingdom = "GB",
-  France = "FR",
-  Spain = "ES",
-  Germany = "DE",
-}
 
 export const flagComponents: { [key: string]: FlagComponent } = {
   da: DK,
@@ -81,4 +73,4 @@ export const flagComponents: { [key: string]: FlagComponent } = {
   es: ES,
 };
 
-export const DEFAULT_LANGUAGE = Languages.English;
+// export const DEFAULT_LANGUAGE = Languages.English;

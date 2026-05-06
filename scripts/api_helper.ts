@@ -1,15 +1,11 @@
 // NOTE: Documentation for the functions in this file has been written with the help of ChatGPT.
 
 import axios from "axios";
-import {
-  Language,
-  Languages,
-  WikiDocument,
-  WikiMetaData,
-} from "../resources/TypesEnums";
+import { WikiDocument, WikiMetaData } from "../resources/TypesEnums";
 import { censorText, extractSnippetFromText } from "./text_processing";
+import { LanguageCode } from "@/resources/language";
 
-function wikiEndpoint(language: Language) {
+function wikiEndpoint(language: LanguageCode) {
   return `https://${language}.wikipedia.org/w/api.php?action=query`;
 }
 // const WIKI_ENDPOINT = "https://en.wikipedia.org/w/api.php?action=query";
@@ -43,7 +39,7 @@ const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
  */
 export async function fetchRandomWikiPageTitles(
   numPages: number,
-  language: Language,
+  language: LanguageCode,
 ): Promise<WikiMetaData[]> {
   const numPagesParam = "&grnlimit=" + numPages;
 
@@ -75,7 +71,7 @@ export async function fetchRandomWikiPageTitles(
  */
 export async function fetchWikiPageContent(
   pageTitle: string,
-  language: Language,
+  language: LanguageCode,
 ): Promise<string> {
   const randomPageEndpoint =
     wikiEndpoint(language) +
@@ -99,7 +95,7 @@ export async function fetchWikiPageContent(
  */
 export async function fetchRandomWikiPages(
   numPages: number,
-  language: Language,
+  language: LanguageCode,
 ): Promise<WikiDocument[]> {
   const wikiTitles: WikiMetaData[] = await fetchRandomWikiPageTitles(
     numPages,
@@ -134,7 +130,7 @@ export async function fetchRandomWikiPages(
 export async function fetchAndSnippetRandomWikiPages(
   numPages: number,
   snippetLength: number,
-  language: Language,
+  language: LanguageCode,
 ): Promise<WikiDocument[]> {
   const wikiPages = await fetchRandomWikiPages(numPages, language);
 
@@ -145,6 +141,7 @@ export async function fetchAndSnippetRandomWikiPages(
     const raw_censored: string = censorText(
       wikiPage.content_raw,
       wikiPage.title,
+      language,
     );
 
     const extractedSnippet: string = extractSnippetFromText(
@@ -153,14 +150,6 @@ export async function fetchAndSnippetRandomWikiPages(
     );
 
     wikiPage.content_censored = extractedSnippet;
-
-    // const newWikiPage: WikiDocument = {
-    //   title: wikiPage.title,
-    //   content_raw: extractedSnippet,
-    //   content_censored: extractedSnippet,
-    //   id: wikiPage.id,
-    // };
-    // wikiPagesSnippeted.push(newWikiPage);
   }
   return wikiPages;
 }

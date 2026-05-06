@@ -16,7 +16,7 @@ const activeLanguage = "scale-110 border-2 border-black border-opacity-15  p-1";
 export default function LanguageButtons() {
   const chosenLanguage = getCookie("language");
   const languageContext = useLanguageContext();
-  const language = languageContext.language;
+  const language = languageContext.languageCode;
   if (!chosenLanguage) {
     storeLanguageSettings(DEFAULT_LANGUAGE);
   }

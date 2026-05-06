@@ -1,4 +1,8 @@
-import { THOUSAND_MOST_COMMON_WORDS } from "@/assets/1000_most_common_words";
+import {
+  HUNDRED_MOST_COMMON_WORDS,
+  THOUSAND_MOST_COMMON_WORDS,
+} from "@/assets/most_common_words";
+import { LanguageCode } from "@/resources/language";
 
 const ALL_TYPES_OF_WHITESPACE = RegExp(/\s+|\r+|\t+|\v+|\n+/g);
 
@@ -64,10 +68,14 @@ export function extractSnippetFromText(
  * @param phraseToCensor - Words or phrases to be censored (comma-separated).
  * @returns The censored text with '###' replacing the specified words or phrases.
  */
-export function censorText(rawText: string, phraseToCensor: string): string {
+export function censorText(
+  rawText: string,
+  phraseToCensor: string,
+  language: LanguageCode,
+): string {
   const censorCandidates: string[] = phraseToCensor.replace(",", "").split(" ");
   const wordsToCensor: string[] = censorCandidates.filter(
-    (word) => word.length > 2 && !THOUSAND_MOST_COMMON_WORDS.has(word),
+    (word) => word.length > 2 && !HUNDRED_MOST_COMMON_WORDS[language].has(word),
   );
   //
   // TODO

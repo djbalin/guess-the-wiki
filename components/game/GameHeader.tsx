@@ -1,24 +1,24 @@
 "use client";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Languages } from "@/resources/TypesEnums";
+import { LANGUAGE_META, LanguageCode } from "@/resources/language";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 
-const LANGS: { code: Languages; flag: string }[] = [
-  { code: Languages.English, flag: "🇬🇧" },
-  { code: Languages.Danish,  flag: "🇩🇰" },
-  { code: Languages.French,  flag: "🇫🇷" },
-  { code: Languages.German,  flag: "🇩🇪" },
-  { code: Languages.Spanish, flag: "🇪🇸" },
-];
+// const LANGS: { code: Languages; flag: string }[] = [
+//   { code: Languages.English, flag: "🇬🇧" },
+//   { code: Languages.Danish, flag: "🇩🇰" },
+//   { code: Languages.French, flag: "🇫🇷" },
+//   { code: Languages.German, flag: "🇩🇪" },
+//   { code: Languages.Spanish, flag: "🇪🇸" },
+// ];
 
 export default function GameHeader() {
-  const { language, setLanguage } = useLanguageContext();
+  const { languageCode: language, setLanguage } = useLanguageContext();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
 
-  function handleLang(lang: Languages) {
+  function handleLang(lang: LanguageCode) {
     setLanguage(lang);
     setCookie("language", lang);
   }
@@ -41,7 +41,12 @@ export default function GameHeader() {
       {/* Logo */}
       <div
         onClick={() => router.push("/")}
-        style={{ display: "flex", alignItems: "center", gap: 11, cursor: "pointer" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 11,
+          cursor: "pointer",
+        }}
       >
         <div
           style={{
@@ -84,7 +89,9 @@ export default function GameHeader() {
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
-          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          title={
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          }
           style={{
             background: "transparent",
             border: "1px solid var(--border2)",
@@ -119,18 +126,19 @@ export default function GameHeader() {
         />
 
         {/* Language selector */}
-        {LANGS.map((l) => (
+        {Object.values(LANGUAGE_META).map(({ languageCode, countryCode }) => (
           <button
-            key={l.code}
-            onClick={() => handleLang(l.code)}
+            key={languageCode}
+            onClick={() => handleLang(languageCode)}
             style={{
               background:
-                language === l.code ? "var(--surface2)" : "transparent",
+                language === languageCode ? "var(--surface2)" : "transparent",
               border:
-                language === l.code
+                language === languageCode
                   ? "1px solid var(--border2)"
                   : "1px solid transparent",
-              color: language === l.code ? "var(--text)" : "var(--textdim)",
+              color:
+                language === languageCode ? "var(--text)" : "var(--textdim)",
               borderRadius: 7,
               padding: "3px 9px",
               fontSize: 15,
@@ -138,7 +146,7 @@ export default function GameHeader() {
               transition: "all 0.15s",
             }}
           >
-            {l.flag}
+            {countryCode}
           </button>
         ))}
       </div>

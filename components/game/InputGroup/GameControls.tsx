@@ -117,7 +117,7 @@ function Slider({
 }
 
 export default function GameControls({ onPlayGame }: Props) {
-  const { language } = useLanguageContext();
+  const { languageCode } = useLanguageContext();
   const [diffIdx, setDiffIdx] = useState(1);
   const [snippetAmount, setSnippetAmount] = useState(DIFFS[1].snippetAmount);
   const [snippetLength, setSnippetLength] = useState(DIFFS[1].snippetLength);
@@ -134,13 +134,13 @@ export default function GameControls({ onPlayGame }: Props) {
     const wikiDocuments = await fetchAndSnippetRandomWikiPages(
       snippetAmount,
       snippetLength,
-      language,
+      languageCode,
     );
     setLoading(false);
     onPlayGame(wikiDocuments);
   }
 
-  const diffLabels = DIFFICULTY_DESCRIPTORS[language];
+  const diffLabels = DIFFICULTY_DESCRIPTORS[languageCode];
 
   return (
     <div
@@ -186,7 +186,7 @@ export default function GameControls({ onPlayGame }: Props) {
             margin: "0 auto",
           }}
         >
-          {GAME_DESCRIPTION[language].body}
+          {GAME_DESCRIPTION[languageCode].body}
         </p>
       </div>
 
@@ -207,7 +207,7 @@ export default function GameControls({ onPlayGame }: Props) {
         >
           {/* Difficulty presets */}
           <div>
-            <Label>{GAME_SETTINGS[language].difficulty}</Label>
+            <Label>{GAME_SETTINGS[languageCode].difficulty}</Label>
             <div
               style={{
                 display: "grid",
@@ -251,7 +251,7 @@ export default function GameControls({ onPlayGame }: Props) {
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22 }}
           >
             <Slider
-              label={GAME_SETTINGS[language].snippetCount}
+              label={GAME_SETTINGS[languageCode].snippetCount}
               min={2}
               max={5}
               step={1}
@@ -262,7 +262,7 @@ export default function GameControls({ onPlayGame }: Props) {
               }}
             />
             <Slider
-              label={GAME_SETTINGS[language].snippetLength}
+              label={GAME_SETTINGS[languageCode].snippetLength}
               min={5}
               max={50}
               step={5}
@@ -297,7 +297,7 @@ export default function GameControls({ onPlayGame }: Props) {
               <SpinIcon /> Fetching articles…
             </>
           ) : (
-            GAME_SETTINGS[language].play
+            GAME_SETTINGS[languageCode].play
           )}
         </button>
       </div>

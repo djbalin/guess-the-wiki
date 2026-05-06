@@ -6,7 +6,7 @@ import US from "country-flag-icons/react/3x2/US";
 
 export function GameDescription() {
   const languageContext = useLanguageContext();
-  const language = languageContext.language;
+  const language = languageContext.languageCode;
   // languageContext.
   return (
     <div className="flex flex-col">
