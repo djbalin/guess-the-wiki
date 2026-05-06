@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import GameControls from "./InputGroup/GameControls";
 import PlayingField from "./PlayingField/PlayingField";
-import { Result, WikiDocument } from "@/resources/TypesEnums";
+import { WikiDocument } from "@/types/wiki";
+import { Result } from "@/types/game";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 
 function shuffleArray(arr: any[], accumulator: any[]): any[] {

@@ -1,9 +1,9 @@
 // NOTE: Documentation for the functions in this file has been written with the help of ChatGPT.
 
 import axios from "axios";
-import { WikiDocument, WikiMetaData } from "../resources/TypesEnums";
+import { WikiDocument, WikiMetaData } from "../types/wiki";
 import { censorText, extractSnippetFromText } from "./text_processing";
-import { LanguageCode } from "@/resources/language";
+import { LanguageCode } from "@/types/language";
 
 function wikiEndpoint(language: LanguageCode) {
   return `https://${language}.wikipedia.org/w/api.php?action=query`;

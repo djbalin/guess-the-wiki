@@ -1,5 +1,5 @@
 "use client";
-import { Result } from "@/resources/TypesEnums";
+import { Result } from "@/types/game";
 import React, { createContext, useContext, useState } from "react";
 
 type GameStatus = {
@@ -53,7 +53,7 @@ export function useGameStatusContext(): GameStatusContext {
 
   if (!context) {
     throw new Error(
-      "useGameStatusContext must be used within a gameStatusContextProvider"
+      "useGameStatusContext must be used within a gameStatusContextProvider",
     );
   }
   return context;

@@ -1,4 +1,4 @@
-import { WikiDocument } from "@/resources/TypesEnums";
+import { WikiDocument } from "@/types/wiki";
 
 function renderSnippet(text: string | null) {
   if (!text) return null;

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { WikiDocument } from "@/resources/TypesEnums";
+import { WikiDocument } from "@/types/wiki";
 import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import {

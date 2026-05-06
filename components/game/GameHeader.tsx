@@ -1,27 +1,13 @@
 "use client";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { LANGUAGE_META, LanguageCode } from "@/resources/language";
-import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
-
-// const LANGS: { code: Languages; flag: string }[] = [
-//   { code: Languages.English, flag: "🇬🇧" },
-//   { code: Languages.Danish, flag: "🇩🇰" },
-//   { code: Languages.French, flag: "🇫🇷" },
-//   { code: Languages.German, flag: "🇩🇪" },
-//   { code: Languages.Spanish, flag: "🇪🇸" },
-// ];
+import LanguageSelector from "./InputGroup/LanguageSelector";
 
 export default function GameHeader() {
-  const { languageCode: language, setLanguage } = useLanguageContext();
+  useLanguageContext();
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
-
-  function handleLang(lang: LanguageCode) {
-    setLanguage(lang);
-    setCookie("language", lang);
-  }
 
   return (
     <header
@@ -126,29 +112,7 @@ export default function GameHeader() {
         />
 
         {/* Language selector */}
-        {Object.values(LANGUAGE_META).map(({ languageCode, countryCode }) => (
-          <button
-            key={languageCode}
-            onClick={() => handleLang(languageCode)}
-            style={{
-              background:
-                language === languageCode ? "var(--surface2)" : "transparent",
-              border:
-                language === languageCode
-                  ? "1px solid var(--border2)"
-                  : "1px solid transparent",
-              color:
-                language === languageCode ? "var(--text)" : "var(--textdim)",
-              borderRadius: 7,
-              padding: "3px 9px",
-              fontSize: 15,
-              cursor: "pointer",
-              transition: "all 0.15s",
-            }}
-          >
-            {countryCode}
-          </button>
-        ))}
+        <LanguageSelector />
       </div>
     </header>
   );

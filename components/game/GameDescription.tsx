@@ -1,8 +1,6 @@
 "use client";
 import { GAME_DESCRIPTION } from "@/assets/strings";
 import { useLanguageContext } from "@/contexts/LanguageContext";
-import { Language, Languages } from "@/resources/TypesEnums";
-import US from "country-flag-icons/react/3x2/US";
 
 export function GameDescription() {
   const languageContext = useLanguageContext();

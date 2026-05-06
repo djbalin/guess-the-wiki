@@ -2,7 +2,7 @@ import {
   HUNDRED_MOST_COMMON_WORDS,
   THOUSAND_MOST_COMMON_WORDS,
 } from "@/assets/most_common_words";
-import { LanguageCode } from "@/resources/language";
+import { LanguageCode } from "@/types/language";
 
 const ALL_TYPES_OF_WHITESPACE = RegExp(/\s+|\r+|\t+|\v+|\n+/g);
 

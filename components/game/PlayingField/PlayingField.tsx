@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import SnippetContent from "./SnippetContent";
-import { WikiDocument } from "@/resources/TypesEnums";
+import { WikiDocument } from "@/types/wiki";
 
 interface Props {
   wikiPages: WikiDocument[];
@@ -16,8 +16,12 @@ export default function PlayingField({
   onMakeGuess,
   onBack,
 }: Props) {
-  const [assignments, setAssignments] = useState<{ [snippetId: string]: string }>({});
-  const [cardResults, setCardResults] = useState<{ [snippetId: string]: boolean }>({});
+  const [assignments, setAssignments] = useState<{
+    [snippetId: string]: string;
+  }>({});
+  const [cardResults, setCardResults] = useState<{
+    [snippetId: string]: boolean;
+  }>({});
   const [phase, setPhase] = useState<"playing" | "result">("playing");
   const [showSol, setShowSol] = useState(false);
   const [shaking, setShaking] = useState(false);
@@ -36,12 +40,15 @@ export default function PlayingField({
   });
 
   const contentHtmlIds = Object.keys(contentHtmlIdsAndPages);
-  const randomizedContentHtmlIds = randomizerArray.map((rnd) => contentHtmlIds[rnd]);
+  const randomizedContentHtmlIds = randomizerArray.map(
+    (rnd) => contentHtmlIds[rnd],
+  );
 
   const usedTitleIds = new Set(Object.values(assignments));
   const placed = Object.keys(assignments).length;
   const isComplete = placed === wikiPages.length;
-  const isVictory = phase === "result" && Object.values(cardResults).every(Boolean);
+  const isVictory =
+    phase === "result" && Object.values(cardResults).every(Boolean);
   const hasIncoming = isDraggingActive || selectedTitleId !== null;
 
   function assign(snippetId: string, titleId: string) {
@@ -136,7 +143,12 @@ export default function PlayingField({
     >
       {/* Titles bar */}
       <div
-        style={{ display: "flex", alignItems: "stretch", gap: 12, marginBottom: 18 }}
+        style={{
+          display: "flex",
+          alignItems: "stretch",
+          gap: 12,
+          marginBottom: 18,
+        }}
         className={shaking ? "shake" : ""}
       >
         <div
@@ -199,11 +211,14 @@ export default function PlayingField({
               fontFamily: "var(--font-barlow-condensed), sans-serif",
               fontSize: 15,
               fontWeight: 900,
-              color: placed === wikiPages.length ? "var(--lime)" : "var(--textdim)",
+              color:
+                placed === wikiPages.length ? "var(--lime)" : "var(--textdim)",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
               textShadow:
-                placed === wikiPages.length ? "0 0 12px var(--limeglow)" : "none",
+                placed === wikiPages.length
+                  ? "0 0 12px var(--limeglow)"
+                  : "none",
               transition: "color 0.3s, text-shadow 0.3s",
             }}
           >
@@ -218,7 +233,12 @@ export default function PlayingField({
               onClick={handleSubmit}
               disabled={!isComplete}
               className="btn-lime"
-              style={{ padding: "0 26px", height: "100%", borderRadius: 10, fontSize: 19 }}
+              style={{
+                padding: "0 26px",
+                height: "100%",
+                borderRadius: 10,
+                fontSize: 19,
+              }}
             >
               Submit →
             </button>
@@ -226,7 +246,12 @@ export default function PlayingField({
             <button
               onClick={handleReset}
               className="btn-lime"
-              style={{ padding: "0 22px", height: "100%", borderRadius: 10, fontSize: 17 }}
+              style={{
+                padding: "0 22px",
+                height: "100%",
+                borderRadius: 10,
+                fontSize: 17,
+              }}
             >
               Play Again
             </button>
@@ -329,7 +354,7 @@ export default function PlayingField({
             ? titleHtmlIdsAndPages[assignedTitleId]
             : null;
           const result =
-            phase === "result" ? cardResults[snippetId] ?? null : null;
+            phase === "result" ? (cardResults[snippetId] ?? null) : null;
           const isOver = dragoverSnippet === snippetId;
 
           let cardClass = "snippet-card";

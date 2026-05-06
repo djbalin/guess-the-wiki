@@ -1,5 +1,5 @@
-import { LanguageCode } from "@/resources/language";
-import { Difficulties } from "@/resources/TypesEnums";
+import { LanguageCode } from "@/types/language";
+import { Difficulties } from "@/types/game";
 
 export const GAME_DESCRIPTION: {
   [key in LanguageCode]: { header: string; body: string };

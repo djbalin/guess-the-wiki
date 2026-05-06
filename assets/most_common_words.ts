@@ -1,4 +1,4 @@
-import { LanguageCode } from "@/resources/language";
+import { LanguageCode } from "@/types/language";
 
 const EN: string[] = [
   "the",

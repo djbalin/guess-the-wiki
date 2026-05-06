@@ -1,6 +1,6 @@
 "use client";
-import { DEFAULT_LANGUAGE, LanguageCode } from "@/resources/language";
-import { Result } from "@/resources/TypesEnums";
+import { DEFAULT_LANGUAGE, LanguageCode } from "@/types/language";
+import { Result } from "@/types/game";
 import { getCookie } from "cookies-next";
 import React, { createContext, useContext, useState } from "react";
 
