@@ -12,14 +12,11 @@
     "typecheck": "npx tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/ssr": "latest",
-    "@supabase/supabase-js": "latest",
     "@vercel/analytics": "^1.2.2",
     "autoprefixer": "10.4.17",
     "axios": "^1.6.7",
     "cookies-next": "^4.1.1",
     "country-flag-icons": "^1.5.9",
-    "geist": "^1.2.1",
     "hono": "^4.12.19",
     "next": "16.2.6",
     "postcss": "8.4.33",
