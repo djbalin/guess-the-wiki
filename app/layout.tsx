@@ -4,6 +4,14 @@ import LanguageContextProvider from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
 import { darkTokens, lightTokens, tokensToCSS } from "./theme";
+import {
+  ClerkProvider,
+  Show,
+  SignIn,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
 const barlowCondensed = Barlow_Condensed({
   weight: ["700", "900"],
@@ -63,10 +71,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: initThemeScript }} />
       </head>
       <body>
-        <ThemeContextProvider>
-          <LanguageContextProvider>{children}</LanguageContextProvider>
-        </ThemeContextProvider>
-        <Analytics />
+        <ClerkProvider>
+          <ThemeContextProvider>
+            <LanguageContextProvider>{children}</LanguageContextProvider>
+          </ThemeContextProvider>
+          <Analytics />
+        </ClerkProvider>
       </body>
     </html>
   );

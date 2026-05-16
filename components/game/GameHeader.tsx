@@ -3,6 +3,7 @@ import { useLanguageContext } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "./InputGroup/LanguageSelector";
+import { UserButton } from "@clerk/nextjs";
 
 export default function GameHeader() {
   useLanguageContext();
@@ -110,6 +111,8 @@ export default function GameHeader() {
             flexShrink: 0,
           }}
         />
+        <button onClick={() => router.push("/sign-in")}>Sign In</button>
+        <UserButton showName={true}></UserButton>
 
         {/* Language selector */}
         <LanguageSelector />
