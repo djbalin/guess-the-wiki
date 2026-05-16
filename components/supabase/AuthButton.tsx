@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function AuthButton() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
   const {
@@ -14,7 +14,7 @@ export default async function AuthButton() {
   const signOut = async () => {
     "use server";
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
     await supabase.auth.signOut();
     return redirect("/login");
