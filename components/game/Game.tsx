@@ -6,6 +6,7 @@ import PlayingField from "./PlayingField/PlayingField";
 import { WikiDocument } from "@/types/wiki";
 import { Result } from "@/types/game";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
+import { db } from "@/db/init";
 
 function shuffleArray(arr: any[], accumulator: any[]): any[] {
   if (arr.length === 0) return accumulator;
@@ -66,6 +67,14 @@ export default function Game() {
       guessHasBeenMade: true,
       result: isVictory ? Result.Victory : Result.Loss,
       revealSolution: isVictory,
+    });
+
+    fetch("http://localhost:3000/api/results", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isVictory }),
     });
   }
 
