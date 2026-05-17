@@ -4,27 +4,58 @@ import axios from "axios";
 import { WikiDocument, WikiMetaData } from "../types/wiki";
 import { censorText, extractSnippetFromText } from "./text_processing";
 import { LanguageCode } from "@/types/language";
+import { prngAlea } from "ts-seedrandom";
 
-function wikiEndpoint(language: LanguageCode) {
-  return `https://${language}.wikipedia.org/w/api.php?action=query`;
+function baseWikiEndpoint(language: LanguageCode) {
+  const BASE_ENDPOINT = `https://${language}.wikipedia.org/w/api.php?action=query`;
+  const STANDARD_PARAMS = ["&format=json", "&origin=*", "&redirects"];
+  return BASE_ENDPOINT + STANDARD_PARAMS.join("");
 }
-// const WIKI_ENDPOINT = "https://en.wikipedia.org/w/api.php?action=query";
-const STANDARD_PARAMS = ["&format=json", "&origin=*"];
-const RANDOM_TITLE_EXTRA_PARAMS = [
-  "&generator=random",
-  "&grnnamespace=0",
-  "&prop=info",
-  "&inprop=url",
-];
-const RANDOM_WIKIPAGES_EXTRA_PARAMS = [
-  "&explaintext",
-  "&formatversion=2",
-  "&prop=extracts",
-];
-const RANDOM_TITLE_PARAMS = STANDARD_PARAMS.concat(RANDOM_TITLE_EXTRA_PARAMS);
-const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
-  RANDOM_WIKIPAGES_EXTRA_PARAMS,
-);
+
+const wikipediaClient = axios.create({
+  baseURL: "https://en.wikipedia.org/w/api.php",
+  headers: {
+    "Api-User-Agent": "MyApp/1.0 (myemail@example.com)",
+  },
+});
+
+const METADATA_ENDPOINTS = ["&prop=info", "&inprop=url"];
+
+function generateRandomTitlesEndpoint(
+  language: LanguageCode,
+  numPages: number,
+) {
+  const RANDOM_TITLE_PARAMS = ["&generator=random", "&grnnamespace=0"].concat(
+    METADATA_ENDPOINTS,
+  );
+  const numPagesParam = "&grnlimit=" + numPages;
+  const randomTitlesEndpoint =
+    baseWikiEndpoint(language) + numPagesParam + RANDOM_TITLE_PARAMS.join("");
+  return randomTitlesEndpoint;
+}
+
+function generateRandomPageEndpoint(language: LanguageCode, pageTitle: string) {
+  const RANDOM_WIKIPAGE_PARAMS = [
+    "&explaintext",
+    "&formatversion=2",
+    "&prop=extracts",
+  ];
+  const randomPageEndpoint =
+    baseWikiEndpoint(language) +
+    "&titles=" +
+    pageTitle +
+    RANDOM_WIKIPAGE_PARAMS.join("");
+
+  return randomPageEndpoint;
+}
+
+function generateMetadataByIdEndpoint(language: LanguageCode, ids: string[]) {
+  return (
+    baseWikiEndpoint(language) +
+    `&pageids=${ids.join("|")}` +
+    METADATA_ENDPOINTS.join("")
+  );
+}
 
 /**
  * Fetches random Wikipedia page titles with their IDs.
@@ -37,18 +68,14 @@ const RANDOM_WIKIPAGE_PARAMS = STANDARD_PARAMS.concat(
  * @returns A Promise that resolves to an array of WikiPageTitleObject.
  * @throws {Error} If there's an issue with the HTTP request or if the response doesn't match the expected format.
  */
-export async function fetchRandomWikiPageTitles(
+async function fetchRandomWikiMetadata(
   numPages: number,
   language: LanguageCode,
 ): Promise<WikiMetaData[]> {
-  const numPagesParam = "&grnlimit=" + numPages;
-
-  const randomTitlesEndpoint =
-    wikiEndpoint(language) + numPagesParam + RANDOM_TITLE_PARAMS.join("");
-
+  const randomTitlesEndpoint = generateRandomTitlesEndpoint(language, numPages);
   const apiResult = await axios.get(randomTitlesEndpoint);
 
-  const randomWikiTitles: WikiMetaData[] = Object.values(
+  const randomWikiMetadata: WikiMetaData[] = Object.values(
     apiResult.data.query.pages,
   ).map((element: any) => {
     return {
@@ -58,7 +85,25 @@ export async function fetchRandomWikiPageTitles(
     };
   });
 
-  return randomWikiTitles;
+  return randomWikiMetadata;
+}
+
+async function fetchWikiMetadataByIds(
+  language: LanguageCode,
+  ids: string[],
+): Promise<WikiMetaData[]> {
+  const endpoint = generateMetadataByIdEndpoint(language, ids);
+  const apiResult = await axios.get(endpoint);
+  const metaData: WikiMetaData[] = Object.values(
+    apiResult.data.query.pages,
+  ).map((element: any) => {
+    return {
+      title: element.title,
+      id: element.pageid,
+      url: element.fullurl,
+    };
+  });
+  return metaData;
 }
 
 /**
@@ -69,15 +114,12 @@ export async function fetchRandomWikiPageTitles(
  * @returns A Promise that resolves to the content of the Wikipedia page as a string.
  * @throws {Error} If there's an issue with the HTTP request, if the page is not found, or if the response doesn't match the expected format.
  */
-export async function fetchWikiPageContent(
+async function fetchWikiPageContent(
   pageTitle: string,
   language: LanguageCode,
 ): Promise<string> {
-  const randomPageEndpoint =
-    wikiEndpoint(language) +
-    "&titles=" +
-    pageTitle +
-    RANDOM_WIKIPAGE_PARAMS.join("");
+  const randomPageEndpoint = generateRandomPageEndpoint(language, pageTitle);
+
   const wikiConfig = {
     timeout: 5000,
   };
@@ -93,14 +135,14 @@ export async function fetchWikiPageContent(
  * @param numPages - The number of random Wikipedia pages to fetch.
  * @returns A Promise that resolves to an array of WikiPageObject, each containing title, raw content, placeholder field for censored content, and ID.
  */
-export async function fetchRandomWikiPages(
+async function fetchWikiPages(
   numPages: number,
   language: LanguageCode,
+  seededIds: string[] | undefined,
 ): Promise<WikiDocument[]> {
-  const wikiTitles: WikiMetaData[] = await fetchRandomWikiPageTitles(
-    numPages,
-    language,
-  );
+  const wikiTitles: WikiMetaData[] = seededIds
+    ? await fetchWikiMetadataByIds(language, seededIds)
+    : await fetchRandomWikiMetadata(numPages, language);
 
   const wikiPages: WikiDocument[] = await Promise.all(
     wikiTitles.map(async (wikiPage) => {
@@ -127,16 +169,23 @@ export async function fetchRandomWikiPages(
  * @param snippetLength - The desired length of the extracted snippets.
  * @returns A Promise that resolves to an array of WikiPageObject, each containing title, raw content snippet, censored content snippet, and ID.
  */
-export async function fetchAndSnippetRandomWikiPages(
+export async function fetchAndSnippetWikiPages(
   numPages: number,
   snippetLength: number,
   language: LanguageCode,
-): Promise<WikiDocument[]> {
-  const wikiPages = await fetchRandomWikiPages(numPages, language);
+  seed: string | undefined,
+  ids: string[] | undefined,
+): Promise<{ wikiPages: WikiDocument[]; parsedSeed: string | number }> {
+  const parsedSeed = seed ?? Math.random();
+  const seededRnd = prngAlea(parsedSeed).double();
+
+  const wikiPages = await fetchWikiPages(numPages, language, ids);
 
   for (const wikiPage of wikiPages) {
     if (!wikiPage.content_raw) {
-      throw Error("Error fetching Wiki snippets: raw content is null");
+      throw Error(
+        `Error fetching Wiki snippets: raw content is null. wiki page id: ${wikiPage.id}, title: ${wikiPage.title}, url: ${wikiPage.url}`,
+      );
     }
     const raw_censored: string = censorText(
       wikiPage.content_raw,
@@ -147,11 +196,12 @@ export async function fetchAndSnippetRandomWikiPages(
     const extractedSnippet: string = extractSnippetFromText(
       raw_censored,
       snippetLength,
+      seededRnd,
     );
 
     wikiPage.content_censored = extractedSnippet;
   }
-  return wikiPages;
+  return { wikiPages, parsedSeed };
 }
 
 // TODO

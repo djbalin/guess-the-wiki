@@ -3,6 +3,7 @@ import {
   THOUSAND_MOST_COMMON_WORDS,
 } from "@/assets/most_common_words";
 import { LanguageCode } from "@/types/language";
+import { prngAlea } from "ts-seedrandom";
 
 const ALL_TYPES_OF_WHITESPACE = RegExp(/\s+|\r+|\t+|\v+|\n+/g);
 
@@ -40,6 +41,7 @@ function stripArticleHeaders(text: string): string {
 export function extractSnippetFromText(
   fullText: string,
   snippetLength: number,
+  seededRnd: number,
 ) {
   const fullTextReferencesRemoved = stripReferencesSection(fullText);
   const fullTextHeadersRemoved = stripArticleHeaders(fullTextReferencesRemoved);
@@ -47,11 +49,12 @@ export function extractSnippetFromText(
   const words = fullTextHeadersRemoved.split(ALL_TYPES_OF_WHITESPACE);
 
   if (words.length <= snippetLength) {
+    console.log("Returning early");
     return words.join(" ");
   }
 
   const beginIndex: number = Math.floor(
-    Math.round(Math.random() * (words.length - snippetLength)),
+    Math.round(seededRnd * (words.length - snippetLength)),
   );
   const endIndex = beginIndex + snippetLength;
 

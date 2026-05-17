@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { WikiDocument } from "@/types/wiki";
-import { fetchAndSnippetRandomWikiPages } from "@/scripts/api_helper";
+import { fetchAndSnippetWikiPages } from "@/lib/wiki_api_helper";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import {
   DIFFICULTY_DESCRIPTORS,
@@ -131,13 +131,13 @@ export default function GameControls({ onPlayGame }: Props) {
 
   async function handlePlay() {
     setLoading(true);
-    const wikiDocuments = await fetchAndSnippetRandomWikiPages(
+    const { wikiPages, seed } = await fetchAndSnippetWikiPages(
       snippetAmount,
       snippetLength,
       languageCode,
     );
     setLoading(false);
-    onPlayGame(wikiDocuments);
+    onPlayGame(wikiPages);
   }
 
   const diffLabels = DIFFICULTY_DESCRIPTORS[languageCode];

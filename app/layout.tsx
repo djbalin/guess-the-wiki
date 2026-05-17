@@ -12,6 +12,7 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs";
+import Header from "@/components/Header";
 
 const barlowCondensed = Barlow_Condensed({
   weight: ["700", "900"],
@@ -68,12 +69,15 @@ export default function RootLayout({
         {/* Inject theme CSS generated from theme.ts */}
         <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
         {/* Set data-theme before React hydrates to prevent flash */}
-        <script dangerouslySetInnerHTML={{ __html: initThemeScript }} />
+        {/* <script dangerouslySetInnerHTML={{ __html: initThemeScript }} /> */}
       </head>
       <body>
         <ClerkProvider>
           <ThemeContextProvider>
-            <LanguageContextProvider>{children}</LanguageContextProvider>
+            <LanguageContextProvider>
+              <Header />
+              <div style={{ minHeight: "100vh" }}>{children}</div>
+            </LanguageContextProvider>
           </ThemeContextProvider>
           <Analytics />
         </ClerkProvider>

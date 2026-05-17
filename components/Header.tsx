@@ -1,12 +1,10 @@
 "use client";
-import { useLanguageContext } from "@/contexts/LanguageContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
-import LanguageSelector from "./InputGroup/LanguageSelector";
+import LanguageSelector from "./game/InputGroup/LanguageSelector";
 import { UserButton } from "@clerk/nextjs";
 
-export default function GameHeader() {
-  useLanguageContext();
+export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
 
