@@ -4,14 +4,7 @@ import LanguageContextProvider from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
 import { darkTokens, lightTokens, tokensToCSS } from "./theme";
-import {
-  ClerkProvider,
-  Show,
-  SignIn,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 
 const barlowCondensed = Barlow_Condensed({
@@ -50,9 +43,6 @@ const themeCSS = [
   tokensToCSS(":root, [data-theme='dark']", darkTokens),
   tokensToCSS("[data-theme='light']", lightTokens),
 ].join("\n\n");
-
-// Inline script that runs before React hydration to avoid flash of wrong theme
-const initThemeScript = `(function(){try{var t=localStorage.getItem('gtw-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
 
 export default function RootLayout({
   children,

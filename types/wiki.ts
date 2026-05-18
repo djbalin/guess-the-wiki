@@ -1,7 +1,7 @@
 export type WikiMetaData = {
   title: string;
-  url: string;
-  id: number;
+  fullurl: string;
+  pageid: number;
 };
 
 export type WikiDocument = WikiMetaData & {
