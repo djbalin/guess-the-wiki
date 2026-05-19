@@ -1,9 +1,9 @@
-import { Suspense } from "react";
-import { getBaseUrl } from "@/lib/is_dev";
+// import { Suspense } from "react";
+// import { getBaseUrl } from "@/lib/is_dev";
 
 export default async function ResultsPage() {
-  const data = await fetch(`${getBaseUrl()}/api/results`);
-  const results = await data.json();
+  // const data = await fetch(`${getBaseUrl()}/api/results`);
+  // const results = await data.json();
 
   return <div>hey</div>;
 
