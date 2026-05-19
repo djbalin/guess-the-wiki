@@ -5,7 +5,7 @@ export default async function ResultsPage() {
   const data = await fetch(`${getBaseUrl()}/api/results`);
   const results = await data.json();
 
-  return null;
+  return <div>hey</div>;
 
   // console.log(results);
   // return (
