@@ -1,9 +1,12 @@
+"use client";
 import { GAME_DESCRIPTION } from "@/assets/strings";
 import GameStatusContextProvider from "@/contexts/GameStatusContext";
 import { useLanguageContext } from "@/contexts/LanguageContext";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const { languageCode } = useLanguageContext();
+  const router = useRouter();
   return (
     <GameStatusContextProvider>
       {/* Hero */}
@@ -43,6 +46,7 @@ export default function Dashboard() {
         >
           {GAME_DESCRIPTION[languageCode].body}
         </p>
+        <button onClick={() => router.push("/play")}>Play game!</button>
       </div>
       {/* <Game /> */}
     </GameStatusContextProvider>

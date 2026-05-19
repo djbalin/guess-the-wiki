@@ -72,7 +72,7 @@ export default function Header() {
       {/* Right controls */}
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {/* Theme toggle */}
-        <button
+        {/* <button
           onClick={toggleTheme}
           title={
             theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
@@ -98,7 +98,7 @@ export default function Header() {
           }
         >
           {theme === "dark" ? "☀️" : "🌙"}
-        </button>
+        </button> */}
 
         {/* Divider */}
         <div

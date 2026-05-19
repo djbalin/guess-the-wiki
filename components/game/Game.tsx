@@ -87,7 +87,6 @@ export default function Game({ wikiPages }: { wikiPages: WikiDocument[] }) {
   if (screen === "lobby") {
     return (
       <GameControls
-        setActiveAfterLoad={false}
         loadGame={async () => {
           handlePlayGame(wikiPages);
         }}

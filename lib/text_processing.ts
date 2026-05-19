@@ -87,5 +87,7 @@ export function censorText(
   //
   // This is buggy: It replaces occurrences of an input word if it forms a substring of another word, if e.g. "King" is to be censored, "Kingdom" becomes "###dom"
   const regEx = new RegExp(wordsToCensor.join("|"), "gi");
-  return rawText.replaceAll(regEx, "###");
+  return rawText
+    .replaceAll(regEx, "###")
+    .replaceAll(/###(?:\s+###)+/g, "###");
 }

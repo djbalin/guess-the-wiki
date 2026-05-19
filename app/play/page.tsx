@@ -8,14 +8,7 @@ import { useGameData } from "../hooks/useGameData";
 
 function PlayFallback() {
   return (
-    <div
-      style={{
-        maxWidth: 900,
-        margin: "0 auto",
-        padding: "24px 20px 80px",
-        color: "var(--text)",
-      }}
-    >
+    <div style={{ padding: "24px 20px", color: "var(--text)" }}>
       Loading…
     </div>
   );
@@ -28,8 +21,31 @@ export default function PlayPage() {
   return (
     <Suspense fallback={<PlayFallback />}>
       <GameStatusContextProvider>
-        <GameControls loadGame={loadGame} />
-        {isActive && <PlayContent dataState={dataState} />}
+        <div
+          style={{
+            display: "flex",
+            height: "calc(100vh - 52px)",
+            overflow: "hidden",
+          }}
+        >
+          {/* Left sidebar — game controls */}
+          <div
+            style={{
+              width: 300,
+              flexShrink: 0,
+              borderRight: "1px solid var(--border)",
+              overflowY: "auto",
+              padding: "20px 16px",
+            }}
+          >
+            <GameControls loadGame={loadGame} compact />
+          </div>
+
+          {/* Right — playing field */}
+          <div style={{ flex: 1, overflowY: "auto" }}>
+            {isActive && <PlayContent loadGame={loadGame} dataState={dataState} />}
+          </div>
+        </div>
       </GameStatusContextProvider>
     </Suspense>
   );

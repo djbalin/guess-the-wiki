@@ -19,14 +19,18 @@ const DIFFICULTIES: {
   extreme: { numPages: 5, snippetLength: 10 },
 } as const;
 
+const BTN_LIME =
+  "bg-[var(--lime)] text-[var(--limedark)] border-0 rounded-xl font-black tracking-[1px] uppercase cursor-pointer transition-all duration-200 shadow-[0_4px_28px_var(--limeglow)] hover:brightness-110 hover:-translate-y-px hover:shadow-[0_6px_36px_var(--limeglow)] active:translate-y-0 disabled:bg-[var(--surface2)] disabled:text-[var(--textdim)] disabled:shadow-none disabled:cursor-not-allowed";
+
 export default function GameControls({
   loadGame,
+  compact = false,
 }: {
   loadGame: () => Promise<void>;
+  compact?: boolean;
 }) {
   const { languageCode } = useLanguageContext();
   const [difficulty, setDifficulty] = useState<Difficulty>(DEFAULT_DIFF);
-
   const { setGameParams, gameParams } = useGameStore();
 
   function pickDifficulty(level: Difficulty) {
@@ -38,82 +42,33 @@ export default function GameControls({
     });
   }
 
-  async function handlePlay() {
-    await loadGame();
-  }
-
   const diffLabels = DIFFICULTY_DESCRIPTORS[languageCode];
-
-  const handleChangeNumPages = (newVal: number) => {
-    setGameParams({ ...gameParams, numPages: newVal });
-  };
-  const handleChangeSnippetLength = (newVal: number) => {
-    setGameParams({ ...gameParams, snippetLength: newVal });
-  };
+  const handleChangeNumPages = (v: number) => setGameParams({ ...gameParams, numPages: v });
+  const handleChangeSnippetLength = (v: number) =>
+    setGameParams({ ...gameParams, snippetLength: v });
 
   return (
     <div
-      className="fade-up"
-      style={{
-        maxWidth: 1200,
-        margin: "60px auto 0",
-        padding: "0 20px 80px",
-      }}
+      className={`animate-fade-up ${compact ? "pt-1 pb-4" : "max-w-[1200px] mx-auto mt-[60px] pb-20 px-5"}`}
     >
-      <div className="max-w-4xl mx-auto">
+      <div className={compact ? "" : "max-w-4xl mx-auto"}>
         {/* Settings card */}
         <div
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 18,
-            padding: 28,
-            display: "flex",
-            flexDirection: "column",
-            gap: 26,
-            maxWidth: 580,
-            margin: "0 auto",
-          }}
+          className={`bg-[var(--surface)] border border-[var(--border)] rounded-[18px] flex flex-col ${compact ? "p-5 gap-[18px]" : "p-7 gap-[26px] max-w-[580px] mx-auto"}`}
         >
           {/* Difficulty presets */}
           <div>
             <Label>{GAME_SETTINGS[languageCode].difficulty}</Label>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(4, 1fr)",
-                gap: 8,
-              }}
-            >
+            <div className={compact ? "flex flex-col gap-2" : "grid grid-cols-4 gap-2"}>
               {DIFFICULTY_LEVELS.map((level, i) => (
                 <button
                   key={level}
                   onClick={() => pickDifficulty(level)}
-                  style={{
-                    background:
-                      difficulty === level ? "var(--lime)" : "var(--surface2)",
-                    color:
-                      difficulty === level
-                        ? "var(--limedark)"
-                        : "var(--textdim)",
-                    border:
-                      difficulty === level
-                        ? "1px solid var(--lime)"
-                        : "1px solid var(--border)",
-                    borderRadius: 9,
-                    padding: "11px 4px",
-                    fontFamily: "var(--font-barlow-condensed), sans-serif",
-                    fontSize: 16,
-                    fontWeight: 900,
-                    letterSpacing: "0.5px",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                    transition: "all 0.15s",
-                    boxShadow:
-                      difficulty === level
-                        ? "0 2px 16px var(--limeglow)"
-                        : "none",
-                  }}
+                  className={`font-barlow font-black tracking-[0.5px] uppercase cursor-pointer transition-all duration-[150ms] rounded-[9px] px-1 ${compact ? "py-[9px] text-[14px]" : "py-[11px] text-[16px]"} ${
+                    difficulty === level
+                      ? "bg-[var(--lime)] text-[var(--limedark)] border border-[var(--lime)] shadow-[0_2px_16px_var(--limeglow)]"
+                      : "bg-[var(--surface2)] text-[var(--textdim)] border border-[var(--border)]"
+                  }`}
                 >
                   {diffLabels[i as Difficulties]}
                 </button>
@@ -122,9 +77,7 @@ export default function GameControls({
           </div>
 
           {/* Fine-tune sliders */}
-          <div
-            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22 }}
-          >
+          <div className="flex flex-col gap-4">
             <Slider
               label={GAME_SETTINGS[languageCode].numPages}
               min={2}
@@ -146,31 +99,13 @@ export default function GameControls({
 
         {/* Play CTA */}
         <button
-          onClick={handlePlay}
-          className="btn-lime"
-          style={{
-            marginTop: 16,
-            width: "100%",
-            padding: "18px 0",
-            borderRadius: 14,
-            fontSize: 21,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 10,
-          }}
+          onClick={() => loadGame()}
+          className={`${BTN_LIME} ${compact ? "mt-3 py-[14px] text-[18px]" : "mt-4 py-[18px] text-[21px]"} w-full flex items-center justify-center gap-[10px] rounded-[14px]`}
         >
           {GAME_SETTINGS[languageCode].play}
         </button>
       </div>
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: 18,
-          fontSize: 12.5,
-          color: "var(--textfaint)",
-        }}
-      >
+      <p className="text-center mt-[14px] text-[12px] text-[var(--textfaint)]">
         {gameParams.numPages} random Wikipedia articles ·{" "}
         {gameParams.snippetLength} words per snippet
       </p>
@@ -180,17 +115,7 @@ export default function GameControls({
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        fontFamily: "var(--font-barlow-condensed), sans-serif",
-        fontSize: 13,
-        fontWeight: 700,
-        letterSpacing: "0.1em",
-        textTransform: "uppercase",
-        color: "var(--textdim)",
-        marginBottom: 10,
-      }}
-    >
+    <div className="font-barlow text-[13px] font-bold tracking-[0.1em] uppercase text-[var(--textdim)] mb-[10px]">
       {children}
     </div>
   );
@@ -213,24 +138,9 @@ function Slider({
 }) {
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "baseline",
-          marginBottom: 10,
-        }}
-      >
+      <div className="flex justify-between items-baseline mb-[10px]">
         <Label>{label}</Label>
-        <span
-          style={{
-            fontFamily: "var(--font-barlow-condensed), sans-serif",
-            fontSize: 28,
-            fontWeight: 900,
-            color: "var(--lime)",
-            lineHeight: 1,
-          }}
-        >
+        <span className="font-barlow text-[28px] font-black text-[var(--lime)] leading-none">
           {value}
         </span>
       </div>
@@ -241,7 +151,7 @@ function Slider({
         step={step}
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
-        style={{ width: "100%" }}
+        className="w-full"
       />
     </div>
   );

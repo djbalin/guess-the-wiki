@@ -1,8 +1,27 @@
 import { client } from "@/lib/api/client";
 import { GetPlayResult } from "@/lib/api/play";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useGameStore } from "../gameStore";
 import { LanguageCode } from "@/types/language";
+
+function gameParamsToSearchParams(params: {
+  lang: LanguageCode;
+  numPages: number;
+  snippetLength: number;
+  seed: number;
+  ids: string[] | undefined;
+}): URLSearchParams {
+  const search = new URLSearchParams();
+  search.set("lang", params.lang);
+  search.set("numPages", String(params.numPages));
+  search.set("snippetLength", String(params.snippetLength));
+  search.set("seed", String(params.seed));
+  if (params.ids?.length) {
+    search.set("ids", params.ids.join(","));
+  }
+  return search;
+}
 
 const validateRequiredParams = (args: {
   numPages: number | null;
@@ -58,6 +77,8 @@ const initialState: FetchState = {
 
 export function useGameData() {
   const [dataState, setDataState] = useState<FetchState>(initialState);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { gameParams, setIsActive } = useGameStore();
 
@@ -111,6 +132,10 @@ export function useGameData() {
       data: json,
       status: "ready",
     });
+
+    const query = gameParamsToSearchParams(gameParams).toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+
     console.log("GAME LOADED, status: ");
     console.log(json);
   }

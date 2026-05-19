@@ -40,7 +40,7 @@ export const metadata = {
 
 // Generate CSS from theme.ts — single source of truth for all color tokens
 const themeCSS = [
-  tokensToCSS(":root, [data-theme='dark']", darkTokens),
+  tokensToCSS(":root, [data-theme='dark']", lightTokens),
   tokensToCSS("[data-theme='light']", lightTokens),
 ].join("\n\n");
 

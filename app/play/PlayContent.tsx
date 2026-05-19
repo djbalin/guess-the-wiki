@@ -7,8 +7,10 @@ import type { FetchState } from "../hooks/useGameData";
 
 export default function PlayContent({
   dataState,
+  loadGame,
 }: {
   dataState: FetchState;
+  loadGame: () => void;
 }) {
   const context = useGameStatusContext();
 
@@ -64,6 +66,7 @@ export default function PlayContent({
       wikiPages={dataState.data.wikiPages}
       onBack={() => console.log("back")}
       onMakeGuess={handleMakeGuess}
+      loadGame={loadGame}
     />
   );
 

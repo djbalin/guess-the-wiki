@@ -14,7 +14,6 @@ type Params = {
 type State = {
   setGameParams: (params: Params) => void;
   setIsActive: (isActive: boolean) => void;
-  beginNewGame: () => void;
   gameParams: Params;
   isActive: boolean;
 };
@@ -37,9 +36,4 @@ export const useGameStore = create<State>()((set) => ({
     console.log(newParams);
     return set({ gameParams: newParams });
   },
-  beginNewGame: () =>
-    set((state) => ({
-      gameParams: { ...state.gameParams, seed: Math.random() },
-      isActive: true,
-    })),
 }));

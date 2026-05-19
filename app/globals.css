@@ -7,8 +7,6 @@
  * from app/theme.ts — no color values live here.
  */
 
-*, *::before, *::after { box-sizing: border-box; }
-
 body {
   background-color: var(--bg);
   background-image: radial-gradient(
@@ -21,32 +19,16 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-
-/* ── Animations ────────────────────────────────────────────────────────── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+::-webkit-scrollbar {
+  width: 5px;
 }
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-7px); }
-  40%       { transform: translateX(7px); }
-  60%       { transform: translateX(-4px); }
-  80%       { transform: translateX(4px); }
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-@keyframes pop {
-  0%   { transform: scale(0.9); opacity: 0; }
-  65%  { transform: scale(1.04); }
-  100% { transform: scale(1);   opacity: 1; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.fade-up { animation: fadeUp 0.45s cubic-bezier(0.16,1,0.3,1) both; }
-.pop     { animation: pop   0.35s cubic-bezier(0.16,1,0.3,1) both; }
-.shake   { animation: shake 0.4s ease; }
 
 /* ── Range input ───────────────────────────────────────────────────────── */
 input[type="range"] {
@@ -60,110 +42,14 @@ input[type="range"] {
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px; height: 16px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--lime);
   cursor: pointer;
   transition: transform 0.12s;
   box-shadow: 0 0 0 3px var(--limeglow);
 }
-input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-/* ── Censor block ──────────────────────────────────────────────────────── */
-.censor {
-  display: inline-block;
-  background: var(--text);
-  color: transparent;
-  border-radius: 3px;
-  padding: 1px 3px;
-  margin: 0 1px;
-  letter-spacing: 0.08em;
-  vertical-align: baseline;
-  user-select: none;
-}
-
-/* ── Title pills ───────────────────────────────────────────────────────── */
-.title-pill {
-  list-style: none;
-  padding: 8px 18px;
-  border-radius: 99px;
-  font-size: 14px;
-  font-weight: 700;
-  user-select: none;
-  transition: opacity 0.2s, transform 0.15s, box-shadow 0.15s;
-  white-space: nowrap;
-  cursor: grab;
-  background: var(--blue);
-  color: white;
-  box-shadow: 0 2px 12px var(--blueglow);
-}
-.title-pill:active { cursor: grabbing; }
-.title-pill.used {
-  opacity: 0.28;
-  cursor: default;
-  pointer-events: none;
-  background: var(--surface2) !important;
-  color: var(--textdim) !important;
-  box-shadow: none !important;
-}
-.title-pill.selected {
-  transform: scale(1.08);
-  background: var(--blue-selected) !important;
-  box-shadow: 0 0 0 2px white, 0 0 0 5px var(--blue), 0 4px 20px var(--blueglow) !important;
-}
-.title-pill.disabled { pointer-events: none; }
-
-/* ── Snippet cards ─────────────────────────────────────────────────────── */
-.snippet-card {
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  overflow: hidden;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-}
-.snippet-card.dragover   { border-color: var(--blue);  box-shadow: 0 0 0 3px var(--blueglow); background: var(--bluebg); }
-.snippet-card.assigned   { border-color: var(--blue-border); }
-.snippet-card.result-ok  { border-color: var(--green); background: var(--greenbg); box-shadow: 0 0 0 2px var(--greenglow); }
-.snippet-card.result-bad { border-color: var(--red);   background: var(--redbg);  box-shadow: 0 0 0 2px var(--redglow); }
-
-/* ── Drop slot ─────────────────────────────────────────────────────────── */
-.drop-slot {
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  background: var(--slot-bg);
-  transition: background 0.2s;
-}
-.snippet-card.dragover   .drop-slot { background: var(--drop); }
-.snippet-card.assigned   .drop-slot { background: transparent; border-bottom-color: var(--blueglow); }
-.snippet-card.result-ok  .drop-slot { background: var(--slot-ok-bg);  border-bottom-color: var(--green-border); }
-.snippet-card.result-bad .drop-slot { background: var(--slot-bad-bg); border-bottom-color: var(--red-border); }
-
-/* ── Lime CTA button ───────────────────────────────────────────────────── */
-.btn-lime {
-  background: var(--lime);
-  color: var(--limedark);
-  border: none;
-  border-radius: 12px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 4px 28px var(--limeglow);
-}
-.btn-lime:hover  { filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 6px 36px var(--limeglow); }
-.btn-lime:active { transform: translateY(0); }
-.btn-lime:disabled {
-  background: var(--surface2);
-  color: var(--textdim);
-  box-shadow: none;
-  cursor: not-allowed;
-  filter: none;
-  transform: none;
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }

@@ -2,7 +2,6 @@
 import { useMemo, useRef, useState } from "react";
 import SnippetContent from "./SnippetContent";
 import { WikiDocument } from "@/types/wiki";
-import { useRouter, useSearchParams } from "next/navigation";
 
 function shuffleArray<T>(arr: Array<T>, accumulator: Array<T>): Array<T> {
   if (arr.length === 0) return accumulator;
@@ -19,16 +18,39 @@ function produceRandomArrayIndices(length: number): number[] {
   );
 }
 
+const BTN_LIME =
+  "bg-[var(--lime)] text-[var(--limedark)] rounded-xl font-bold uppercase cursor-pointer disabled:bg-[var(--surface2)] disabled:text-[var(--textdim)]";
+
+const PILL_BASE =
+  "list-none px-[18px] py-2 rounded-full text-[22px] font-bold select-none whitespace-nowrap transition-[opacity,transform,box-shadow] duration-200 active:cursor-grabbing";
+
+function getPillClass(used: boolean, selected: boolean, phase: string) {
+  if (used)
+    return `${PILL_BASE} opacity-[0.28] cursor-default pointer-events-none bg-[var(--surface2)] text-[var(--textdim)]`;
+  if (selected)
+    return `${PILL_BASE} scale-[1.08] cursor-grab bg-[var(--blue-selected)] text-white shadow-[0_0_0_2px_white,0_0_0_5px_var(--blue),0_4px_20px_var(--blueglow)]`;
+  const normal = `${PILL_BASE} cursor-grab bg-[var(--blue)] text-white shadow-[0_2px_12px_var(--blueglow)]`;
+  return phase === "result" ? `${normal} pointer-events-none` : normal;
+}
+
+const GRID_COLS: Record<number, string> = {
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+  4: "grid-cols-4",
+};
+
 interface Props {
   wikiPages: WikiDocument[];
   onMakeGuess: (isVictory: boolean) => void;
   onBack: () => void;
+  loadGame: () => void;
 }
 
 export default function PlayingField({
   wikiPages,
   onMakeGuess,
   onBack,
+  loadGame,
 }: Props) {
   const [assignments, setAssignments] = useState<{
     [snippetId: string]: string;
@@ -43,11 +65,6 @@ export default function PlayingField({
   const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
   const [isDraggingActive, setIsDraggingActive] = useState(false);
 
-  const searchParams = useSearchParams();
-
-  const params = new URLSearchParams(searchParams.toString());
-  const router = useRouter();
-
   const randomizerArray = useMemo(
     () => produceRandomArrayIndices(wikiPages.length),
     [wikiPages],
@@ -55,7 +72,6 @@ export default function PlayingField({
 
   const currentlyDragging = useRef<string | null>(null);
 
-  // Build deterministic ID maps from wikiPages (stable across renders while pages don't change)
   const contentHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
   const titleHtmlIdsAndPages: { [key: string]: WikiDocument } = {};
   wikiPages.forEach((page, i) => {
@@ -128,9 +144,7 @@ export default function PlayingField({
       assign(snippetId, selectedTitleId);
       return;
     }
-    if (assignments[snippetId]) {
-      unassign(snippetId);
-    }
+    if (assignments[snippetId]) unassign(snippetId);
   }
 
   function handleSubmit() {
@@ -156,190 +170,62 @@ export default function PlayingField({
     setSelectedTitleId(null);
     setDragoverSnippet(null);
     setIsDraggingActive(false);
-    params.delete("seed");
-
-    router.replace(`?${params.toString()}`);
   }
 
   const cols = Math.min(wikiPages.length, 4);
 
   return (
-    <div
-      className="fade-up"
-      style={{ padding: "20px 28px 48px", maxWidth: 1400, margin: "0 auto" }}
-    >
+    <div className="animate-fade-up px-7 py-5 pb-12 max-w-[1400px] mx-auto">
       {/* Titles bar */}
       <div
-        style={{
-          display: "flex",
-          alignItems: "stretch",
-          gap: 12,
-          marginBottom: 18,
-        }}
-        className={shaking ? "shake" : ""}
+        className={`flex items-stretch gap-3 mb-[18px] ${shaking ? "animate-shake" : ""}`}
       >
-        <div
-          style={{
-            flex: 1,
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: 12,
-            padding: "10px 16px",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            flexWrap: "wrap",
-            minHeight: 56,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "var(--font-barlow-condensed), sans-serif",
-              fontSize: 13,
-              fontWeight: 900,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--textdim)",
-              flexShrink: 0,
-              marginRight: 2,
-            }}
-          >
+        <div className="flex-1 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-[10px] flex items-center gap-[10px] flex-wrap min-h-14">
+          <span className="font-barlow text-[13px] font-black tracking-[0.12em] uppercase text-[var(--textdim)] shrink-0 mr-0.5">
             Titles
           </span>
 
-          {Object.entries(titleHtmlIdsAndPages).map(([titleId, page]) => {
-            const used = usedTitleIds.has(titleId);
-            const selected = selectedTitleId === titleId;
-            return (
-              <li
-                key={titleId}
-                draggable={!used && phase !== "result"}
-                onDragStart={(e) => handleDragStart(e, titleId)}
-                onDragEnd={handleDragEnd}
-                onClick={() => handleClickTitle(titleId)}
-                className={[
-                  "title-pill",
-                  used ? "used" : "",
-                  selected ? "selected" : "",
-                  phase === "result" ? "disabled" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {page.title}
-              </li>
-            );
-          })}
+          <div className="flex flex-row justify-around w-full xl:mx-20">
+            {Object.entries(titleHtmlIdsAndPages).map(([titleId, page]) => {
+              const used = usedTitleIds.has(titleId);
+              const selected = selectedTitleId === titleId;
+              return (
+                <li
+                  key={titleId}
+                  draggable={!used && phase !== "result"}
+                  onDragStart={(e) => handleDragStart(e, titleId)}
+                  onDragEnd={handleDragEnd}
+                  onClick={() => handleClickTitle(titleId)}
+                  className={getPillClass(used, selected, phase)}
+                >
+                  {page.title}
+                </li>
+              );
+            })}
+          </div>
 
           <span
-            style={{
-              marginLeft: "auto",
-              flexShrink: 0,
-              fontFamily: "var(--font-barlow-condensed), sans-serif",
-              fontSize: 15,
-              fontWeight: 900,
-              color:
-                numPlaced === wikiPages.length
-                  ? "var(--lime)"
-                  : "var(--textdim)",
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              textShadow:
-                numPlaced === wikiPages.length
-                  ? "0 0 12px var(--limeglow)"
-                  : "none",
-              transition: "color 0.3s, text-shadow 0.3s",
-            }}
+            className={`ml-auto shrink-0 font-barlow text-[15px] font-black tracking-[0.05em] uppercase transition-[color,text-shadow] duration-300 ${numPlaced === wikiPages.length ? "text-[var(--lime)] [text-shadow:0_0_12px_var(--limeglow)]" : "text-[var(--textdim)]"}`}
           >
             {numPlaced}/{wikiPages.length} placed
           </span>
-        </div>
-
-        {/* Action button */}
-        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
-          {phase === "playing" ? (
-            <button
-              onClick={handleSubmit}
-              disabled={!isComplete}
-              className="btn-lime"
-              style={{
-                padding: "0 26px",
-                height: "100%",
-                borderRadius: 10,
-                fontSize: 19,
-              }}
-            >
-              Submit →
-            </button>
-          ) : isVictory ? (
-            <button
-              onClick={handleReset}
-              className="btn-lime"
-              style={{
-                padding: "0 22px",
-                height: "100%",
-                borderRadius: 10,
-                fontSize: 17,
-              }}
-            >
-              Play Again
-            </button>
-          ) : (
-            <button
-              onClick={handleReset}
-              style={{
-                background: "var(--surface2)",
-                color: "var(--text)",
-                border: "1px solid var(--border)",
-                borderRadius: 10,
-                padding: "0 20px",
-                height: "100%",
-                fontSize: 15,
-                fontWeight: 600,
-                cursor: "pointer",
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                whiteSpace: "nowrap",
-              }}
-            >
-              ↩ Try Again
-            </button>
-          )}
         </div>
       </div>
 
       {/* Result banner */}
       {phase === "result" && (
         <div
-          className="pop"
-          style={{
-            background: isVictory ? "var(--greenbg)" : "var(--redbg)",
-            border: `1px solid ${isVictory ? "var(--green)" : "var(--red)"}`,
-            borderRadius: 10,
-            padding: "14px 20px",
-            marginBottom: 16,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 16,
-          }}
+          className={`animate-pop rounded-[10px] px-5 py-[14px] mb-4 flex items-center justify-between gap-4 border ${isVictory ? "bg-[var(--greenbg)] border-[var(--green)]" : "bg-[var(--redbg)] border-[var(--red)]"}`}
         >
           <div>
             <div
-              style={{
-                fontFamily: "var(--font-barlow-condensed), sans-serif",
-                fontWeight: 900,
-                fontSize: 22,
-                letterSpacing: "0.5px",
-                textTransform: "uppercase",
-                color: isVictory ? "var(--green)" : "var(--red)",
-                marginBottom: 4,
-              }}
+              className={`font-barlow font-black text-[22px] tracking-[0.5px] uppercase mb-1 ${isVictory ? "text-[var(--green)]" : "text-[var(--red)]"}`}
             >
               {isVictory
                 ? "🎉 Perfect Score! All articles matched."
                 : "❌ Not quite — some matches were wrong!"}
             </div>
-            <div style={{ fontSize: 13.5, color: "var(--textdim)" }}>
+            <div className="text-[13.5px] text-[var(--textdim)]">
               {isVictory
                 ? `You matched all ${wikiPages.length} Wikipedia articles correctly.`
                 : "Incorrect cards are outlined in red. Reveal the solution below to check answers."}
@@ -348,34 +234,16 @@ export default function PlayingField({
           {!isVictory && (
             <button
               onClick={handleReset}
-              style={{
-                background: "var(--surface2)",
-                color: "var(--text)",
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-                padding: "8px 18px",
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                whiteSpace: "nowrap",
-                flexShrink: 0,
-              }}
+              className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-lg px-[18px] py-2 text-[13px] font-semibold cursor-pointer whitespace-nowrap shrink-0"
             >
-              Try Again
+              Try Same Game Again
             </button>
           )}
         </div>
       )}
 
       {/* Snippet grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
-          gap: 10,
-        }}
-      >
+      <div className={`grid ${GRID_COLS[cols] ?? "grid-cols-4"} gap-[10px]`}>
         {randomizedContentHtmlIds.map((snippetId, idx) => {
           const page = contentHtmlIdsAndPages[snippetId];
           const assignedTitleId = assignments[snippetId];
@@ -386,12 +254,6 @@ export default function PlayingField({
             phase === "result" ? (cardResults[snippetId] ?? null) : null;
           const isOver = dragoverSnippet === snippetId;
 
-          let cardClass = "snippet-card";
-          if (isOver && hasIncoming) cardClass += " dragover";
-          else if (result === true) cardClass += " result-ok";
-          else if (result === false) cardClass += " result-bad";
-          else if (assignedTitle) cardClass += " assigned";
-
           return (
             <SnippetContent
               key={snippetId}
@@ -399,7 +261,6 @@ export default function PlayingField({
               wikiPageObject={page}
               assignedTitle={assignedTitle}
               result={result}
-              cardClass={cardClass}
               isDragOver={isOver && hasIncoming}
               hasIncoming={hasIncoming}
               showSol={showSolution}
@@ -424,40 +285,49 @@ export default function PlayingField({
       </div>
 
       {/* Bottom bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginTop: 16,
-        }}
-      >
+      <div className="flex justify-between items-center mt-4">
         <button
           onClick={onBack}
-          style={{
-            background: "transparent",
-            color: "var(--textdim)",
-            border: "none",
-            fontSize: 13.5,
-            cursor: "pointer",
-            fontFamily: "var(--font-dm-sans), sans-serif",
-          }}
+          className="bg-transparent text-[var(--textdim)] border-0 text-[13.5px] cursor-pointer"
         >
           ← New game
         </button>
+
+        <div className="flex items-center shrink-0">
+          {phase === "playing" ? (
+            <button
+              onClick={handleSubmit}
+              disabled={!isComplete}
+              className={`${BTN_LIME} px-[26px] h-full rounded-[10px] text-[19px]`}
+            >
+              Submit →
+            </button>
+          ) : (
+            <div className="gap-4 flex flex-row">
+              <button
+                onClick={loadGame}
+                className={`${BTN_LIME} px-[22px] h-full rounded-[10px] text-[17px]`}
+              >
+                Play New Game
+              </button>
+
+              {!isVictory && (
+                <>
+                  <button
+                    onClick={handleReset}
+                    className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-[10px] px-5 h-full text-[15px] font-semibold cursor-pointer whitespace-nowrap"
+                  >
+                    ↩ Try Again
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
         <button
           onClick={() => setShowSolution((s) => !s)}
-          style={{
-            background: showSolution ? "var(--surface2)" : "transparent",
-            color: showSolution ? "var(--text)" : "var(--textdim)",
-            border: "1px solid var(--border)",
-            borderRadius: 8,
-            padding: "7px 16px",
-            fontSize: 13,
-            cursor: "pointer",
-            fontFamily: "var(--font-dm-sans), sans-serif",
-            transition: "all 0.15s",
-          }}
+          className={`border border-[var(--border)] rounded-lg px-4 py-[7px] text-[13px] cursor-pointer transition-all duration-[150ms] ${showSolution ? "bg-[var(--surface2)] text-[var(--text)]" : "bg-transparent text-[var(--textdim)]"}`}
         >
           {showSolution ? "🙈 Hide solution" : "👁 Reveal solution"}
         </button>
