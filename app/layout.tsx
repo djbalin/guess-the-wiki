@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { darkTokens, lightTokens, tokensToCSS } from "./theme";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
+import { getBaseUrl } from "@/lib/is_dev";
 
 const barlowCondensed = Barlow_Condensed({
   weight: ["700", "900"],
@@ -28,12 +29,8 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
 export const metadata = {
-  metadataBase: new URL(defaultUrl),
+  metadataBase: new URL(getBaseUrl()),
   title: "Guess the Wiki",
   description: "Match Wikipedia article titles to their snippets!",
 };

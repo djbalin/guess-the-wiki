@@ -182,7 +182,7 @@ export default function PlayContent({
       revealSolution: isVictory,
     });
 
-    fetch("http://localhost:3000/api/results", {
+    fetch("/api/results", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
