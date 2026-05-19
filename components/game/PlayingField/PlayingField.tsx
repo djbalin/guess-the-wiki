@@ -22,7 +22,7 @@ const BTN_LIME =
   "bg-[var(--lime)] text-[var(--limedark)] rounded-xl font-bold uppercase cursor-pointer disabled:bg-[var(--surface2)] disabled:text-[var(--textdim)]";
 
 const PILL_BASE =
-  "list-none px-[18px] py-2 rounded-full text-[22px] font-bold select-none whitespace-nowrap transition-[opacity,transform,box-shadow] duration-200 active:cursor-grabbing";
+  "list-none px-3 sm:px-[18px] py-1.5 sm:py-2 rounded-full text-[14px] sm:text-[22px] font-bold select-none text-center leading-tight max-w-full break-words sm:whitespace-nowrap transition-[opacity,transform,box-shadow] duration-200 active:cursor-grabbing";
 
 function getPillClass(used: boolean, selected: boolean, phase: string) {
   if (used)
@@ -34,9 +34,9 @@ function getPillClass(used: boolean, selected: boolean, phase: string) {
 }
 
 const GRID_COLS: Record<number, string> = {
-  2: "grid-cols-2",
-  3: "grid-cols-3",
-  4: "grid-cols-4",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+  4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
 };
 
 interface Props {
@@ -175,17 +175,17 @@ export default function PlayingField({
   const cols = Math.min(wikiPages.length, 4);
 
   return (
-    <div className="animate-fade-up px-7 py-5 pb-12 max-w-[1400px] mx-auto">
+    <div className="animate-fade-up px-3 sm:px-7 py-3 sm:py-5 pb-12 max-w-[1400px] mx-auto">
       {/* Titles bar */}
       <div
-        className={`flex items-stretch gap-3 mb-[18px] ${shaking ? "animate-shake" : ""}`}
+        className={`flex items-stretch gap-3 mb-3 sm:mb-[18px] sticky top-[100px] md:static md:top-auto z-20 ${shaking ? "animate-shake" : ""}`}
       >
-        <div className="flex-1 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-4 py-[10px] flex items-center gap-[10px] flex-wrap min-h-14">
-          <span className="font-barlow text-[13px] font-black tracking-[0.12em] uppercase text-[var(--textdim)] shrink-0 mr-0.5">
+        <div className="flex-1 bg-[var(--surface)] border border-[var(--border)] rounded-xl px-3 sm:px-4 py-2 sm:py-[10px] flex items-center gap-2 sm:gap-[10px] flex-wrap min-h-14 shadow-lg md:shadow-none">
+          <span className="font-barlow text-[11px] sm:text-[13px] font-black tracking-[0.12em] uppercase text-[var(--textdim)] shrink-0 mr-0.5">
             Titles
           </span>
 
-          <div className="flex flex-row justify-around w-full xl:mx-20">
+          <div className="flex flex-row flex-wrap justify-center gap-2 w-full xl:mx-20">
             {Object.entries(titleHtmlIdsAndPages).map(([titleId, page]) => {
               const used = usedTitleIds.has(titleId);
               const selected = selectedTitleId === titleId;
@@ -205,7 +205,7 @@ export default function PlayingField({
           </div>
 
           <span
-            className={`ml-auto shrink-0 font-barlow text-[15px] font-black tracking-[0.05em] uppercase transition-[color,text-shadow] duration-300 ${numPlaced === wikiPages.length ? "text-[var(--lime)] [text-shadow:0_0_12px_var(--limeglow)]" : "text-[var(--textdim)]"}`}
+            className={`mx-auto sm:ml-auto sm:mr-0 shrink-0 font-barlow text-[12px] sm:text-[15px] font-black tracking-[0.05em] uppercase transition-[color,text-shadow] duration-300 ${numPlaced === wikiPages.length ? "text-[var(--lime)] [text-shadow:0_0_12px_var(--limeglow)]" : "text-[var(--textdim)]"}`}
           >
             {numPlaced}/{wikiPages.length} placed
           </span>
@@ -215,17 +215,17 @@ export default function PlayingField({
       {/* Result banner */}
       {phase === "result" && (
         <div
-          className={`animate-pop rounded-[10px] px-5 py-[14px] mb-4 flex items-center justify-between gap-4 border ${isVictory ? "bg-[var(--greenbg)] border-[var(--green)]" : "bg-[var(--redbg)] border-[var(--red)]"}`}
+          className={`animate-pop rounded-[10px] px-4 sm:px-5 py-3 sm:py-[14px] mb-3 sm:mb-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 border ${isVictory ? "bg-[var(--greenbg)] border-[var(--green)]" : "bg-[var(--redbg)] border-[var(--red)]"}`}
         >
           <div>
             <div
-              className={`font-barlow font-black text-[22px] tracking-[0.5px] uppercase mb-1 ${isVictory ? "text-[var(--green)]" : "text-[var(--red)]"}`}
+              className={`font-barlow font-black text-[17px] sm:text-[22px] leading-tight tracking-[0.5px] uppercase mb-1 ${isVictory ? "text-[var(--green)]" : "text-[var(--red)]"}`}
             >
               {isVictory
                 ? "🎉 Perfect Score! All articles matched."
                 : "❌ Not quite — some matches were wrong!"}
             </div>
-            <div className="text-[13.5px] text-[var(--textdim)]">
+            <div className="text-[12.5px] sm:text-[13.5px] text-[var(--textdim)]">
               {isVictory
                 ? `You matched all ${wikiPages.length} Wikipedia articles correctly.`
                 : "Incorrect cards are outlined in red. Reveal the solution below to check answers."}
@@ -234,7 +234,7 @@ export default function PlayingField({
           {!isVictory && (
             <button
               onClick={handleReset}
-              className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-lg px-[18px] py-2 text-[13px] font-semibold cursor-pointer whitespace-nowrap shrink-0"
+              className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-lg px-[18px] py-2 text-[13px] font-semibold cursor-pointer whitespace-nowrap shrink-0 self-start sm:self-auto"
             >
               Try Same Game Again
             </button>
@@ -243,7 +243,7 @@ export default function PlayingField({
       )}
 
       {/* Snippet grid */}
-      <div className={`grid ${GRID_COLS[cols] ?? "grid-cols-4"} gap-[10px]`}>
+      <div className={`grid ${GRID_COLS[cols] ?? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"} gap-[10px]`}>
         {randomizedContentHtmlIds.map((snippetId, idx) => {
           const page = contentHtmlIdsAndPages[snippetId];
           const assignedTitleId = assignments[snippetId];
@@ -285,49 +285,49 @@ export default function PlayingField({
       </div>
 
       {/* Bottom bar */}
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={onBack}
-          className="bg-transparent text-[var(--textdim)] border-0 text-[13.5px] cursor-pointer"
-        >
-          ← New game
-        </button>
-
-        <div className="flex items-center shrink-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4 gap-3 sm:gap-2">
+        {/* Primary actions (Submit / Play new / Try again) — shown first on mobile */}
+        <div className="order-1 sm:order-2 flex items-center justify-center shrink-0">
           {phase === "playing" ? (
             <button
               onClick={handleSubmit}
               disabled={!isComplete}
-              className={`${BTN_LIME} px-[26px] h-full rounded-[10px] text-[19px]`}
+              className={`${BTN_LIME} w-full sm:w-auto px-6 sm:px-[26px] py-3 sm:py-2 rounded-[10px] text-[18px] sm:text-[19px]`}
             >
               Submit →
             </button>
           ) : (
-            <div className="gap-4 flex flex-row">
+            <div className="gap-3 sm:gap-4 flex flex-col sm:flex-row w-full sm:w-auto">
               <button
                 onClick={loadGame}
-                className={`${BTN_LIME} px-[22px] h-full rounded-[10px] text-[17px]`}
+                className={`${BTN_LIME} px-5 sm:px-[22px] py-3 sm:py-2 rounded-[10px] text-[16px] sm:text-[17px]`}
               >
                 Play New Game
               </button>
 
               {!isVictory && (
-                <>
-                  <button
-                    onClick={handleReset}
-                    className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-[10px] px-5 h-full text-[15px] font-semibold cursor-pointer whitespace-nowrap"
-                  >
-                    ↩ Try Again
-                  </button>
-                </>
+                <button
+                  onClick={handleReset}
+                  className="bg-[var(--surface2)] text-[var(--text)] border border-[var(--border)] rounded-[10px] px-5 py-3 sm:py-2 text-[14px] sm:text-[15px] font-semibold cursor-pointer whitespace-nowrap"
+                >
+                  ↩ Try Again
+                </button>
               )}
             </div>
           )}
         </div>
 
+        {/* Secondary actions */}
+        <button
+          onClick={onBack}
+          className="order-3 sm:order-1 bg-transparent text-[var(--textdim)] border-0 text-[13.5px] cursor-pointer hidden sm:inline-block"
+        >
+          ← New game
+        </button>
+
         <button
           onClick={() => setShowSolution((s) => !s)}
-          className={`border border-[var(--border)] rounded-lg px-4 py-[7px] text-[13px] cursor-pointer transition-all duration-[150ms] ${showSolution ? "bg-[var(--surface2)] text-[var(--text)]" : "bg-transparent text-[var(--textdim)]"}`}
+          className={`order-2 sm:order-3 border border-[var(--border)] rounded-lg px-4 py-2 sm:py-[7px] text-[13px] cursor-pointer transition-all duration-[150ms] self-center sm:self-auto ${showSolution ? "bg-[var(--surface2)] text-[var(--text)]" : "bg-transparent text-[var(--textdim)]"}`}
         >
           {showSolution ? "🙈 Hide solution" : "👁 Reveal solution"}
         </button>

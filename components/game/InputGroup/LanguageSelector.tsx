@@ -33,7 +33,7 @@ export default function LanguageSelector() {
   }
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-0.5 sm:gap-1">
       {Object.entries(flagComponents).map(([code, Flag]) => {
         const languageCode = code as LanguageCode;
         const isActive = activeLanguageCode === languageCode;
@@ -47,13 +47,13 @@ export default function LanguageSelector() {
               storeLanguageSettings(languageCode);
             }}
             title={`Switch language to ${languageCode.toUpperCase()}`}
-            className={`rounded-md border p-1 transition-transform duration-150 ${
+            className={`rounded-md border p-0.5 sm:p-1 transition-transform duration-150 ${
               isActive
                 ? "scale-110 border-black/20"
                 : "border-transparent hover:border-black/15 hover:bg-black/5"
             }`}
           >
-            <Flag className="block h-4 w-8 rounded-[2px]" />
+            <Flag className="block h-3 w-5 sm:h-4 sm:w-8 rounded-[2px]" />
           </button>
         );
       })}

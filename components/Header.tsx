@@ -2,7 +2,7 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "./game/InputGroup/LanguageSelector";
-import { UserButton } from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -10,28 +10,17 @@ export default function Header() {
 
   return (
     <header
+      className="sticky top-0 z-[200] flex items-center justify-between px-3 sm:px-7"
       style={{
         background: "var(--header-bg)",
         borderBottom: "1px solid var(--border)",
         height: 52,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 28px",
-        position: "sticky",
-        top: 0,
-        zIndex: 200,
       }}
     >
       {/* Logo */}
       <div
         onClick={() => router.push("/")}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 11,
-          cursor: "pointer",
-        }}
+        className="flex items-center gap-2 sm:gap-[11px] cursor-pointer min-w-0"
       >
         <div
           style={{
@@ -56,6 +45,7 @@ export default function Header() {
           W?
         </div>
         <span
+          className="hidden sm:inline truncate"
           style={{
             fontFamily: "var(--font-barlow-condensed), sans-serif",
             fontSize: 21,
@@ -70,7 +60,7 @@ export default function Header() {
       </div>
 
       {/* Right controls */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div className="flex items-center gap-2 shrink-0">
         {/* Theme toggle */}
         {/* <button
           onClick={toggleTheme}
@@ -109,8 +99,17 @@ export default function Header() {
             flexShrink: 0,
           }}
         />
-        <button onClick={() => router.push("/sign-in")}>Sign In</button>
-        <UserButton showName={true}></UserButton>
+        <Show when="signed-out">
+          <button
+            onClick={() => router.push("/sign-in")}
+            className="bg-green-600 text-white rounded-full font-medium text-sm sm:text-base h-6   px-4 sm:px-5 cursor-pointer"
+          >
+            Sign In
+          </button>
+        </Show>
+        <Show when="signed-in">
+          <UserButton showName={true} />
+        </Show>
 
         {/* Language selector */}
         <LanguageSelector />

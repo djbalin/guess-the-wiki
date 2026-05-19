@@ -83,7 +83,7 @@ export const darkTokens: ThemeTokens = {
 };
 
 export const lightTokens: ThemeTokens = {
-  bg: "oklch(94% 0.022 18)",
+  bg: "rgb(252 165 165 / 0.7)",
   surface: "oklch(98% 0.010 18)",
   surface2: "oklch(91% 0.026 18)",
   surface3: "oklch(86% 0.032 18)",

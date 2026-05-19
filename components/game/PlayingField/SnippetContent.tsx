@@ -17,12 +17,12 @@ function getCardClass(
   if (result === false)
     return `${CARD_BASE} border-[var(--red)] bg-[var(--redbg)] shadow-[0_0_0_2px_var(--redglow)]`;
   if (assignedTitle)
-    return `${CARD_BASE} border-[var(--blue-border)] bg-[var(--surface)]`;
+    return `${CARD_BASE} border-[var(--blue-border)] bg-[var(--bluebg)] shadow-[0_0_0_1px_var(--blueglow)]`;
   return `${CARD_BASE} border-[var(--border)] bg-[var(--surface)]`;
 }
 
 const DROP_BASE =
-  "min-h-12 flex items-center justify-center px-[14px] py-[10px] border-b transition-[background] duration-200";
+  "min-h-12 flex items-center justify-center px-3 sm:px-[14px] py-2 sm:py-[10px] border-b transition-[background] duration-200";
 
 function getDropSlotClass(
   result: boolean | null,
@@ -37,7 +37,7 @@ function getDropSlotClass(
   if (result === false)
     return `${DROP_BASE} bg-[var(--slot-bad-bg)] [border-bottom-color:var(--red-border)]`;
   if (assignedTitle)
-    return `${DROP_BASE} bg-transparent [border-bottom-color:var(--blueglow)]`;
+    return `${DROP_BASE} bg-[var(--surface2)] [border-bottom-color:var(--blue-border)]`;
   return `${DROP_BASE} bg-[var(--slot-bg)] [border-bottom-color:var(--border)]`;
 }
 
@@ -123,25 +123,29 @@ export default function SnippetContent({
         {assignedTitle ? (
           <div className="flex items-center gap-2 w-full">
             <span
-              className={`${titleBadgeColor} text-white py-1 px-4 rounded-full text-lg font-bold flex-1 text-center`}
+              className={`${titleBadgeColor} text-white py-1 px-3 sm:px-4 rounded-full text-sm sm:text-lg font-bold flex-1 text-center truncate`}
             >
               {assignedTitle.title}
             </span>
             {result === true && (
-              <span className="text-[18px] text-[var(--green)]">✓</span>
+              <span className="text-[16px] sm:text-[18px] text-[var(--green)] shrink-0">
+                ✓
+              </span>
             )}
             {result === false && (
-              <span className="text-[18px] text-[var(--red)]">✗</span>
+              <span className="text-[16px] sm:text-[18px] text-[var(--red)] shrink-0">
+                ✗
+              </span>
             )}
           </div>
         ) : (
           <span
-            className={`text-sm italic transition-colors duration-[150ms] ${isDragOver ? "text-[oklch(72%_0.17_248)]" : "text-[var(--textfaint)]"}`}
+            className={`text-xs sm:text-sm italic transition-colors duration-[150ms] text-center ${isDragOver ? "text-[oklch(72%_0.17_248)]" : "text-[var(--textfaint)]"}`}
           >
             {isDragOver
               ? "Release to assign"
               : hasIncoming
-                ? "Drop here…"
+                ? "Place here…"
                 : "No title assigned"}
           </span>
         )}
@@ -149,7 +153,7 @@ export default function SnippetContent({
 
       {/* Solution strip */}
       {showSol && (
-        <div className="bg-[var(--greenbg)] px-[14px] py-[6px] border-b border-b-[oklch(58%_0.18_145/0.3)] flex items-center gap-2">
+        <div className="bg-[var(--greenbg)] px-3 sm:px-[14px] py-1.5 sm:py-[6px] border-b border-b-[oklch(58%_0.18_145/0.3)] flex items-center gap-2 flex-wrap">
           <span className="text-[10.5px] text-[var(--green)] font-bold uppercase tracking-[0.08em] shrink-0">
             Answer
           </span>
@@ -158,7 +162,7 @@ export default function SnippetContent({
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-[var(--green)] text-[13px] font-semibold no-underline"
+            className="text-[var(--green)] text-[12.5px] sm:text-[13px] font-semibold no-underline break-words"
           >
             {wikiPageObject.title} ↗
           </a>
@@ -166,7 +170,7 @@ export default function SnippetContent({
       )}
 
       {/* Snippet text */}
-      <div className="p-4 flex-1 font-spectral text-[15px] leading-[1.75] text-[var(--text)]">
+      <div className="p-3 sm:p-4 flex-1 font-spectral text-[13.5px] sm:text-[15px] leading-[1.65] sm:leading-[1.75] text-[var(--text)]">
         {renderSnippet(wikiPageObject.content_censored)}
       </div>
       {IS_DEV && (
