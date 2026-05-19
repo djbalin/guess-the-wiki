@@ -1,18 +1,32 @@
 "use client";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import SnippetContent from "./SnippetContent";
 import { WikiDocument } from "@/types/wiki";
+import { useRouter, useSearchParams } from "next/navigation";
+
+function shuffleArray<T>(arr: Array<T>, accumulator: Array<T>): Array<T> {
+  if (arr.length === 0) return accumulator;
+  const idx = Math.floor(Math.random() * arr.length);
+  const el = arr[idx];
+  accumulator.push(el);
+  return shuffleArray(arr.toSpliced(idx, 1), accumulator);
+}
+
+function produceRandomArrayIndices(length: number): number[] {
+  return shuffleArray(
+    Array.from({ length }, (_, i) => i),
+    [],
+  );
+}
 
 interface Props {
   wikiPages: WikiDocument[];
-  randomizerArray: number[];
   onMakeGuess: (isVictory: boolean) => void;
   onBack: () => void;
 }
 
 export default function PlayingField({
   wikiPages,
-  randomizerArray,
   onMakeGuess,
   onBack,
 }: Props) {
@@ -23,11 +37,21 @@ export default function PlayingField({
     [snippetId: string]: boolean;
   }>({});
   const [phase, setPhase] = useState<"playing" | "result">("playing");
-  const [showSol, setShowSol] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
   const [shaking, setShaking] = useState(false);
   const [dragoverSnippet, setDragoverSnippet] = useState<string | null>(null);
   const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
   const [isDraggingActive, setIsDraggingActive] = useState(false);
+
+  const searchParams = useSearchParams();
+
+  const params = new URLSearchParams(searchParams.toString());
+  const router = useRouter();
+
+  const randomizerArray = useMemo(
+    () => produceRandomArrayIndices(wikiPages.length),
+    [wikiPages],
+  );
 
   const currentlyDragging = useRef<string | null>(null);
 
@@ -45,8 +69,8 @@ export default function PlayingField({
   );
 
   const usedTitleIds = new Set(Object.values(assignments));
-  const placed = Object.keys(assignments).length;
-  const isComplete = placed === wikiPages.length;
+  const numPlaced = Object.keys(assignments).length;
+  const isComplete = numPlaced === wikiPages.length;
   const isVictory =
     phase === "result" && Object.values(cardResults).every(Boolean);
   const hasIncoming = isDraggingActive || selectedTitleId !== null;
@@ -128,10 +152,13 @@ export default function PlayingField({
     setAssignments({});
     setCardResults({});
     setPhase("playing");
-    setShowSol(false);
+    setShowSolution(false);
     setSelectedTitleId(null);
     setDragoverSnippet(null);
     setIsDraggingActive(false);
+    params.delete("seed");
+
+    router.replace(`?${params.toString()}`);
   }
 
   const cols = Math.min(wikiPages.length, 4);
@@ -212,17 +239,19 @@ export default function PlayingField({
               fontSize: 15,
               fontWeight: 900,
               color:
-                placed === wikiPages.length ? "var(--lime)" : "var(--textdim)",
+                numPlaced === wikiPages.length
+                  ? "var(--lime)"
+                  : "var(--textdim)",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
               textShadow:
-                placed === wikiPages.length
+                numPlaced === wikiPages.length
                   ? "0 0 12px var(--limeglow)"
                   : "none",
               transition: "color 0.3s, text-shadow 0.3s",
             }}
           >
-            {placed}/{wikiPages.length} placed
+            {numPlaced}/{wikiPages.length} placed
           </span>
         </div>
 
@@ -373,7 +402,7 @@ export default function PlayingField({
               cardClass={cardClass}
               isDragOver={isOver && hasIncoming}
               hasIncoming={hasIncoming}
-              showSol={showSol}
+              showSol={showSolution}
               snippetIndex={idx + 1}
               totalSnippets={wikiPages.length}
               phase={phase}
@@ -417,10 +446,10 @@ export default function PlayingField({
           ← New game
         </button>
         <button
-          onClick={() => setShowSol((s) => !s)}
+          onClick={() => setShowSolution((s) => !s)}
           style={{
-            background: showSol ? "var(--surface2)" : "transparent",
-            color: showSol ? "var(--text)" : "var(--textdim)",
+            background: showSolution ? "var(--surface2)" : "transparent",
+            color: showSolution ? "var(--text)" : "var(--textdim)",
             border: "1px solid var(--border)",
             borderRadius: 8,
             padding: "7px 16px",
@@ -430,7 +459,7 @@ export default function PlayingField({
             transition: "all 0.15s",
           }}
         >
-          {showSol ? "🙈 Hide solution" : "👁 Reveal solution"}
+          {showSolution ? "🙈 Hide solution" : "👁 Reveal solution"}
         </button>
       </div>
     </div>

@@ -8,26 +8,9 @@ import { Result } from "@/types/game";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { db } from "@/db/init";
 
-function shuffleArray(arr: any[], accumulator: any[]): any[] {
-  if (arr.length === 0) return accumulator;
-  const idx = Math.floor(Math.random() * arr.length);
-  const el = arr[idx];
-  accumulator.push(el);
-  return shuffleArray(arr.toSpliced(idx, 1), accumulator);
-}
-
-function produceRandomArrayIndices(length: number): number[] {
-  return shuffleArray(
-    Array.from({ length }, (_, i) => i),
-    [],
-  );
-}
-
-export default function Game() {
+export default function Game({ wikiPages }: { wikiPages: WikiDocument[] }) {
   const context = useGameStatusContext();
   const [screen, setScreen] = useState<"lobby" | "game">("lobby");
-  const [wikiPageObjects, setWikiPageObjects] = useState<WikiDocument[]>([]);
-  const [randomizerArray, setRandomizerArray] = useState<number[]>([]);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -40,8 +23,6 @@ export default function Game() {
   }, []);
 
   function handlePlayGame(wikiPages: WikiDocument[]) {
-    setWikiPageObjects(wikiPages);
-    setRandomizerArray(produceRandomArrayIndices(wikiPages.length));
     context.setGameStatusContext({
       showPlayingField: true,
       guessHasBeenMade: false,
@@ -109,8 +90,7 @@ export default function Game() {
 
   return (
     <PlayingField
-      wikiPages={wikiPageObjects}
-      randomizerArray={randomizerArray}
+      wikiPages={wikiPages}
       onMakeGuess={handleMakeGuess}
       onBack={handleBack}
     />

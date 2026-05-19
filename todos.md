@@ -30,5 +30,6 @@
 
 ## Create game yourself
 
+- semi-implemented with ids argument already. with this present, numPages should be disregarded.
 - Choose Wiki articles for the game
 - Submit them to a database for others to play

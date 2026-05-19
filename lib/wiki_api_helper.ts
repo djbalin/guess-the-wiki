@@ -73,7 +73,7 @@ async function fetchRandomWikiMetadata(
   language: LanguageCode,
 ): Promise<WikiMetaData[]> {
   const randomTitlesEndpoint = generateRandomTitlesEndpoint(language, numPages);
-  console.log("randomtitlesendpoint: ", randomTitlesEndpoint);
+  console.info("FETCHING ENDPOINT: ", randomTitlesEndpoint);
   const apiResult = await axios.get(randomTitlesEndpoint, cfg);
 
   const randomWikiMetadata: WikiMetaData[] = Object.values(
@@ -94,6 +94,7 @@ async function fetchWikiMetadataByIds(
   ids: string[],
 ): Promise<WikiMetaData[]> {
   const endpoint = generateMetadataByIdEndpoint(language, ids);
+  console.info("FETCHING ENDPOINT: ", endpoint);
   const apiResult = await axios.get(endpoint, cfg);
   const metaData: WikiMetaData[] = Object.values(
     apiResult.data.query.pages as WikiMetaData[],

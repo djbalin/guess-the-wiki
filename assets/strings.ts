@@ -64,7 +64,7 @@ export const DIFFICULTY_DESCRIPTORS: {
 export const GAME_SETTINGS: {
   [key in LanguageCode]: {
     tweak: string;
-    snippetCount: string;
+    numPages: string;
     snippetLength: string;
     difficulty: string;
     play: string;
@@ -72,35 +72,35 @@ export const GAME_SETTINGS: {
 } = {
   en: {
     tweak: "Tweak difficulty",
-    snippetCount: "Number of snippets",
+    numPages: "Number of snippets",
     snippetLength: "Words per snippet",
     difficulty: "Difficulty",
     play: "PLAY GAME!",
   },
   da: {
     tweak: "Justér sværhedsgrad",
-    snippetCount: "Antal brødtekster",
+    numPages: "Antal brødtekster",
     snippetLength: "Ord i brødtekster",
     difficulty: "Sværhedsgrad",
     play: "SPIL!",
   },
   fr: {
     tweak: "Ajuster la difficulté",
-    snippetCount: "Nombre de snippets",
+    numPages: "Nombre de snippets",
     snippetLength: "Longueur de snippet",
     difficulty: "Difficulté",
     play: "Á JOUER !",
   },
   de: {
     tweak: "Schwierigkeit anpassen",
-    snippetCount: "Anzahl der Snippets",
+    numPages: "Anzahl der Snippets",
     snippetLength: "Wörter pro Snippet",
     difficulty: "Schwierigkeit",
     play: "SPIELEN!",
   },
   es: {
     tweak: "Ajustar dificultad",
-    snippetCount: "Número de fragmentos",
+    numPages: "Número de fragmentos",
     snippetLength: "Palabras por fragmento",
     difficulty: "Dificultad",
     play: "JUGAR!",

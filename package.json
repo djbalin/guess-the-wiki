@@ -31,7 +31,8 @@
     "tailwind-merge": "^2.2.1",
     "tailwindcss": "3.4.1",
     "ts-seedrandom": "^1.4.1",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@types/node": "20.11.5",
