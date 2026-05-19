@@ -5,6 +5,7 @@ import PlayingField from "@/components/game/PlayingField/PlayingField";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { Result } from "@/types/game";
 import type { FetchState } from "../hooks/useGameData";
+import { devIndicatorServerState } from "next/dist/server/dev/dev-indicator-server-state";
 
 const SKELETON_WIDTHS = [100, 88, 94, 72, 86, 58, 78];
 
@@ -204,6 +205,8 @@ export default function PlayContent({
       </div>
     );
   }
+
+  console.log(dataState.status);
 
   if (dataState.status === "loading") {
     return <LoadingFallback />;

@@ -103,9 +103,7 @@ export default function PlayPage() {
 
         {/* Playing field */}
         <main className="flex-1 md:overflow-y-auto">
-          {isActive && (
-            <PlayContent loadGame={loadGame} dataState={dataState} />
-          )}
+          <PlayContent loadGame={loadGame} dataState={dataState} />
         </main>
       </div>
     </GameStatusContextProvider>

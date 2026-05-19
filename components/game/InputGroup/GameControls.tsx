@@ -14,7 +14,7 @@ const DIFFICULTIES: {
   [key in Difficulty]: { numPages: number; snippetLength: number };
 } = {
   easy: { numPages: 2, snippetLength: 50 },
-  medium: { numPages: 3, snippetLength: 40 },
+  medium: { numPages: 3, snippetLength: 30 },
   hard: { numPages: 4, snippetLength: 25 },
   extreme: { numPages: 5, snippetLength: 10 },
 } as const;
@@ -43,7 +43,8 @@ export default function GameControls({
   }
 
   const diffLabels = DIFFICULTY_DESCRIPTORS[languageCode];
-  const handleChangeNumPages = (v: number) => setGameParams({ ...gameParams, numPages: v });
+  const handleChangeNumPages = (v: number) =>
+    setGameParams({ ...gameParams, numPages: v });
   const handleChangeSnippetLength = (v: number) =>
     setGameParams({ ...gameParams, snippetLength: v });
 
@@ -59,7 +60,11 @@ export default function GameControls({
           {/* Difficulty presets */}
           <div>
             <Label>{GAME_SETTINGS[languageCode].difficulty}</Label>
-            <div className={compact ? "flex flex-col gap-2" : "grid grid-cols-4 gap-2"}>
+            <div
+              className={
+                compact ? "flex flex-col gap-2" : "grid grid-cols-4 gap-2"
+              }
+            >
               {DIFFICULTY_LEVELS.map((level, i) => (
                 <button
                   key={level}

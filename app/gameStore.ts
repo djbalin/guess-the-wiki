@@ -25,7 +25,7 @@ export const useGameStore = create<State>()((set) => ({
     lang: "en" as const,
     numPages: 3,
     seed: Math.random(),
-    snippetLength: 40,
+    snippetLength: 30,
   },
   isActive: false,
   setIsActive(newIsActive) {
