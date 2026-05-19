@@ -1,5 +1,6 @@
 "use client";
 
+import { useGameStore } from "@/app/gameStore";
 import { useLanguageContext } from "@/contexts/LanguageContext";
 import { DEFAULT_LANGUAGE, LanguageCode } from "@/types/language";
 import { setCookie, getCookie } from "cookies-next";
@@ -11,6 +12,7 @@ import {
   DE,
   FlagComponent,
 } from "country-flag-icons/react/3x2";
+
 function storeLanguageSettings(language: LanguageCode) {
   setCookie("language", language);
 }
@@ -27,9 +29,16 @@ export default function LanguageSelector() {
   const chosenLanguage = getCookie("language");
   const languageContext = useLanguageContext();
   const activeLanguageCode = languageContext.languageCode;
+  const { setGameParams, gameParams } = useGameStore();
 
   if (!chosenLanguage) {
     storeLanguageSettings(DEFAULT_LANGUAGE);
+  }
+
+  function handleClickLanguage(languageCode: LanguageCode) {
+    languageContext.setLanguage(languageCode);
+    storeLanguageSettings(languageCode);
+    setGameParams({ ...gameParams, lang: languageCode });
   }
 
   return (
@@ -42,10 +51,7 @@ export default function LanguageSelector() {
           <button
             key={languageCode}
             type="button"
-            onClick={() => {
-              languageContext.setLanguage(languageCode);
-              storeLanguageSettings(languageCode);
-            }}
+            onClick={() => handleClickLanguage(languageCode)}
             title={`Switch language to ${languageCode.toUpperCase()}`}
             className={`rounded-md border p-0.5 sm:p-1 transition-transform duration-150 ${
               isActive
