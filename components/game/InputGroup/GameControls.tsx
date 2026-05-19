@@ -19,20 +19,18 @@ const DIFFICULTIES: {
   extreme: { numPages: 5, snippetLength: 10 },
 } as const;
 
-export default function GameControls() {
+export default function GameControls({
+  loadGame,
+}: {
+  loadGame: () => Promise<void>;
+}) {
   const { languageCode } = useLanguageContext();
   const [difficulty, setDifficulty] = useState<Difficulty>(DEFAULT_DIFF);
 
-  const { setGameParams, gameParams, setIsActive } = useGameStore();
-  // const [numPages, setNumPages] = useState(DIFFICULTIES[DEFAULT_DIFF].numPages);
-  // const [snippetLength, setSnippetLength] = useState(
-  //   DIFFICULTIES[DEFAULT_DIFF].snippetLength,
-  // );
-  const [loading, setLoading] = useState(false);
+  const { setGameParams, gameParams } = useGameStore();
 
   function pickDifficulty(level: Difficulty) {
     setDifficulty(level);
-    // const level = DIFFICULTY_LEVELS[i];
     setGameParams({
       ...gameParams,
       numPages: DIFFICULTIES[level].numPages,
@@ -41,9 +39,7 @@ export default function GameControls() {
   }
 
   async function handlePlay() {
-    setLoading(true);
-    setLoading(false);
-    setIsActive(true);
+    await loadGame();
   }
 
   const diffLabels = DIFFICULTY_DESCRIPTORS[languageCode];
@@ -151,7 +147,6 @@ export default function GameControls() {
         {/* Play CTA */}
         <button
           onClick={handlePlay}
-          disabled={loading}
           className="btn-lime"
           style={{
             marginTop: 16,
@@ -165,13 +160,7 @@ export default function GameControls() {
             gap: 10,
           }}
         >
-          {loading ? (
-            <>
-              <SpinIcon /> Fetching articles…
-            </>
-          ) : (
-            GAME_SETTINGS[languageCode].play
-          )}
+          {GAME_SETTINGS[languageCode].play}
         </button>
       </div>
       <p
@@ -186,33 +175,6 @@ export default function GameControls() {
         {gameParams.snippetLength} words per snippet
       </p>
     </div>
-  );
-}
-
-function SpinIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      style={{ animation: "spin 0.75s linear infinite", flexShrink: 0 }}
-    >
-      <circle
-        cx="9"
-        cy="9"
-        r="7"
-        fill="none"
-        stroke="rgba(0,0,0,0.25)"
-        strokeWidth="2.5"
-      />
-      <path
-        d="M9 2a7 7 0 0 1 7 7"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-    </svg>
   );
 }
 

@@ -3,12 +3,14 @@
 import PlayingField from "@/components/game/PlayingField/PlayingField";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { Result } from "@/types/game";
-import { useGameData } from "../hooks/useGameData";
+import type { FetchState } from "../hooks/useGameData";
 
-export default function PlayContent() {
+export default function PlayContent({
+  dataState,
+}: {
+  dataState: FetchState;
+}) {
   const context = useGameStatusContext();
-
-  const gameData = useGameData();
 
   function handleMakeGuess(isVictory: boolean) {
     context.setGameStatusContext({
@@ -27,9 +29,7 @@ export default function PlayContent() {
     });
   }
 
-  const { data, status } = gameData;
-
-  if (status === "error") {
+  if (dataState.status === "error") {
     return (
       <div
         style={{
@@ -44,7 +44,7 @@ export default function PlayContent() {
     );
   }
 
-  if (status === "loading") {
+  if (dataState.status === "loading") {
     return (
       <div
         style={{
@@ -61,7 +61,7 @@ export default function PlayContent() {
 
   return (
     <PlayingField
-      wikiPages={data.wikiPages}
+      wikiPages={dataState.data.wikiPages}
       onBack={() => console.log("back")}
       onMakeGuess={handleMakeGuess}
     />
