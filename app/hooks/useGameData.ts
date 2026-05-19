@@ -92,6 +92,8 @@ export function useGameData() {
       data: undefined,
       status: "loading",
     });
+    const startTime = Date.now();
+
     const validationResult = validateRequiredParams({
       lang,
       numPages,
@@ -109,8 +111,7 @@ export function useGameData() {
     setIsActive(true);
 
     console.log("calling load, ids passed: ", ids);
-    // const { data } = validatedParams;
-    // const { ids, lang, numPages, seed, snippetLength } = data;
+
     const res = await client.api.play.$get({
       query: {
         lang: validationResult.params.lang,
@@ -128,13 +129,22 @@ export function useGameData() {
       return;
     }
     const json = (await res.json()) as GetPlayResult;
+
+    // Wait if function is ready to return in less than 500ms
+    const elapsed = Date.now() - startTime;
+    if (elapsed < 2000) {
+      await new Promise((resolve) => setTimeout(resolve, 2000 - elapsed));
+    }
+
     setDataState({
       data: json,
       status: "ready",
     });
 
     const query = gameParamsToSearchParams(gameParams).toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
 
     console.log("GAME LOADED, status: ");
     console.log(json);
