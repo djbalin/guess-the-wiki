@@ -1,6 +1,6 @@
 import { LanguageCode } from "@/types/language";
 
-const limit = 5;
+const limit = 50;
 const exploreLimit = 50;
 
 export function findCategoriesUrl(search: string, languageCode: LanguageCode) {
@@ -100,7 +100,9 @@ export async function fetchCategoryContents(
   categoryTitle: string,
   languageCode: LanguageCode,
 ): Promise<CategoryContents> {
-  const result = await fetch(getCategoryContentsUrl(categoryTitle, languageCode));
+  const result = await fetch(
+    getCategoryContentsUrl(categoryTitle, languageCode),
+  );
   if (!result.ok) {
     throw new Error(
       `HTTP error! status: ${result.status} (${result.statusText})`,
