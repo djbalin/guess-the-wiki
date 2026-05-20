@@ -500,7 +500,7 @@ function SubcategoryRow({
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="shrink-0 text-[var(--textfaint)] hover:text-[var(--lime)] transition-colors"
+        className="shrink-0  text-[var(--textfaint)] hover:text-[var(--lime)] transition-colors"
         title="Open on Wikipedia"
       >
         <ExternalLink className="w-5 h-5" />
@@ -533,12 +533,13 @@ function PageRow({
         href={wikiResult.fullurl}
         target="_blank"
         rel="noopener noreferrer"
-        className="min-w-0 flex-1 break-words text-[var(--text)] hover:text-[var(--lime)] transition-colors"
+        onClick={(e) => e.stopPropagation()}
+        className="min-w-0 flex-1 break-words text-[var(--text)] hover:text-[var(--lime)] transition-colors flex items-center gap-1"
         title={wikiResult.title}
       >
         {wikiResult.title}
+        <ExternalLink className="w-5 h-5 text-[var(--textfaint)] shrink-0 ml-auto" />
       </a>
-      <ExternalLink className="w-5 h-5 text-[var(--textfaint)] shrink-0" />
     </li>
   );
 }
