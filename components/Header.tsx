@@ -3,6 +3,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "./game/InputGroup/LanguageSelector";
 import { Show, UserButton } from "@clerk/nextjs";
+import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -58,6 +59,12 @@ export default function Header() {
           Guess the Wiki
         </span>
       </div>
+      <button
+        onClick={() => router.push("/categories")}
+        className="font-barlow font-black uppercase tracking-wide text-lg sm:text-xl text-purple-700 hover:text-purple-600 transition-colors px-3 py-1 rounded-md shadow-sm bg-[var(--surface)] border border-[var(--border)] hover:bg-[var(--surface2)]"
+      >
+        Categories
+      </button>
 
       {/* Right controls */}
       <div className="flex items-center gap-2 shrink-0">
