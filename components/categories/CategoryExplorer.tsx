@@ -483,7 +483,7 @@ function SubcategoryRow({
   onDrill: (title: string) => void;
 }) {
   return (
-    <li className="group flex items-center gap-2 px-3 py-3 text-base text-[var(--text)] hover:bg-[var(--surface2)] transition-colors">
+    <li className="group flex items-center gap-2 px-3 py-3 text-base text-[var(--text)] hover:bg-[var(--surface2)] transition-colors ">
       <span className="shrink-0 w-7 text-right text-[var(--textfaint)] font-mono text-sm tabular-nums">
         {index + 1}
       </span>

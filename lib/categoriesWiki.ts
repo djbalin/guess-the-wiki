@@ -1,7 +1,7 @@
 import { LanguageCode } from "@/types/language";
 
-const limit = 50;
-const exploreLimit = 50;
+const limit = 200;
+const exploreLimit = 200;
 
 export function findCategoriesUrl(search: string, languageCode: LanguageCode) {
   return `https://${languageCode}.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(search)}&gsrlimit=${limit}&gsrnamespace=14&prop=info&inprop=url&format=json&origin=*&redirects`;
@@ -11,8 +11,8 @@ export function getSubcategoriesUrl(
   categoryTitle: string,
   languageCode: LanguageCode,
 ) {
-  const normalizedTitle = normalizeCategoryTitle(categoryTitle);
-  return `https://${languageCode}.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=${encodeURIComponent(normalizedTitle)}&cmtype=subcat&cmlimit=${limit}&prop=info&inprop=url&format=json&origin=*`;
+  // const normalizedTitle = normalizeCategoryTitle(categoryTitle);
+  return `https://${languageCode}.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=${encodeURIComponent(categoryTitle)}&cmtype=subcat&cmlimit=${limit}&prop=info&inprop=url&format=json&origin=*`;
 }
 
 export function findPagesInCategoryUrl(
@@ -26,8 +26,8 @@ function getCategoryContentsUrl(
   categoryTitle: string,
   languageCode: LanguageCode,
 ) {
-  const normalizedTitle = normalizeCategoryTitle(categoryTitle);
-  return `https://${languageCode}.wikipedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=${encodeURIComponent(normalizedTitle)}&gcmtype=subcat|page&gcmlimit=${exploreLimit}&prop=info&inprop=url&format=json&origin=*&redirects`;
+  // const normalizedTitle = normalizeCategoryTitle(categoryTitle);
+  return `https://${languageCode}.wikipedia.org/w/api.php?action=query&generator=categorymembers&gcmtitle=${encodeURIComponent(categoryTitle)}&gcmtype=subcat|page&gcmlimit=${exploreLimit}&prop=info&inprop=url&format=json&origin=*&redirects`;
 }
 
 export type WikiResult = {
@@ -54,12 +54,6 @@ export async function fetchCategoryTitles(
   const json = await result.json();
   const categories = Object.values(json.query.pages) as WikiResult[];
   return categories;
-}
-
-function normalizeCategoryTitle(categoryTitle: string) {
-  return categoryTitle.startsWith("Category:")
-    ? categoryTitle
-    : `Category:${categoryTitle}`;
 }
 
 export async function fetchSubcategories(
@@ -101,6 +95,10 @@ export async function fetchCategoryContents(
   languageCode: LanguageCode,
 ): Promise<CategoryContents> {
   const result = await fetch(
+    getCategoryContentsUrl(categoryTitle, languageCode),
+  );
+  console.warn(
+    "fetching category contents for url: ",
     getCategoryContentsUrl(categoryTitle, languageCode),
   );
   if (!result.ok) {
