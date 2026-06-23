@@ -2,20 +2,17 @@
 import { useEffect, useState } from "react";
 import PlayContent from "./PlayContent";
 import GameStatusContextProvider from "@/contexts/GameStatusContext";
-import { useGameStore } from "../gameStore";
 import GameControls from "@/components/game/InputGroup/GameControls";
 import { useGameData } from "../hooks/useGameData";
 
 export default function PlayPage() {
-  const { isActive } = useGameStore();
+  // const { isGameActive } = useGameStore();
   const { dataState, loadGame } = useGameData();
   const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false);
 
   useEffect(() => {
-    if (!isActive) {
-      loadGame();
-    }
-  }, [isActive, loadGame]);
+    loadGame();
+  }, []);
 
   useEffect(() => {
     if (isMobileSettingsOpen) {

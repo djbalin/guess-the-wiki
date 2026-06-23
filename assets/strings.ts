@@ -1,5 +1,5 @@
 import { LanguageCode } from "@/types/language";
-import { Difficulties } from "@/types/game";
+import { Difficulty } from "@/types/game";
 
 export const GAME_DESCRIPTION: {
   [key in LanguageCode]: { header: string; body: string };
@@ -27,37 +27,37 @@ export const GAME_DESCRIPTION: {
 };
 
 export const DIFFICULTY_DESCRIPTORS: {
-  [key in LanguageCode]: { [key in Difficulties]: string };
+  [key in LanguageCode]: { [key in Difficulty]: string };
 } = {
   en: {
-    0: "Easy",
-    1: "Medium",
-    2: "Hard",
-    3: "Extreme",
+    easy: "Easy",
+    medium: "Medium",
+    hard: "Hard",
+    extreme: "Extreme",
   },
   da: {
-    0: "Let",
-    1: "Mellem",
-    2: "Svært",
-    3: "Ekstremt",
+    easy: "Let",
+    medium: "Mellem",
+    hard: "Svært",
+    extreme: "Ekstremt",
   },
   fr: {
-    0: "Facile",
-    1: "Moyen",
-    2: "Difficile",
-    3: "Extrême",
+    easy: "Facile",
+    medium: "Moyen",
+    hard: "Difficile",
+    extreme: "Extrême",
   },
   de: {
-    0: "Leicht",
-    1: "Mittel",
-    2: "Schwer",
-    3: "Extrem",
+    easy: "Leicht",
+    medium: "Mittel",
+    hard: "Schwer",
+    extreme: "Extrem",
   },
   es: {
-    0: "Fácil",
-    1: "Medio",
-    2: "Difícil",
-    3: "Extremo",
+    easy: "Fácil",
+    medium: "Medio",
+    hard: "Difícil",
+    extreme: "Extremo",
   },
 };
 

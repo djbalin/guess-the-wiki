@@ -115,7 +115,10 @@ export default function Header() {
           </button>
         </Show>
         <Show when="signed-in">
-          <UserButton showName={true} />
+          <button onClick={() => router.push("/profile")}>
+            Profile
+            <UserButton showName={true} />
+          </button>
         </Show>
 
         {/* Language selector */}

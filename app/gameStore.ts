@@ -1,4 +1,5 @@
 // store.ts
+import { DEFAULT_DIFFICULTY, Difficulty } from "@/types/game";
 import { LanguageCode } from "@/types/language";
 import { create } from "zustand";
 
@@ -9,13 +10,14 @@ type Params = {
   seed: number;
   lang: LanguageCode;
   ids: string[] | undefined;
+  difficulty: Difficulty;
 };
 
 type State = {
   setGameParams: (params: Params) => void;
-  setIsActive: (isActive: boolean) => void;
+  setIsGameActive: (isActive: boolean) => void;
   gameParams: Params;
-  isActive: boolean;
+  isGameActive: boolean;
 };
 
 // Create store using the curried form of `create`
@@ -26,10 +28,11 @@ export const useGameStore = create<State>()((set) => ({
     numPages: 3,
     seed: Math.random(),
     snippetLength: 30,
+    difficulty: DEFAULT_DIFFICULTY,
   },
-  isActive: false,
-  setIsActive(newIsActive) {
-    return set({ isActive: newIsActive });
+  isGameActive: false,
+  setIsGameActive(newIsActive) {
+    return set({ isGameActive: newIsActive });
   },
   setGameParams: (newParams) => {
     console.log("Setting new params:");

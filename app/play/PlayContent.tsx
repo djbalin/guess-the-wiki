@@ -5,7 +5,8 @@ import PlayingField from "@/components/game/PlayingField/PlayingField";
 import { useGameStatusContext } from "@/contexts/GameStatusContext";
 import { Result } from "@/types/game";
 import type { FetchState } from "../hooks/useGameData";
-import { devIndicatorServerState } from "next/dist/server/dev/dev-indicator-server-state";
+import { client } from "@/lib/api/client";
+import { useGameStore } from "../gameStore";
 
 const SKELETON_WIDTHS = [100, 88, 94, 72, 86, 58, 78];
 
@@ -173,8 +174,9 @@ export default function PlayContent({
   loadGame: () => void;
 }) {
   const context = useGameStatusContext();
+  const { gameParams } = useGameStore();
 
-  function handleMakeGuess(isVictory: boolean) {
+  async function handleMakeGuess(isVictory: boolean) {
     context.setGameStatusContext({
       showPlayingField: true,
       guessHasBeenMade: true,
@@ -182,12 +184,11 @@ export default function PlayContent({
       revealSolution: isVictory,
     });
 
-    fetch("/api/results", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    await client.api.results.$post({
+      json: {
+        isVictory,
+        difficulty: gameParams.difficulty,
       },
-      body: JSON.stringify({ isVictory }),
     });
   }
 

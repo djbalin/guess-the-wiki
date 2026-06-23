@@ -1,3 +1,5 @@
+import { DIFFICULTY_LEVELS } from "@/lib/constants";
+
 export enum Difficulties {
   Easy,
   Medium,
@@ -24,3 +26,14 @@ export enum BackgroundColors {
   CORRECT = "rgb(22 163 74)",
   INCORRECT = "rgb(185 28 28)",
 }
+export type Difficulty = (typeof DIFFICULTY_LEVELS)[number];
+export const DEFAULT_DIFFICULTY: Difficulty = "medium";
+
+export const DIFFICULTY_SETTINGS: {
+  [key in Difficulty]: { numPages: number; snippetLength: number };
+} = {
+  easy: { numPages: 2, snippetLength: 50 },
+  medium: { numPages: 3, snippetLength: 30 },
+  hard: { numPages: 4, snippetLength: 25 },
+  extreme: { numPages: 5, snippetLength: 10 },
+} as const;

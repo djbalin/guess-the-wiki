@@ -80,7 +80,7 @@ export function useGameData() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { gameParams, setIsActive } = useGameStore();
+  const { gameParams, setIsGameActive: setIsActive } = useGameStore();
 
   const { ids, lang, numPages, seed, snippetLength } = gameParams;
 
