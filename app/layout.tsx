@@ -3,7 +3,7 @@ import "./globals.css";
 import LanguageContextProvider from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
-import { darkTokens, lightTokens, tokensToCSS } from "./theme";
+import { lightTokens, tokensToCSS } from "./theme";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import { getBaseUrl } from "@/lib/is_dev";

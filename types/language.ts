@@ -1,4 +1,12 @@
 export const LANGUAGE_CODES = ["da", "en", "fr", "de", "es"] as const;
+
+export const BROWSER_LANGUAGE_CODES: Record<string, LanguageCode> = {
+  "da-DK": "da",
+  "en-US": "en",
+  "fr-FR": "fr",
+  "de-DE": "de",
+  "es-ES": "es",
+};
 export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
 export const DEFAULT_LANGUAGE: LanguageCode = "en";

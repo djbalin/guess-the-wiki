@@ -1,7 +1,9 @@
 "use client";
-import { DEFAULT_LANGUAGE, LanguageCode } from "@/types/language";
-import { Result } from "@/types/game";
-import { getCookie } from "cookies-next";
+import {
+  BROWSER_LANGUAGE_CODES,
+  DEFAULT_LANGUAGE,
+  LanguageCode,
+} from "@/types/language";
 import React, { createContext, useContext, useState } from "react";
 
 type LanguageContext = {
@@ -23,7 +25,11 @@ export default function LanguageContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [language, setLanguage] = useState<LanguageCode>(DEFAULT_LANGUAGE);
+  const browserLang = navigator.language;
+  const initialLanguage =
+    BROWSER_LANGUAGE_CODES[browserLang] || DEFAULT_LANGUAGE;
+
+  const [language, setLanguage] = useState<LanguageCode>(initialLanguage);
 
   return (
     <LanguageContext.Provider

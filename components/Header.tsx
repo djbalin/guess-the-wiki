@@ -1,12 +1,9 @@
 "use client";
-import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "./game/InputGroup/LanguageSelector";
-import { Show, UserAvatar, UserButton, UserProfile } from "@clerk/nextjs";
-import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
+import { Show, UserAvatar } from "@clerk/nextjs";
 
 export default function Header() {
-  const { theme, toggleTheme } = useTheme();
   const router = useRouter();
 
   return (
