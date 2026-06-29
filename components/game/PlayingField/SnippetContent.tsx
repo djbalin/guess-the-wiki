@@ -1,5 +1,6 @@
 import { IS_DEV } from "@/lib/is_dev";
 import { WikiDocument } from "@/types/wiki";
+import { FaWikipediaW } from "react-icons/fa";
 
 const CARD_BASE =
   "rounded-[14px] overflow-hidden transition-[border-color,background,box-shadow] duration-200 flex flex-col border";
@@ -122,11 +123,15 @@ export default function SnippetContent({
       <div className={dropSlotClass}>
         {assignedTitle ? (
           <div className="flex items-center gap-2 w-full">
-            <span
-              className={`${titleBadgeColor} text-white py-1 px-3 sm:px-4 rounded-full text-sm sm:text-lg font-bold flex-1 text-center truncate`}
+            <button
+              type="button"
+              className={`${titleBadgeColor} flex flex-row items-center justify-center text-white py-1 px-3 sm:px-4 rounded-full text-sm sm:text-lg font-bold flex-1 text-center truncate`}
+              onClick={() => window.open(assignedTitle.fullurl, "_blank")}
+              title={assignedTitle.fullurl}
             >
               {assignedTitle.title}
-            </span>
+              <FaWikipediaW className="w-4 h-4 shrink-0 ml-auto" />↗
+            </button>
             {result === true && (
               <span className="text-[16px] sm:text-[18px] text-[var(--green)] shrink-0">
                 ✓
@@ -162,9 +167,10 @@ export default function SnippetContent({
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
-            className="text-[var(--green)] text-[12.5px] sm:text-[13px] font-semibold no-underline break-words"
+            className="text-[var(--green)] text-[12.5px] sm:text-[13px] font-semibold no-underline break-words flex flex-row items-center justify-center gap-2"
           >
-            {wikiPageObject.title} ↗
+            {wikiPageObject.title}
+            <FaWikipediaW className="w-4 h-4 shrink-0" />↗
           </a>
         </div>
       )}
