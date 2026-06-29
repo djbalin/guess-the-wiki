@@ -198,16 +198,55 @@ export default function PlayContent({
         style={{
           maxWidth: 900,
           margin: "0 auto",
-          padding: "24px 20px 80px",
+          padding: "80px 20px",
           color: "var(--text)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 16,
+          textAlign: "center",
         }}
       >
-        {"ERRRor"}
+        <p
+          style={{
+            fontFamily: "var(--font-barlow-condensed), sans-serif",
+            fontSize: 30,
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "0.04em",
+            margin: 0,
+          }}
+        >
+          An error occurred
+        </p>
+        <p
+          style={{
+            margin: 0,
+            color: "var(--textdim)",
+            fontSize: 15,
+          }}
+        >
+          We could not load this round. Please try again.
+        </p>
+        <button
+          type="button"
+          onClick={loadGame}
+          style={{
+            marginTop: 4,
+            padding: "10px 20px",
+            borderRadius: 8,
+            border: "1px solid var(--border)",
+            background: "var(--lime)",
+            color: "var(--black)",
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          Try Again
+        </button>
       </div>
     );
   }
-
-  console.log(dataState.status);
 
   if (dataState.status === "loading") {
     return <LoadingFallback />;

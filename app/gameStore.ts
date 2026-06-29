@@ -1,6 +1,6 @@
 // store.ts
 import { DEFAULT_DIFFICULTY, Difficulty } from "@/types/game";
-import { LanguageCode } from "@/types/language";
+import { DEFAULT_LANGUAGE, LanguageCode } from "@/types/language";
 import { create } from "zustand";
 
 // Define types for state & actions
@@ -24,7 +24,7 @@ type State = {
 export const useGameStore = create<State>()((set) => ({
   gameParams: {
     ids: undefined,
-    lang: "en" as const,
+    lang: DEFAULT_LANGUAGE,
     numPages: 3,
     seed: Math.random(),
     snippetLength: 30,

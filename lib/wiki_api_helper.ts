@@ -167,6 +167,7 @@ async function fetchWikiPages(
  * @param numPages - The number of random Wikipedia pages to fetch.
  * @param snippetLength - The desired length of the extracted snippets.
  * @returns A Promise that resolves to an array of WikiPageObject, each containing title, raw content snippet, censored content snippet, and ID.
+ * @throws {Error} If there's an issue with the HTTP request, if the page is not found, or if the response doesn't match the expected format.
  */
 export async function fetchAndSnippetWikiPages(
   numPages: number,

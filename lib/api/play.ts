@@ -34,14 +34,18 @@ export const playRoutes = new Hono().get(
           .filter(Boolean)
       : null;
 
-    const result: GetPlayResult = await fetchAndSnippetWikiPages(
-      numPages,
-      snippetLength,
-      lang as LanguageCode,
-      seed ?? null,
-      idsParsed,
-    );
-
-    return c.json(result);
+    try {
+      const result: GetPlayResult = await fetchAndSnippetWikiPages(
+        numPages,
+        snippetLength,
+        lang as LanguageCode,
+        seed ?? null,
+        idsParsed,
+      );
+      return c.json(result);
+    } catch (error) {
+      console.error("error: ", error);
+      return c.json({ error: "Internal server error" }, 500);
+    }
   },
 );

@@ -9,7 +9,7 @@ export const BROWSER_LANGUAGE_CODES: Record<string, LanguageCode> = {
 };
 export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 
-export const DEFAULT_LANGUAGE: LanguageCode = "en";
+export const DEFAULT_LANGUAGE: LanguageCode = "en" as const;
 
 export const LANGUAGE_META: Record<
   LanguageCode,
