@@ -44,8 +44,16 @@ export default async function ProfilePage() {
               </h1>
               <p className="mt-1 text-sm text-slate-600">{email}</p>
             </div>
-            <div className="self-start md:self-auto">
-              <UserButton showName={true} />
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+              {/* <div className="text-right">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Account
+                </p>
+                <p className="text-xs text-slate-600">
+                  Open menu for settings
+                </p>
+              </div> */}
+              <UserButton defaultOpen showName />
             </div>
           </div>
         </div>

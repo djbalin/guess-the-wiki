@@ -2,7 +2,7 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "./game/InputGroup/LanguageSelector";
-import { Show, UserButton } from "@clerk/nextjs";
+import { Show, UserAvatar, UserButton, UserProfile } from "@clerk/nextjs";
 import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
 export default function Header() {
@@ -115,9 +115,12 @@ export default function Header() {
           </button>
         </Show>
         <Show when="signed-in">
-          <button onClick={() => router.push("/profile")}>
+          <button
+            onClick={() => router.push("/profile")}
+            className="flex flex-row items-center gap-2"
+          >
+            <UserAvatar />
             Profile
-            <UserButton showName={true} />
           </button>
         </Show>
 

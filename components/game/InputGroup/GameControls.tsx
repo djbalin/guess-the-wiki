@@ -114,38 +114,38 @@ function Label({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Slider({
-  label,
-  min,
-  max,
-  step,
-  value,
-  onChange,
-}: {
-  label: string;
-  min: number;
-  max: number;
-  step: number;
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div>
-      <div className="flex justify-between items-baseline mb-[10px]">
-        <Label>{label}</Label>
-        <span className="font-barlow text-[28px] font-black text-[var(--lime)] leading-none">
-          {value}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full"
-      />
-    </div>
-  );
-}
+// function Slider({
+//   label,
+//   min,
+//   max,
+//   step,
+//   value,
+//   onChange,
+// }: {
+//   label: string;
+//   min: number;
+//   max: number;
+//   step: number;
+//   value: number;
+//   onChange: (v: number) => void;
+// }) {
+//   return (
+//     <div>
+//       <div className="flex justify-between items-baseline mb-[10px]">
+//         <Label>{label}</Label>
+//         <span className="font-barlow text-[28px] font-black text-[var(--lime)] leading-none">
+//           {value}
+//         </span>
+//       </div>
+//       <input
+//         type="range"
+//         min={min}
+//         max={max}
+//         step={step}
+//         value={value}
+//         onChange={(e) => onChange(parseInt(e.target.value))}
+//         className="w-full"
+//       />
+//     </div>
+//   );
+// }
