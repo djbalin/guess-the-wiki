@@ -1,15 +1,17 @@
 {
   "name": "guess-the-wiki",
-  "homepage": "https://djbalin.github.io/guess-the-wiki/",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d .next",
-    "typecheck": "npx tsc --noEmit"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test \"lib/**/*.test.ts\"",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.3.5",
