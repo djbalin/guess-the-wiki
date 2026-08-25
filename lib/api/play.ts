@@ -22,10 +22,7 @@ export const playRoutes = new Hono().get(
   "/",
   zValidator("query", playRouteValidator),
   async (c) => {
-    console.log("heyeye");
     const { lang, snippetLength, seed, ids, numPages } = c.req.valid("query");
-
-    console.log("Hello from play route");
 
     const idsParsed = ids
       ? ids
@@ -44,7 +41,7 @@ export const playRoutes = new Hono().get(
       );
       return c.json(result);
     } catch (error) {
-      console.error("error: ", error);
+      console.error("Failed to build a round of wiki snippets:", error);
       return c.json({ error: "Internal server error" }, 500);
     }
   },

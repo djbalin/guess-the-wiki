@@ -3,7 +3,7 @@ import "./globals.css";
 import LanguageContextProvider from "@/contexts/LanguageContext";
 import { ThemeContextProvider } from "@/contexts/ThemeContext";
 import { Analytics } from "@vercel/analytics/react";
-import { lightTokens, tokensToCSS } from "./theme";
+import { darkTokens, lightTokens, tokensToCSS } from "./theme";
 import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/Header";
 import { getBaseUrl } from "@/lib/is_dev";
@@ -37,7 +37,7 @@ export const metadata = {
 
 // Generate CSS from theme.ts — single source of truth for all color tokens
 const themeCSS = [
-  tokensToCSS(":root, [data-theme='dark']", lightTokens),
+  tokensToCSS(":root, [data-theme='dark']", darkTokens),
   tokensToCSS("[data-theme='light']", lightTokens),
 ].join("\n\n");
 

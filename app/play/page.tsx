@@ -10,8 +10,12 @@ export default function PlayPage() {
   const { dataState, loadGame } = useGameData();
   const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false);
 
+  // Load a single round when the page mounts. `loadGame` is rebuilt on every
+  // render, so listing it as a dependency would restart the game on each state
+  // change.
   useEffect(() => {
     loadGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

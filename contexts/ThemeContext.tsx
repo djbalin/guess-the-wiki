@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Theme } from "@/app/theme";
 
 type ThemeContextType = {
@@ -9,28 +9,50 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
+const DEFAULT_THEME: Theme = "dark";
+const STORAGE_KEY = "gtw-theme";
+
+function isTheme(value: string | null): value is Theme {
+  return value === "light" || value === "dark";
+}
+
+/**
+ * Reads the theme the inline boot script already applied to <html>, falling
+ * back to the stored preference. Runs lazily on first client render, so the
+ * server never touches `document`.
+ */
+function readInitialTheme(): Theme {
+  if (typeof document === "undefined") return DEFAULT_THEME;
+
+  const applied = document.documentElement.getAttribute("data-theme");
+  if (isTheme(applied)) return applied;
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (isTheme(stored)) return stored;
+  } catch {
+    // localStorage can throw when cookies are blocked; the default is fine.
+  }
+
+  return DEFAULT_THEME;
+}
+
 export function ThemeContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [theme, setTheme] = useState<Theme>("dark");
-
-  useEffect(() => {
-    // Sync initial state with what the inline script set on <html>
-    const current = document.documentElement.getAttribute(
-      "data-theme"
-    ) as Theme | null;
-    if (current === "light" || current === "dark") setTheme(current);
-  }, []);
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
 
   function toggleTheme() {
     const next: Theme = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
     try {
-      localStorage.setItem("gtw-theme", next);
-    } catch {}
+      localStorage.setItem(STORAGE_KEY, next);
+    } catch {
+      // Persisting is best-effort.
+    }
   }
 
   return (
