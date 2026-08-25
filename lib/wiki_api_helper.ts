@@ -21,6 +21,25 @@ function baseWikiEndpoint(language: LanguageCode) {
 
 const METADATA_ENDPOINTS = ["&prop=info", "&inprop=url"];
 
+/**
+ * Reads the `query.pages` bag out of a MediaWiki response.
+ *
+ * The API answers with HTTP 200 even when it could not satisfy the request, so
+ * the shape has to be checked explicitly rather than assumed — otherwise a
+ * throttled or malformed response surfaces as an opaque
+ * "cannot read properties of undefined".
+ */
+function parsePagesResponse(data: unknown, endpoint: string): WikiMetaData[] {
+  const pages = (data as { query?: { pages?: unknown } })?.query?.pages;
+  if (!pages || typeof pages !== "object") {
+    throw new Error(`Unexpected Wikipedia API response from ${endpoint}`);
+  }
+
+  return (Object.values(pages) as WikiMetaData[])
+    .filter((page) => page && page.title && page.pageid)
+    .map(({ title, pageid, fullurl }) => ({ title, pageid, fullurl }));
+}
+
 function generateRandomTitlesEndpoint(
   language: LanguageCode,
   numPages: number,
@@ -40,10 +59,12 @@ function generateRandomPageEndpoint(language: LanguageCode, pageTitle: string) {
     "&formatversion=2",
     "&prop=extracts",
   ];
+  // Titles must be encoded: unescaped "&", "+" or "#" — as in "AT&T" — would
+  // otherwise truncate the title and silently fetch the wrong article.
   const randomPageEndpoint =
     baseWikiEndpoint(language) +
     "&titles=" +
-    pageTitle +
+    encodeURIComponent(pageTitle) +
     RANDOM_WIKIPAGE_PARAMS.join("");
 
   return randomPageEndpoint;
@@ -52,7 +73,7 @@ function generateRandomPageEndpoint(language: LanguageCode, pageTitle: string) {
 function generateMetadataByIdEndpoint(language: LanguageCode, ids: string[]) {
   return (
     baseWikiEndpoint(language) +
-    `&pageids=${ids.join("|")}` +
+    `&pageids=${encodeURIComponent(ids.join("|"))}` +
     METADATA_ENDPOINTS.join("")
   );
 }
@@ -73,20 +94,8 @@ async function fetchRandomWikiMetadata(
   language: LanguageCode,
 ): Promise<WikiMetaData[]> {
   const randomTitlesEndpoint = generateRandomTitlesEndpoint(language, numPages);
-  console.info("FETCHING ENDPOINT: ", randomTitlesEndpoint);
   const apiResult = await axios.get(randomTitlesEndpoint, cfg);
-
-  const randomWikiMetadata: WikiMetaData[] = Object.values(
-    apiResult.data.query.pages as WikiMetaData[],
-  ).map(({ title, pageid, fullurl }) => {
-    return {
-      title,
-      pageid,
-      fullurl,
-    };
-  });
-
-  return randomWikiMetadata;
+  return parsePagesResponse(apiResult.data, randomTitlesEndpoint);
 }
 
 async function fetchWikiMetadataByIds(
@@ -94,18 +103,8 @@ async function fetchWikiMetadataByIds(
   ids: string[],
 ): Promise<WikiMetaData[]> {
   const endpoint = generateMetadataByIdEndpoint(language, ids);
-  console.info("FETCHING ENDPOINT: ", endpoint);
   const apiResult = await axios.get(endpoint, cfg);
-  const metaData: WikiMetaData[] = Object.values(
-    apiResult.data.query.pages as WikiMetaData[],
-  ).map(({ fullurl, pageid, title }) => {
-    return {
-      title,
-      pageid,
-      fullurl,
-    };
-  });
-  return metaData;
+  return parsePagesResponse(apiResult.data, endpoint);
 }
 
 /**
@@ -123,7 +122,13 @@ async function fetchWikiPageContent(
   const randomPageEndpoint = generateRandomPageEndpoint(language, pageTitle);
 
   const response = await axios.get(randomPageEndpoint, cfg);
-  return response.data.query.pages[0].extract;
+  const extract = response.data?.query?.pages?.[0]?.extract;
+  if (typeof extract !== "string") {
+    throw new Error(
+      `Wikipedia returned no extract for "${pageTitle}" (${language}).`,
+    );
+  }
+  return extract;
 }
 
 /**
