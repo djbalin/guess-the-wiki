@@ -34,9 +34,5 @@ export const useGameStore = create<State>()((set) => ({
   setIsGameActive(newIsActive) {
     return set({ isGameActive: newIsActive });
   },
-  setGameParams: (newParams) => {
-    console.log("Setting new params:");
-    console.log(newParams);
-    return set({ gameParams: newParams });
-  },
+  setGameParams: (newParams) => set({ gameParams: newParams }),
 }));

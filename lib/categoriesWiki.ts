@@ -67,7 +67,6 @@ export async function fetchSubcategories(
     );
   }
   const data = await result.json();
-  console.log(data);
   return Object.values(data.query.categorymembers) as WikiResult[];
 }
 
@@ -95,10 +94,6 @@ export async function fetchCategoryContents(
   languageCode: LanguageCode,
 ): Promise<CategoryContents> {
   const result = await fetch(
-    getCategoryContentsUrl(categoryTitle, languageCode),
-  );
-  console.warn(
-    "fetching category contents for url: ",
     getCategoryContentsUrl(categoryTitle, languageCode),
   );
   if (!result.ok) {

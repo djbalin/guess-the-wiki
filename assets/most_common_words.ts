@@ -1,5 +1,13 @@
 import { LanguageCode } from "@/types/language";
 
+/**
+ * Stop-word lists are stored lowercase, so callers must lowercase their lookups
+ * too — otherwise a capitalised title word like "The" is treated as uncommon.
+ */
+function toLowercaseSet(words: string[]): Set<string> {
+  return new Set(words.map((word) => word.toLowerCase()));
+}
+
 const EN: string[] = [
   "the",
   "of",
@@ -1002,8 +1010,8 @@ const EN: string[] = [
   "shell",
   "neck",
 ];
-export const englishWords = new Set(EN);
-export const englishWords_100 = new Set(EN.slice(0, 100));
+export const englishWords = toLowercaseSet(EN);
+export const englishWords_100 = toLowercaseSet(EN.slice(0, 100));
 
 const FR = [
   "comme",
@@ -2006,8 +2014,8 @@ const FR = [
   "colère",
   "revendication",
 ];
-const frenchWords = new Set(FR);
-const frenchWords_100 = new Set(FR.slice(0, 100));
+const frenchWords = toLowercaseSet(FR);
+const frenchWords_100 = toLowercaseSet(FR.slice(0, 100));
 
 const DA = [
   "som",
@@ -3011,8 +3019,8 @@ const DA = [
   "fordring",
   "kontinent",
 ];
-const danishWords = new Set(DA);
-const danishWords_100 = new Set(DA.slice(0, 100));
+const danishWords = toLowercaseSet(DA);
+const danishWords_100 = toLowercaseSet(DA.slice(0, 100));
 
 const ES = [
   "como",
@@ -4016,8 +4024,8 @@ const ES = [
   "reclamación",
   "continente",
 ];
-const spanishWords = new Set(ES);
-const spanishWords_100 = new Set(ES.slice(0, 100));
+const spanishWords = toLowercaseSet(ES);
+const spanishWords_100 = toLowercaseSet(ES.slice(0, 100));
 
 const DE = [
   "wie",
@@ -5021,8 +5029,8 @@ const DE = [
   "Anspruch",
   "Kontinent",
 ];
-const germanWords = new Set(DE);
-const germanWords_100 = new Set(DE.slice(100));
+const germanWords = toLowercaseSet(DE);
+const germanWords_100 = toLowercaseSet(DE.slice(0, 100));
 
 export const THOUSAND_MOST_COMMON_WORDS: {
   [key in LanguageCode]: Set<string>;

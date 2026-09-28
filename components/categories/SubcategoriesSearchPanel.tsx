@@ -36,7 +36,6 @@ function SubcategoriesResultList({
       </p>
     );
   }
-  console.log(subcategories);
   return (
     <ul className="divide-y divide-[var(--border)]">
       {subcategories.map((subcategory, i) => (

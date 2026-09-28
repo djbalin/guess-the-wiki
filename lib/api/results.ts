@@ -4,6 +4,7 @@ import { resultsTable } from "@/db/schema";
 import { DIFFICULTY_LEVELS } from "@/lib/constants";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
+import { desc, eq } from "drizzle-orm";
 import { HTTPException } from "hono/http-exception";
 import * as z from "zod";
 
@@ -12,9 +13,24 @@ const createResultSchema = z.object({
   difficulty: z.enum(DIFFICULTY_LEVELS),
 });
 
+const RESULTS_PAGE_SIZE = 50;
+
 export const resultsRoutes = new Hono()
+  // Returns the signed-in user's own results. This must stay scoped to the
+  // caller: the rows carry Clerk user IDs, so an unscoped query would hand
+  // every caller other players' identifiers.
   .get("/", async (c) => {
-    const results = await db.select().from(resultsTable).limit(10);
+    const clerkUser = await getCurrentUser();
+    if (!clerkUser) {
+      throw new HTTPException(401, { message: "Unauthorized" });
+    }
+
+    const results = await db
+      .select()
+      .from(resultsTable)
+      .where(eq(resultsTable.clerkUserId, clerkUser.id))
+      .orderBy(desc(resultsTable.createdAt))
+      .limit(RESULTS_PAGE_SIZE);
     return c.json(results);
   })
   .post("/", zValidator("json", createResultSchema), async (c) => {

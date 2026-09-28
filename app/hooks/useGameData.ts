@@ -70,6 +70,9 @@ export type FetchState =
       data: GetPlayResult;
     };
 
+/** Minimum time the loading skeleton stays on screen, in milliseconds. */
+const MIN_LOADING_MS = 500;
+
 const initialState: FetchState = {
   status: "loading",
   data: undefined,
@@ -86,8 +89,6 @@ export function useGameData() {
 
   // useEffect(() => {
   async function loadGame() {
-    console.warn("LOADING GAME wit hparams:");
-    console.log(gameParams);
     setDataState({
       data: undefined,
       status: "loading",
@@ -100,7 +101,7 @@ export function useGameData() {
       snippetLength,
     });
     if (validationResult.error === true) {
-      console.error(`validated params not ok, params:`);
+      console.error("Cannot start a game: missing language, numPages or snippetLength.");
       setDataState({
         data: null,
         status: "error",
@@ -110,30 +111,28 @@ export function useGameData() {
 
     setIsActive(true);
 
-    console.log("calling load, ids passed: ", ids);
-
     const res = await client.api.play.$get({
       query: {
         lang: validationResult.params.lang,
         numPages: String(validationResult.params.numPages),
         snippetLength: String(validationResult.params.snippetLength),
-        ids: ids ?? undefined,
-        seed: String(seed) ?? undefined,
+        ids: ids?.length ? ids.join(",") : undefined,
+        seed: String(seed),
       },
     });
 
     if (!res.ok) {
-      const errorBody = await res.json();
-      console.error("validation failed:", errorBody);
+      console.error(`Failed to load game (HTTP ${res.status}).`);
       setDataState({ data: null, status: "error" });
       return;
     }
     const json = (await res.json()) as GetPlayResult;
 
-    // Wait if function is ready to return in less than 500ms
+    // Hold the loading state briefly so a fast response does not make the
+    // skeleton flash in and straight back out again.
     const elapsed = Date.now() - startTime;
-    if (elapsed < 2000) {
-      await new Promise((resolve) => setTimeout(resolve, 2000 - elapsed));
+    if (elapsed < MIN_LOADING_MS) {
+      await new Promise((resolve) => setTimeout(resolve, MIN_LOADING_MS - elapsed));
     }
 
     setDataState({
@@ -145,9 +144,6 @@ export function useGameData() {
     router.replace(query ? `${pathname}?${query}` : pathname, {
       scroll: false,
     });
-
-    console.log("GAME LOADED, status: ");
-    console.log(json);
   }
 
   return { dataState, loadGame };

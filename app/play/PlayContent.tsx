@@ -255,7 +255,7 @@ export default function PlayContent({
   return (
     <PlayingField
       wikiPages={dataState.data.wikiPages}
-      onBack={() => console.log("back")}
+      onBack={loadGame}
       onMakeGuess={handleMakeGuess}
       loadGame={loadGame}
     />

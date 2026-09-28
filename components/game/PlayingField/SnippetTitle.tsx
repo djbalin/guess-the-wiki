@@ -1,5 +1,4 @@
 import { WikiDocument } from "@/types/wiki";
-import { useEffect } from "react";
 
 interface SnippetTitleProps {
   wikiPage: WikiDocument;

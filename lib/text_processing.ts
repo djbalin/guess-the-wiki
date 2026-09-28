@@ -1,9 +1,5 @@
-import {
-  HUNDRED_MOST_COMMON_WORDS,
-  THOUSAND_MOST_COMMON_WORDS,
-} from "@/assets/most_common_words";
+import { HUNDRED_MOST_COMMON_WORDS } from "@/assets/most_common_words";
 import { LanguageCode } from "@/types/language";
-import { prngAlea } from "ts-seedrandom";
 
 const ALL_TYPES_OF_WHITESPACE = RegExp(/\s+|\r+|\t+|\v+|\n+/g);
 
@@ -46,10 +42,14 @@ export function extractSnippetFromText(
   const fullTextReferencesRemoved = stripReferencesSection(fullText);
   const fullTextHeadersRemoved = stripArticleHeaders(fullTextReferencesRemoved);
 
-  const words = fullTextHeadersRemoved.split(ALL_TYPES_OF_WHITESPACE);
+  // Splitting can yield empty strings at either end (leading/trailing
+  // whitespace, or whitespace left behind by a stripped header). They would
+  // otherwise be counted against snippetLength and show up as stray spaces.
+  const words = fullTextHeadersRemoved
+    .split(ALL_TYPES_OF_WHITESPACE)
+    .filter(Boolean);
 
   if (words.length <= snippetLength) {
-    console.log("Returning early");
     return words.join(" ");
   }
 
@@ -61,33 +61,50 @@ export function extractSnippetFromText(
   return words.slice(beginIndex, endIndex).join(" ");
 }
 
+/** Escapes regular-expression metacharacters so a word can be matched literally. */
+function escapeRegExp(word: string): string {
+  return word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /**
  * Replaces specified words in a given input string.
  *
- * The words to replace/censor are assumed to be provided as a space-separated string. Occurrences of these words are replaced by
- * the string "###" provided that the given word does not appear in the list of the 1000 most common words in English.
+ * The words to censor are taken from the article title. Occurrences are
+ * replaced by the string "###" provided that the given word does not appear in
+ * the list of the most common words in the article's language.
+ *
+ * Matching is whole-word only, so censoring "King" no longer turns "Kingdom"
+ * into "###dom", and every candidate is escaped before it reaches the regular
+ * expression, so titles containing metacharacters ("C++", "*NSYNC") no longer
+ * throw.
  *
  * @param rawText - The original text to be censored.
- * @param phraseToCensor - Words or phrases to be censored (comma-separated).
- * @returns The censored text with '###' replacing the specified words or phrases.
+ * @param phraseToCensor - The article title whose words should be censored.
+ * @param language - Language of the article, used to pick the stop-word list.
+ * @returns The censored text with '###' replacing the specified words.
  */
 export function censorText(
   rawText: string,
   phraseToCensor: string,
   language: LanguageCode,
 ): string {
-  const censorCandidates: string[] = phraseToCensor.replace(",", "").split(" ");
-  const wordsToCensor: string[] = censorCandidates.filter(
-    (word) => word.length > 2 && !HUNDRED_MOST_COMMON_WORDS[language].has(word),
+  const commonWords = HUNDRED_MOST_COMMON_WORDS[language];
+  const wordsToCensor = phraseToCensor
+    .split(/[\s,]+/)
+    // Strip punctuation that clings to a title word, e.g. "(band)" or "Who?".
+    .map((word) => word.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ""))
+    .filter((word) => word.length > 2 && !commonWords.has(word.toLowerCase()));
+
+  // An empty pattern matches at every position, which would replace the whole
+  // article with "###". Nothing to censor means nothing to do.
+  if (wordsToCensor.length === 0) {
+    return rawText;
+  }
+
+  const regEx = new RegExp(
+    `(?<![\\p{L}\\p{N}])(?:${wordsToCensor.map(escapeRegExp).join("|")})(?![\\p{L}\\p{N}])`,
+    "giu",
   );
-  //
-  // TODO
-  // TODO
-  // TODO
-  //
-  // This is buggy: It replaces occurrences of an input word if it forms a substring of another word, if e.g. "King" is to be censored, "Kingdom" becomes "###dom"
-  const regEx = new RegExp(wordsToCensor.join("|"), "gi");
-  return rawText
-    .replaceAll(regEx, "###")
-    .replaceAll(/###(?:\s+###)+/g, "###");
+
+  return rawText.replaceAll(regEx, "###").replaceAll(/###(?:\s+###)+/g, "###");
 }

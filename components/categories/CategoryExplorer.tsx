@@ -95,12 +95,10 @@ export default function CategoryExplorer({
   // }, [startCategory]);
 
   const currentCategory = trail.length > 0 ? trail[trail.length - 1] : null;
-  console.log("currentCategory: ", currentCategory);
 
   useEffect(() => {
     let cancelled = false;
     async function fetchContents() {
-      console.log("fetching contents for category: ", currentCategory);
       if (!currentCategory) {
         // setContents(null);
         // setError(null);
@@ -110,7 +108,6 @@ export default function CategoryExplorer({
       setError(null);
       fetchCategoryContents(currentCategory, languageCode)
         .then((c) => {
-          console.log(c);
           if (!cancelled) setContents(c);
         })
         .catch((err: unknown) => {
@@ -276,7 +273,6 @@ function Breadcrumb({
   onJump: (index: number) => void;
   onReset: () => void;
 }) {
-  console.log(trail);
   if (trail.length === 0) {
     return (
       <div className="flex items-center gap-2 text-base text-[var(--textfaint)]">
